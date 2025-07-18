@@ -19,7 +19,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-sunset-gradient font-elegant relative">
+        <div className="min-h-screen bg-pink-gradient font-elegant relative">
           <ParticleEffect />
           
           <Toaster 
