@@ -3,9 +3,9 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Sadece giriş yapmış kullanıcılar okuyabilir/yazabilir
     match /{document=**} {
-      allow read, write: if request.auth != null && 
-        (request.auth.token.email == 'yintsukuyomi@proton.me' || 
-         request.auth.token.email == 'maruko@gmail.com');
+      // Eski kısıtlama kaldırıldı
+      allow read, write: if request.auth != null;
     }
   }
+}
 }

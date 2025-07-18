@@ -45,19 +45,35 @@ export default function Movies() {
   const fetchMovies = async () => {
     setLoading(true);
     try {
-      const moviesQuery = query(
-        collection(db, 'movies'),
-        where('status', '==', activeTab),
-        orderBy('date', 'desc')
-      );
-      const snapshot = await getDocs(moviesQuery);
+      let snapshot;
+      try {
+        // Önce firestore üzerinden status + date ile sıralı sorgu dene
+        snapshot = await getDocs(query(
+          collection(db, 'movies'),
+          where('status', '==', activeTab),
+          orderBy('date', 'desc')
+        ));
+      } catch (err) {
+        console.error('Ordered query failed, fallback:', err);
+        // İndeks yoksa tümünü çek, client-side filtrele ve sırala
+        const allSnap = await getDocs(collection(db, 'movies'));
+        const filtered = allSnap.docs.filter(d => d.data().status === activeTab);
+        snapshot = { docs: filtered };
+      }
+      // Veriyi al ve tarih bazlı sırala
       const moviesData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
+      moviesData.sort((a, b) => {
+        const aDate = a.date?.toDate?.() || new Date(0);
+        const bDate = b.date?.toDate?.() || new Date(0);
+        return bDate - aDate;
+      });
       setMovies(moviesData);
     } catch (error) {
-      toast.error('Filmler yüklenemedi');
+      console.error('Filmler yüklenirken hata:', error);
+      toast.error('Filmler yüklenemedi: ' + (error.message || ''));
     } finally {
       setLoading(false);
     }

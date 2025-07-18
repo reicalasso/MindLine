@@ -11,7 +11,7 @@ import {
   orderBy, 
   serverTimestamp 
 } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, writeBatch } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { Folder, FolderPlus, Edit, Trash2, Check, X } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -96,10 +96,34 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
   };
 
   const handleDeleteFolder = async (folderId) => {
-    if (window.confirm('Bu klasörü silmek istediğinizden emin misiniz? İçerisindeki öğeler silinmeyecek, ancak kategorisiz olacaktır.')) {
+    if (window.confirm('Bu klasörü silmek istediğinizden emin misiniz? İçerisindeki tüm öğeler "Kategorisiz" olarak işaretlenecektir.')) {
       try {
-        await deleteDoc(doc(db, `folders_${collectionName}`, folderId));
-        toast.success('Klasör silindi');
+        const batch = writeBatch(db);
+
+        // 1. Bu klasördeki tüm öğeleri bul
+        // NOT: Bu sorgu, öğe koleksiyonu büyükse bir dizin gerektirebilir.
+        // Gerekli dizin: folderId (artan), author (artan)
+        const itemsQuery = query(
+          collection(db, collectionName), 
+          where('folderId', '==', folderId),
+          where('author', '==', currentUser.email)
+        );
+        const itemsSnapshot = await getDocs(itemsQuery);
+
+        // 2. Öğelerin folderId'sini null olarak güncellemek için batch'e ekle
+        itemsSnapshot.forEach(itemDoc => {
+          const itemRef = doc(db, collectionName, itemDoc.id);
+          batch.update(itemRef, { folderId: null });
+        });
+
+        // 3. Klasörün kendisini silmek için batch'e ekle
+        const folderRef = doc(db, `folders_${collectionName}`, folderId);
+        batch.delete(folderRef);
+
+        // 4. Tüm işlemleri gerçekleştir
+        await batch.commit();
+
+        toast.success('Klasör silindi ve içindeki öğeler taşındı.');
         
         // Eğer silinen klasör seçiliyse, seçimi kaldır
         if (selectedFolder === folderId) {
@@ -109,7 +133,7 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
         fetchFolders();
       } catch (error) {
         console.error('Klasör silinirken hata:', error);
-        toast.error('Klasör silinemedi');
+        toast.error('Klasör silinemedi. Lütfen tekrar deneyin.');
       }
     }
   };
@@ -198,7 +222,7 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
               folders.map(folder => (
                 <div
                   key={folder.id}
-                  className={`flex items-center justify-between p-2 rounded-lg ${
+                  className={`group flex items-center justify-between p-2 rounded-lg ${
                     isEditing === folder.id ? 'bg-blue-50' : 'hover:bg-gray-100'
                   } ${
                     selectedFolder === folder.id ? 'bg-gray-100 font-medium' : ''
@@ -235,16 +259,16 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
                         <Folder className="w-4 h-4 mr-2 text-blue-500" />
                         <span className="truncate">{folder.name}</span>
                       </div>
-                      <div className="flex space-x-1">
+                      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                         <button
                           onClick={() => startEditing(folder)}
-                          className="p-1 text-blue-600 hover:text-blue-800 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="p-2 text-blue-600 hover:text-blue-800"
                         >
                           <Edit className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteFolder(folder.id)}
-                          className="p-1 text-red-600 hover:text-red-800 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="p-2 text-red-600 hover:text-red-800"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

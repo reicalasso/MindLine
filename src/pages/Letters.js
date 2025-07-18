@@ -53,21 +53,28 @@ export default function Letters() {
       if (selectedFolder) {
         lettersQuery = query(
           collection(db, 'letters'),
-          where('folderId', '==', selectedFolder),
-          orderBy('date', 'desc')
+          where('folderId', '==', selectedFolder)
+          // orderBy('date', 'desc') // Bu satır birleşik index gerektiriyor, bu yüzden kaldırıldı.
         );
       } else {
         lettersQuery = query(
-          collection(db, 'letters'),
-          orderBy('date', 'desc')
+          collection(db, 'letters')
         );
       }
       
       const snapshot = await getDocs(lettersQuery);
-      const lettersData = snapshot.docs.map(doc => ({
+      let lettersData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
+
+      // Sıralamayı istemci tarafında yap
+      lettersData.sort((a, b) => {
+        const dateA = a.date?.toDate?.() || 0;
+        const dateB = b.date?.toDate?.() || 0;
+        return dateB - dateA;
+      });
+
       // Mektuplar başarıyla yüklendi
       setLetters(lettersData);
     } catch (error) {
