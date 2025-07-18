@@ -1,0 +1,348 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  updateDoc,
+  doc,
+  query,
+  where,
+  orderBy,
+  serverTimestamp
+} from 'firebase/firestore';
+import { db } from '../firebase';
+import { Film, Plus, Edit, Trash2, Save, X, StickyNote, Image, Calendar } from 'lucide-react';
+import toast from 'react-hot-toast';
+
+const LIST_TYPES = [
+  { key: 'watchlist', label: 'İzleyeceklerimiz' },
+  { key: 'watched', label: 'İzlediklerimiz' },
+  { key: 'dropped', label: 'Yarıda Bıraktıklarımız' }
+];
+
+export default function Movies() {
+  const { currentUser } = useAuth();
+  const [activeTab, setActiveTab] = useState('watchlist');
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingMovie, setEditingMovie] = useState(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    posterUrl: '',
+    note: '',
+    date: new Date().toISOString().split('T')[0],
+    status: 'watchlist'
+  });
+
+  useEffect(() => {
+    fetchMovies();
+    // eslint-disable-next-line
+  }, [activeTab]);
+
+  const fetchMovies = async () => {
+    setLoading(true);
+    try {
+      const moviesQuery = query(
+        collection(db, 'movies'),
+        where('status', '==', activeTab),
+        orderBy('date', 'desc')
+      );
+      const snapshot = await getDocs(moviesQuery);
+      const moviesData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setMovies(moviesData);
+    } catch (error) {
+      toast.error('Filmler yüklenemedi');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.title.trim()) {
+      toast.error('Film başlığı boş olamaz');
+      return;
+    }
+    try {
+      const movieData = {
+        title: formData.title.trim(),
+        posterUrl: formData.posterUrl.trim(),
+        note: formData.note.trim(),
+        date: new Date(formData.date),
+        status: formData.status,
+        author: currentUser.email,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      if (editingMovie) {
+        await updateDoc(doc(db, 'movies', editingMovie.id), {
+          ...movieData,
+          createdAt: editingMovie.createdAt
+        });
+        toast.success('Film güncellendi');
+      } else {
+        await addDoc(collection(db, 'movies'), movieData);
+        toast.success('Film eklendi');
+      }
+      setFormData({
+        title: '',
+        posterUrl: '',
+        note: '',
+        date: new Date().toISOString().split('T')[0],
+        status: activeTab
+      });
+      setShowForm(false);
+      setEditingMovie(null);
+      fetchMovies();
+    } catch (error) {
+      toast.error('Film kaydedilemedi');
+    }
+  };
+
+  const handleEdit = (movie) => {
+    setEditingMovie(movie);
+    setFormData({
+      title: movie.title,
+      posterUrl: movie.posterUrl,
+      note: movie.note,
+      date: movie.date?.toDate?.()?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0],
+      status: movie.status
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (movieId) => {
+    if (window.confirm('Bu filmi silmek istediğinizden emin misiniz?')) {
+      try {
+        await deleteDoc(doc(db, 'movies', movieId));
+        toast.success('Film silindi');
+        fetchMovies();
+      } catch {
+        toast.error('Film silinemedi');
+      }
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      posterUrl: '',
+      note: '',
+      date: new Date().toISOString().split('T')[0],
+      status: activeTab
+    });
+    setShowForm(false);
+    setEditingMovie(null);
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="text-center">
+        <h1 className="text-4xl font-romantic text-romantic-700 mb-2 flex items-center justify-center">
+          <Film className="w-8 h-8 mr-3" />
+          Ortak Film Listesi
+        </h1>
+        <p className="text-lg text-romantic-600 font-elegant">
+          Birlikte izlediğiniz ve izleyeceğiniz filmler burada...
+        </p>
+      </div>
+
+      {/* Tablar */}
+      <div className="flex justify-center space-x-4 mb-6">
+        {LIST_TYPES.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`px-6 py-2 rounded-lg font-medium transition-all ${
+              activeTab === tab.key
+                ? 'bg-romantic-100 text-romantic-700 shadow'
+                : 'bg-white/80 text-romantic-500 hover:bg-romantic-50'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Yeni Film Butonu */}
+      <div className="flex justify-center">
+        <button
+          onClick={() => setShowForm(true)}
+          className="bg-love-gradient text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all flex items-center space-x-2"
+        >
+          <Plus className="w-5 h-5" />
+          <span>Film Ekle</span>
+        </button>
+      </div>
+
+      {/* Film Formu */}
+      {showForm && (
+        <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-romantic-200">
+          <h2 className="text-2xl font-romantic text-romantic-700 mb-6">
+            {editingMovie ? 'Filmi Düzenle' : 'Yeni Film Ekle'}
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-romantic-700 mb-2">
+                Film Başlığı
+              </label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={e => setFormData({ ...formData, title: e.target.value })}
+                className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                placeholder="Film adı..."
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-romantic-700 mb-2">
+                Poster URL
+              </label>
+              <div className="relative">
+                <Image className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
+                <input
+                  type="url"
+                  value={formData.posterUrl}
+                  onChange={e => setFormData({ ...formData, posterUrl: e.target.value })}
+                  className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-romantic-700 mb-2">
+                Not
+              </label>
+              <div className="relative">
+                <StickyNote className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
+                <input
+                  type="text"
+                  value={formData.note}
+                  onChange={e => setFormData({ ...formData, note: e.target.value })}
+                  className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                  placeholder="Kısa not..."
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-romantic-700 mb-2">
+                Tarih
+              </label>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
+                <input
+                  type="date"
+                  value={formData.date}
+                  onChange={e => setFormData({ ...formData, date: e.target.value })}
+                  className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-romantic-700 mb-2">
+                Liste
+              </label>
+              <select
+                value={formData.status}
+                onChange={e => setFormData({ ...formData, status: e.target.value })}
+                className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+              >
+                {LIST_TYPES.map(tab => (
+                  <option key={tab.key} value={tab.key}>{tab.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={resetForm}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-1"
+              >
+                <X className="w-4 h-4" />
+                <span>İptal</span>
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-love-gradient text-white rounded-lg hover:shadow-lg transition-all flex items-center space-x-1"
+              >
+                <Save className="w-4 h-4" />
+                <span>{editingMovie ? 'Güncelle' : 'Kaydet'}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Film Listesi */}
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[200px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-romantic-500"></div>
+        </div>
+      ) : movies.length === 0 ? (
+        <div className="text-center py-12">
+          <Film className="w-16 h-16 text-romantic-300 mx-auto mb-4" />
+          <h3 className="text-xl font-romantic text-romantic-600 mb-2">
+            Henüz film yok
+          </h3>
+          <p className="text-romantic-500">
+            Listeye ilk filmi ekleyin!
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {movies.map(movie => (
+            <div
+              key={movie.id}
+              className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-romantic-100 group"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="font-semibold text-lg text-romantic-700 flex-1">
+                  {movie.title}
+                </h3>
+                <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => handleEdit(movie)}
+                    className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(movie.id)}
+                    className="p-1 text-red-600 hover:bg-red-50 rounded"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+              {movie.posterUrl && (
+                <img
+                  src={movie.posterUrl}
+                  alt={movie.title}
+                  className="w-full h-48 object-cover rounded-lg mb-3"
+                  onError={e => { e.target.style.display = 'none'; }}
+                />
+              )}
+              <p className="text-gray-700 mb-2 text-sm">
+                {movie.note}
+              </p>
+              <div className="flex justify-between items-center text-xs text-romantic-500">
+                <span>{movie.author}</span>
+                <span>
+                  {movie.date?.toDate?.()?.toLocaleDateString('tr-TR') || 'Tarih yok'}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

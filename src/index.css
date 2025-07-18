@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Indie+Flower&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Montserrat', 'Roboto', Arial, sans-serif;
+  background: linear-gradient(135deg, #f6f8fa 0%, #eaecef 100%);
+  min-height: 100vh;
+  color: #24292f;
+}
+
+/* Kedili arka plan */
+body::before {
+  content: "🐾";
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  font-size: 48px;
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+}
+body::after {
+  content: "😺";
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  font-size: 48px;
+  opacity: 0.12;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Soft scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f6f8fa;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Minimal card shadow */
+.card {
+  box-shadow: 0 2px 8px 0 rgba(100, 116, 139, 0.08);
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+/* Line clamp utility */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
