@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
+import { 
+  collection, 
+  addDoc, 
+  getDocs, 
+  deleteDoc, 
   updateDoc,
-  doc,
+  doc, 
+  orderBy, 
   query,
   where,
-  orderBy,
-  serverTimestamp
+  serverTimestamp 
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Film, Plus, Edit, Trash2, Save, X, StickyNote, Image, Calendar } from 'lucide-react';
+import { 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Save, 
+  X, 
+  Film,
+  Calendar,
+  Star,
+  FolderPlus
+} from 'lucide-react';
 import toast from 'react-hot-toast';
+import FolderManager from '../components/FolderManager';
 
 const LIST_TYPES = [
   { key: 'watchlist', label: 'İzleyeceklerimiz' },
@@ -36,11 +47,12 @@ export default function Movies() {
     date: new Date().toISOString().split('T')[0],
     status: 'watchlist'
   });
+  const [selectedFolder, setSelectedFolder] = useState(null);
 
   useEffect(() => {
     fetchMovies();
     // eslint-disable-next-line
-  }, [activeTab]);
+  }, [activeTab, selectedFolder]);
 
   const fetchMovies = async () => {
     setLoading(true);
@@ -157,208 +169,299 @@ export default function Movies() {
     setEditingMovie(null);
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-romantic-500"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
+      {/* Başlık */}
       <div className="text-center">
         <h1 className="text-4xl font-romantic text-romantic-700 mb-2 flex items-center justify-center">
           <Film className="w-8 h-8 mr-3" />
-          Ortak Film Listesi
+          Film Koleksiyonu
         </h1>
         <p className="text-lg text-romantic-600 font-elegant">
-          Birlikte izlediğiniz ve izleyeceğiniz filmler burada...
+          Birlikte izlediğiniz güzel filmler burada...
         </p>
       </div>
 
-      {/* Tablar */}
-      <div className="flex justify-center space-x-4 mb-6">
-        {LIST_TYPES.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`px-6 py-2 rounded-lg font-medium transition-all ${
-              activeTab === tab.key
-                ? 'bg-romantic-100 text-romantic-700 shadow'
-                : 'bg-white/80 text-romantic-500 hover:bg-romantic-50'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Yeni Film Butonu */}
-      <div className="flex justify-center">
-        <button
-          onClick={() => setShowForm(true)}
-          className="bg-love-gradient text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all flex items-center space-x-2"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Film Ekle</span>
-        </button>
-      </div>
-
-      {/* Film Formu */}
-      {showForm && (
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-romantic-200">
-          <h2 className="text-2xl font-romantic text-romantic-700 mb-6">
-            {editingMovie ? 'Filmi Düzenle' : 'Yeni Film Ekle'}
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-romantic-700 mb-2">
-                Film Başlığı
-              </label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={e => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
-                placeholder="Film adı..."
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-romantic-700 mb-2">
-                Poster URL
-              </label>
-              <div className="relative">
-                <Image className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
-                <input
-                  type="url"
-                  value={formData.posterUrl}
-                  onChange={e => setFormData({ ...formData, posterUrl: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
-                  placeholder="https://..."
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-romantic-700 mb-2">
-                Not
-              </label>
-              <div className="relative">
-                <StickyNote className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
-                <input
-                  type="text"
-                  value={formData.note}
-                  onChange={e => setFormData({ ...formData, note: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
-                  placeholder="Kısa not..."
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-romantic-700 mb-2">
-                Tarih
-              </label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
-                <input
-                  type="date"
-                  value={formData.date}
-                  onChange={e => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-romantic-700 mb-2">
-                Liste
-              </label>
-              <select
-                value={formData.status}
-                onChange={e => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
-              >
-                {LIST_TYPES.map(tab => (
-                  <option key={tab.key} value={tab.key}>{tab.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex justify-end space-x-3">
-              <button
-                type="button"
-                onClick={resetForm}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-1"
-              >
-                <X className="w-4 h-4" />
-                <span>İptal</span>
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-love-gradient text-white rounded-lg hover:shadow-lg transition-all flex items-center space-x-1"
-              >
-                <Save className="w-4 h-4" />
-                <span>{editingMovie ? 'Güncelle' : 'Kaydet'}</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Film Listesi */}
-      {loading ? (
-        <div className="flex items-center justify-center min-h-[200px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-romantic-500"></div>
-        </div>
-      ) : movies.length === 0 ? (
-        <div className="text-center py-12">
-          <Film className="w-16 h-16 text-romantic-300 mx-auto mb-4" />
-          <h3 className="text-xl font-romantic text-romantic-600 mb-2">
-            Henüz film yok
-          </h3>
-          <p className="text-romantic-500">
-            Listeye ilk filmi ekleyin!
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {movies.map(movie => (
-            <div
-              key={movie.id}
-              className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-romantic-100 group"
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* Klasör Sidebar */}
+        <div className="md:col-span-1">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-romantic-200">
+            <FolderManager 
+              collectionName="movies" 
+              onSelectFolder={setSelectedFolder} 
+              selectedFolder={selectedFolder}
+            />
+            
+            {/* Yeni Film Butonu */}
+            <button
+              onClick={() => {
+                setFormData({ 
+                  ...formData, 
+                  folderId: selectedFolder 
+                });
+                setShowForm(true);
+              }}
+              className="w-full bg-love-gradient text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all flex items-center justify-center space-x-2"
             >
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="font-semibold text-lg text-romantic-700 flex-1">
-                  {movie.title}
-                </h3>
-                <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Plus className="w-4 h-4" />
+              <span>Yeni Film Ekle</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Filmler İçeriği */}
+        <div className="md:col-span-3">
+          {/* Film Formu */}
+          {showForm && (
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-romantic-200 mb-8">
+              <h2 className="text-2xl font-romantic text-romantic-700 mb-6">
+                {editingMovie ? 'Filmi Düzenle' : 'Yeni Film Ekle'}
+              </h2>
+              
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-romantic-700 mb-2">
+                      Film Adı
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                      placeholder="Film adını girin..."
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-romantic-700 mb-2">
+                      Yıl
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.year}
+                      onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                      className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                      placeholder="2024"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-romantic-700 mb-2">
+                      İzlenme Tarihi
+                    </label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
+                      <input
+                        type="date"
+                        value={formData.watchDate}
+                        onChange={(e) => setFormData({ ...formData, watchDate: e.target.value })}
+                        className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-romantic-700 mb-2">
+                      Puanınız
+                    </label>
+                    <div className="relative">
+                      <Star className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
+                      <select
+                        value={formData.rating}
+                        onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
+                        className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                      >
+                        <option value="">Puan seçin</option>
+                        {[1,2,3,4,5,6,7,8,9,10].map(num => (
+                          <option key={num} value={num}>{num}/10</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-romantic-700 mb-2">
+                    Klasör (İsteğe Bağlı)
+                  </label>
+                  <div className="relative">
+                    <FolderPlus className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
+                    <select
+                      value={formData.folderId || ''}
+                      onChange={(e) => setFormData({ ...formData, folderId: e.target.value || null })}
+                      className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                    >
+                      <option value="">Klasör Seçin (İsteğe Bağlı)</option>
+                      <FolderOptions collectionName="movies" />
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-romantic-700 mb-2">
+                    Notlarınız (İsteğe Bağlı)
+                  </label>
+                  <textarea
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    rows={3}
+                    className="w-full px-4 py-3 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50 resize-none"
+                    placeholder="Film hakkında düşünceleriniz..."
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3">
                   <button
-                    onClick={() => handleEdit(movie)}
-                    className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                    type="button"
+                    onClick={resetForm}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-1"
                   >
-                    <Edit className="w-4 h-4" />
+                    <X className="w-4 h-4" />
+                    <span>İptal</span>
                   </button>
                   <button
-                    onClick={() => handleDelete(movie.id)}
-                    className="p-1 text-red-600 hover:bg-red-50 rounded"
+                    type="submit"
+                    className="px-4 py-2 bg-love-gradient text-white rounded-lg hover:shadow-lg transition-all flex items-center space-x-1"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Save className="w-4 h-4" />
+                    <span>{editingMovie ? 'Güncelle' : 'Kaydet'}</span>
                   </button>
                 </div>
-              </div>
-              {movie.posterUrl && (
-                <img
-                  src={movie.posterUrl}
-                  alt={movie.title}
-                  className="w-full h-48 object-cover rounded-lg mb-3"
-                  onError={e => { e.target.style.display = 'none'; }}
-                />
-              )}
-              <p className="text-gray-700 mb-2 text-sm">
-                {movie.note}
-              </p>
-              <div className="flex justify-between items-center text-xs text-romantic-500">
-                <span>{movie.author}</span>
-                <span>
-                  {movie.date?.toDate?.()?.toLocaleDateString('tr-TR') || 'Tarih yok'}
-                </span>
-              </div>
+              </form>
             </div>
-          ))}
+          )}
+
+          {/* Filmler Listesi */}
+          {movies.length === 0 ? (
+            <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-romantic-100">
+              <Film className="w-16 h-16 text-romantic-300 mx-auto mb-4" />
+              <h3 className="text-xl font-romantic text-romantic-600 mb-2">
+                {selectedFolder ? 'Bu klasörde henüz film yok' : 'Henüz film yok'}
+              </h3>
+              <p className="text-romantic-500">
+                {selectedFolder ? 'Bu klasöre ilk filminizi ekleyin!' : 'İlk filminizi eklemeye ne dersiniz?'}
+              </p>
+              <button
+                onClick={() => {
+                  setFormData({ 
+                    ...formData, 
+                    folderId: selectedFolder 
+                  });
+                  setShowForm(true);
+                }}
+                className="mt-4 bg-love-gradient text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all inline-flex items-center space-x-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Yeni Film</span>
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+              {movies.map((movie) => (
+                <div
+                  key={movie.id}
+                  className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-romantic-100 group"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-xl text-romantic-700 mb-1">
+                        {movie.title}
+                      </h3>
+                      {movie.year && (
+                        <p className="text-sm text-romantic-500">({movie.year})</p>
+                      )}
+                    </div>
+                    <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => handleEdit(movie)}
+                        className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(movie.id)}
+                        className="p-1 text-red-600 hover:bg-red-50 rounded"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {movie.rating && (
+                    <div className="flex items-center mb-2">
+                      <Star className="w-4 h-4 text-yellow-500 fill-current mr-1" />
+                      <span className="text-sm font-medium text-gray-700">
+                        {movie.rating}/10
+                      </span>
+                    </div>
+                  )}
+
+                  {movie.notes && (
+                    <p className="text-gray-700 mb-4 text-sm line-clamp-3">
+                      {movie.notes}
+                    </p>
+                  )}
+
+                  <div className="flex justify-between items-center text-xs text-romantic-500">
+                    <span>{movie.author}</span>
+                    <span>
+                      {movie.watchDate?.toDate?.()?.toLocaleDateString('tr-TR') || 
+                       movie.createdAt?.toDate?.()?.toLocaleDateString('tr-TR') || 
+                       'Tarih yok'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
+  );
+}
+
+export function FolderOptions({ collectionName }) {
+  const [folders, setFolders] = useState([]);
+
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const foldersCol = collection(db, `${collectionName}Folders`);
+        const folderSnapshot = await getDocs(foldersCol);
+        const folderList = folderSnapshot.docs.map(doc => ({ 
+          id: doc.id, 
+          ...doc.data() 
+        }));
+        setFolders(folderList);
+      } catch (error) {
+        console.error('Klasörler yüklenirken hata:', error);
+      }
+    };
+
+    fetchFolders();
+  }, [collectionName]);
+
+  return (
+    <>
+      {folders.length === 0 ? (
+        <option value="">Henüz klasör yok</option>
+      ) : (
+        folders.map(folder => (
+          <option key={folder.id} value={folder.id}>{folder.name}</option>
+        ))
+      )}
+    </>
   );
 }

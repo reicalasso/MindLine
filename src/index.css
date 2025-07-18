@@ -1,70 +1,514 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Indie+Flower&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower:wght@400&family=Montserrat:wght@400;500;600;700&family=Dancing+Script:wght@400;500;600;700&family=Caveat:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Dinamik arka plan gradyenti */
 body {
   margin: 0;
-  font-family: 'Montserrat', 'Roboto', Arial, sans-serif;
-  background: linear-gradient(135deg, #f6f8fa 0%, #eaecef 100%);
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(135deg, #feeeee 0%, #fdd1d1 25%, #fba2a2 50%, #f86868 75%, #f53333 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   min-height: 100vh;
-  color: #24292f;
+  color: #1f2937; /* Daha koyu renk */
+  overflow-x: hidden;
+  position: relative;
 }
 
-/* Kedili arka plan */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Dinamik kedi süslemeleri - daha fazla çeşit */
 body::before {
   content: "🐾";
   position: fixed;
-  left: 10px;
-  bottom: 10px;
-  font-size: 48px;
-  opacity: 0.15;
-  z-index: 0;
-  pointer-events: none;
-}
-body::after {
-  content: "😺";
-  position: fixed;
-  right: 10px;
-  top: 10px;
-  font-size: 48px;
+  left: 5%;
+  bottom: 10%;
+  font-size: clamp(2rem, 8vw, 4rem);
   opacity: 0.12;
   z-index: 0;
   pointer-events: none;
+  animation: float 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(242, 113, 28, 0.3));
 }
 
-/* Soft scrollbar */
+body::after {
+  content: "😺";
+  position: fixed;
+  right: 5%;
+  top: 15%;
+  font-size: clamp(2rem, 8vw, 4rem);
+  opacity: 0.12;
+  z-index: 0;
+  pointer-events: none;
+  animation: float 3s ease-in-out infinite reverse;
+  filter: drop-shadow(0 0 10px rgba(242, 113, 28, 0.3));
+}
+
+/* Daha fazla kedi süslemesi - rastgele konumlarda */
+.cat-decoration-1::before {
+  content: "😻";
+  position: fixed;
+  left: 10%;
+  top: 60%;
+  font-size: clamp(1.5rem, 6vw, 3rem);
+  opacity: 0.1;
+  z-index: 0;
+  pointer-events: none;
+  animation: wiggle 3s ease-in-out infinite;
+  filter: hue-rotate(20deg);
+}
+
+.cat-decoration-2::after {
+  content: "🐱";
+  position: fixed;
+  right: 15%;
+  bottom: 30%;
+  font-size: clamp(1.5rem, 6vw, 3rem);
+  opacity: 0.1;
+  z-index: 0;
+  pointer-events: none;
+  animation: purr 2.5s ease-in-out infinite;
+  filter: hue-rotate(-20deg);
+}
+
+.cat-decoration-3::before {
+  content: "😸";
+  position: fixed;
+  right: 30%;
+  top: 40%;
+  font-size: clamp(1rem, 5vw, 2.5rem);
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
+  animation: float 4s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.cat-decoration-4::after {
+  content: "😽";
+  position: fixed;
+  left: 70%;
+  bottom: 60%;
+  font-size: clamp(1rem, 5vw, 2.5rem);
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
+  animation: wiggle 3.5s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+/* Kalp süslemeleri - daha romantik */
+.love-decoration-1::before {
+  content: "💕";
+  position: fixed;
+  left: 80%;
+  top: 70%;
+  font-size: clamp(1rem, 4vw, 2rem);
+  opacity: 0.12;
+  z-index: 0;
+  pointer-events: none;
+  animation: heartbeat 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.4));
+}
+
+.love-decoration-2::after {
+  content: "💖";
+  position: fixed;
+  left: 20%;
+  top: 20%;
+  font-size: clamp(1rem, 4vw, 2rem);
+  opacity: 0.12;
+  z-index: 0;
+  pointer-events: none;
+  animation: purr 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.4));
+}
+
+.love-decoration-3::before {
+  content: "💝";
+  position: fixed;
+  right: 60%;
+  bottom: 40%;
+  font-size: clamp(0.8rem, 3vw, 1.5rem);
+  opacity: 0.1;
+  z-index: 0;
+  pointer-events: none;
+  animation: float 3.5s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+
+/* Yeni animasyonlar */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
+  75% { transform: scale(1.15); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-5deg) scale(1); }
+  25% { transform: rotate(5deg) scale(1.05); }
+  50% { transform: rotate(-3deg) scale(0.95); }
+  75% { transform: rotate(3deg) scale(1.02); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-15px) rotate(2deg); }
+  66% { transform: translateY(-5px) rotate(-1deg); }
+}
+
+@keyframes purr {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.03) rotate(1deg); }
+  50% { transform: scale(1.06) rotate(0deg); }
+  75% { transform: scale(1.02) rotate(-1deg); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes bounce-love {
+  0%, 20%, 53%, 80%, 100% { transform: translateY(0) scale(1); }
+  40%, 43% { transform: translateY(-15px) scale(1.1); }
+  70% { transform: translateY(-8px) scale(1.05); }
+}
+
+/* Gelişmiş kedi kartları */
+.cat-card {
+  @apply bg-white/90 backdrop-blur-md rounded-3xl shadow-cat border-2 border-cat-200/60;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  color: #1f2937; /* Koyu metin rengi */
+}
+
+.cat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.5s;
+}
+
+.cat-card:hover::before {
+  left: 100%;
+}
+
+.cat-card:hover {
+  @apply shadow-glow transform scale-[1.03];
+  border-color: #f59133;
+  animation: purr 0.6s ease-in-out;
+}
+
+/* İyileştirilmiş butonlar */
+.paw-button, .love-button {
+  @apply font-medium rounded-2xl shadow-paw relative overflow-hidden;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+}
+
+.paw-button {
+  @apply bg-paw-gradient text-white;
+}
+
+.love-button {
+  @apply bg-love-gradient text-white;
+}
+
+.paw-button::before, .love-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.paw-button:hover::before, .love-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.paw-button:hover, .love-button:hover {
+  @apply shadow-xl transform scale-110;
+  animation: bounce-love 0.6s ease-in-out;
+}
+
+/* Gelişmiş input stilleri */
+.cat-input {
+  @apply bg-white/70 border-2 border-cat-200 rounded-2xl focus:border-cat-400 focus:ring-4 focus:ring-cat-100;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+}
+
+.cat-input:focus {
+  @apply shadow-cat;
+  transform: scale(1.02);
+}
+
+.cat-input:hover {
+  @apply border-cat-300;
+  box-shadow: 0 0 0 3px rgba(242, 113, 28, 0.1);
+}
+
+/* Etkileşimli emoji efektleri */
+.emoji-interactive {
+  display: inline-block;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.emoji-interactive:hover {
+  transform: scale(1.3) rotate(10deg);
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(242, 113, 28, 0.6));
+}
+
+/* Özel scrollbar - kedili tema */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #f6f8fa;
+  background: linear-gradient(180deg, #fef7ee, #fde8d1);
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(242, 113, 28, 0.1);
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  background: linear-gradient(180deg, #f21c1c, #f53333, #f86868);
+  border-radius: 10px;
+  border: 2px solid #fef7ee;
+  box-shadow: 0 0 10px rgba(242, 113, 28, 0.3);
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: linear-gradient(180deg, #e31212, #f21c1c, #f53333);
+  box-shadow: 0 0 15px rgba(242, 113, 28, 0.5);
 }
 
-/* Minimal card shadow */
-.card {
-  box-shadow: 0 2px 8px 0 rgba(100, 116, 139, 0.08);
-  border-radius: 16px;
-  background: #f8fafc;
+/* Dinamik gölge efektleri */
+.shadow-magic {
+  box-shadow: 
+    0 4px 20px rgba(242, 113, 28, 0.15),
+    0 8px 40px rgba(236, 72, 153, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-/* Line clamp utility */
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-.line-clamp-4 {
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* Parçacık efekti */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
 }
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+
+.particle {
+  position: absolute;
+  font-size: 1rem;
+  opacity: 0.3;
+  animation: particleFloat 8s linear infinite;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.3;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Responsive iyileştirmeler */
+@media (max-width: 640px) {
+  .container {
+    @apply px-3;
+  }
+  
+  .cat-card {
+    @apply p-4 rounded-2xl;
+  }
+  
+  body::before, body::after {
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .container {
+    @apply px-4;
+  }
+  
+  .cat-card {
+    @apply p-5 rounded-3xl;
+  }
+}
+
+@media (min-width: 1025px) {
+  body::before, body::after {
+    font-size: clamp(3rem, 6vw, 5rem);
+  }
+}
+
+/* Dark mode iyileştirmeleri */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(135deg, #1f2937 0%, #374151 25%, #4b5563 50%, #6b7280 75%, #9ca3af 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    color: #f9fafb;
+  }
+  
+  .cat-card {
+    @apply bg-fur-800/85 border-fur-600/60;
+  }
+}
+
+/* Yeni hover efektleri */
+.hover-glow {
+  transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+  filter: drop-shadow(0 0 20px rgba(242, 113, 28, 0.4));
+  transform: translateY(-2px);
+}
+
+/* Çok sevimli pati izi efekti */
+.paw-trail {
+  position: relative;
+}
+
+.paw-trail::before {
+  content: "🐾";
+  position: absolute;
+  top: -15px;
+  left: -25px;
+  font-size: 1.2rem;
+  opacity: 0.4;
+  animation: float 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(242, 113, 28, 0.3));
+}
+
+/* Loading animasyonları */
+.loading-cat {
+  animation: bounce-cat 1.5s ease-in-out infinite;
+}
+
+@keyframes bounce-cat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-10px) rotate(-5deg); }
+  50% { transform: translateY(-20px) rotate(0deg); }
+  75% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* İnteraktif focus efektleri */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  @apply outline-none ring-4 ring-cat-300/60;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(242, 113, 28, 0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(242, 113, 28, 0.1); }
+}
+
+/* Son dokunuşlar */
+* {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              box-shadow 0.2s ease,
+              filter 0.2s ease;
+}
+
+/* Özel emoji büyütme efekti */
+.emoji-zoom:hover {
+  animation: emojiZoom 0.5s ease-in-out;
+}
+
+@keyframes emojiZoom {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5) rotate(10deg); }
+  100% { transform: scale(1); }
+}
+
+/* Özel metin renkleri - okunabilirlik için */
+.text-readable {
+  color: #1f2937 !important;
+}
+
+.text-readable-secondary {
+  color: #374151 !important;
+}
+
+.text-readable-muted {
+  color: #6b7280 !important;
+}
+
+/* Başlık renkleri düzeltme */
+h1, h2, h3, h4, h5, h6 {
+  color: #1f2937 !important;
+}
+
+/* Form elementleri için koyu metin */
+input, textarea, select {
+  color: #1f2937 !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Link renkleri */
+a {
+  color: #1f2937;
+}
+
+a:hover {
+  color: #374151;
+}
+
+/* Button text colors */
+button {
+  color: inherit;
+}
+
+/* Kart içi metinler */
+.card-text {
+  color: #1f2937 !important;
+}
+
+.card-text-secondary {
+  color: #374151 !important;
+}
+
+.card-text-muted {
+  color: #6b7280 !important;
 }

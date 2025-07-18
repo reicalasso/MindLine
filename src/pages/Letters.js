@@ -190,11 +190,11 @@ export default function Letters() {
     <div className="space-y-8">
       {/* Başlık */}
       <div className="text-center">
-        <h1 className="text-4xl font-romantic text-romantic-700 mb-2 flex items-center justify-center">
+        <h1 className="text-4xl font-romantic text-gray-800 mb-2 flex items-center justify-center">
           <Mail className="w-8 h-8 mr-3" />
           Aşk Mektupları
         </h1>
-        <p className="text-lg text-romantic-600 font-elegant">
+        <p className="text-lg text-gray-700 font-elegant">
           Birbirinize yazdığınız güzel mektuplar burada...
         </p>
       </div>
@@ -231,51 +231,51 @@ export default function Letters() {
           {/* Mektup Formu */}
           {showForm && (
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-romantic-200 mb-8">
-              <h2 className="text-2xl font-romantic text-romantic-700 mb-6">
+              <h2 className="text-2xl font-romantic text-gray-800 mb-6">
                 {editingLetter ? 'Mektubu Düzenle' : 'Yeni Mektup Yaz'}
               </h2>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-romantic-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-800 mb-2">
                     Başlık (İsteğe Bağlı)
                   </label>
                   <input
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                    className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50 text-gray-800"
                     placeholder="Mektubunuza bir başlık verin..."
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-romantic-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-800 mb-2">
                       Tarih
                     </label>
                     <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
+                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
                       <input
                         type="date"
                         value={formData.date}
                         onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                        className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50 text-gray-800"
                         required
                       />
                     </div>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-romantic-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-800 mb-2">
                       Klasör (İsteğe Bağlı)
                     </label>
                     <div className="relative">
-                      <FolderPlus className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-romantic-400" />
+                      <FolderPlus className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
                       <select
                         value={formData.folderId || ''}
                         onChange={(e) => setFormData({ ...formData, folderId: e.target.value || null })}
-                        className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                        className="w-full pl-10 pr-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50 text-gray-800"
                       >
                         <option value="">Klasör Seçin (İsteğe Bağlı)</option>
                         <FolderOptions collectionName="letters" />
@@ -285,14 +285,14 @@ export default function Letters() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-romantic-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-800 mb-2">
                     Mektup İçeriği
                   </label>
                   <textarea
                     value={formData.content}
                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                     rows={8}
-                    className="w-full px-4 py-3 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50 font-handwriting text-lg resize-none"
+                    className="w-full px-4 py-3 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50 font-handwriting text-lg resize-none text-gray-800"
                     placeholder="Sevgili..."
                     required
                   />
@@ -323,10 +323,10 @@ export default function Letters() {
           {letters.length === 0 ? (
             <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-romantic-100">
               <Heart className="w-16 h-16 text-romantic-300 mx-auto mb-4" />
-              <h3 className="text-xl font-romantic text-romantic-600 mb-2">
+              <h3 className="text-xl font-romantic text-gray-800 mb-2">
                 {selectedFolder ? 'Bu klasörde henüz mektup yok' : 'Henüz mektup yok'}
               </h3>
-              <p className="text-romantic-500">
+              <p className="text-gray-700">
                 {selectedFolder ? 'Bu klasöre ilk mektubunuzu ekleyin!' : 'İlk aşk mektubunuzu yazmaya ne dersiniz?'}
               </p>
               <button
@@ -351,7 +351,7 @@ export default function Letters() {
                   className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-romantic-100 group"
                 >
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-handwriting text-xl text-romantic-700 flex-1">
+                    <h3 className="font-handwriting text-xl text-gray-800 flex-1">
                       {letter.title || 'Başlıksız Mektup'}
                     </h3>
                     <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -370,11 +370,11 @@ export default function Letters() {
                     </div>
                   </div>
 
-                  <p className="text-gray-700 mb-4 font-handwriting text-sm line-clamp-4">
+                  <p className="text-gray-800 mb-4 font-handwriting text-sm line-clamp-4">
                     {letter.content}
                   </p>
 
-                  <div className="flex justify-between items-center text-xs text-romantic-500">
+                  <div className="flex justify-between items-center text-xs text-gray-600">
                     <span>{letter.author}</span>
                     <span>
                       {letter.date?.toDate?.()?.toLocaleDateString('tr-TR') || 'Tarih yok'}

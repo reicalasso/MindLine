@@ -94,22 +94,25 @@ export default function Dashboard() {
       title: 'Yeni Mektup Yaz',
       description: 'Sevgiline güzel bir mektup yaz',
       icon: Mail,
+      emoji: '💌',
       link: '/letters',
-      color: 'bg-romantic-100 text-romantic-700'
+      gradient: 'bg-love-gradient'
     },
     {
       title: 'Film Ekle',
       description: 'İzlemek istediğin filmi ekle',
       icon: Film,
+      emoji: '🎬',
       link: '/movies',
-      color: 'bg-blue-100 text-blue-700'
+      gradient: 'bg-paw-gradient'
     },
     {
       title: 'Yapılacak Ekle',
       description: 'Birlikte yapacağınız şeyi not et',
       icon: CheckSquare,
+      emoji: '📝',
       link: '/todos',
-      color: 'bg-green-100 text-green-700'
+      gradient: 'bg-cat-gradient'
     }
   ];
 
@@ -118,67 +121,87 @@ export default function Dashboard() {
       title: 'Yazılan Mektuplar',
       value: stats.letters,
       icon: Mail,
-      color: 'text-romantic-500',
+      emoji: '💌',
+      color: 'text-love-500',
+      gradient: 'bg-love-gradient',
       link: '/letters'
     },
     {
       title: 'Film Listesi',
       value: stats.movies,
       icon: Film,
-      color: 'text-blue-500',
+      emoji: '🎬',
+      color: 'text-paw-500',
+      gradient: 'bg-paw-gradient',
       link: '/movies'
     },
     {
       title: 'Yapılacaklar',
       value: `${stats.completedTodos}/${stats.todos}`,
       icon: CheckSquare,
-      color: 'text-green-500',
+      emoji: '📝',
+      color: 'text-cat-500',
+      gradient: 'bg-cat-gradient',
       link: '/todos'
     },
     {
       title: 'Müzik Listesi',
       value: stats.music,
       icon: Music,
+      emoji: '🎵',
       color: 'text-purple-500',
+      gradient: 'bg-purple-400',
       link: '/music'
     }
   ];
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-romantic-500"></div>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <div className="text-6xl animate-bounce-cat">😺</div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-cat-300 border-t-cat-600"></div>
+        <p className="text-cat-600 font-cat text-lg">Kediler yükleniyor...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 px-2 sm:px-0">
       {/* Hoş Geldin Başlığı */}
-      <div className="text-center">
-        <h1 className="text-4xl font-futuristic text-futuristic-700 mb-2 flex items-center justify-center">
-          <span className="mr-2">😺</span>
-          Hoş Geldin!
+      <div className="text-center py-6 sm:py-8">
+        <div className="flex justify-center mb-4 sm:mb-6">
+          <span className="text-6xl sm:text-7xl lg:text-8xl animate-float">😺</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-cat text-gray-800 mb-2 sm:mb-4">
+          Hoş Geldin Kedici! 
         </h1>
-        <p className="text-lg text-futuristic-600 font-futuristic">
-          Kedili futuristik alanınız!
+        <p className="text-lg sm:text-xl text-gray-700 font-elegant max-w-2xl mx-auto px-4">
+          <span className="inline-block animate-wiggle mr-2">🐾</span>
+          Kedili aşk dünyanda her şey seni bekliyor
+          <span className="inline-block animate-wiggle ml-2">💕</span>
         </p>
       </div>
 
       {/* İstatistik Kartları */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         {statCards.map((stat, index) => (
           <Link
             key={index}
             to={stat.link}
-            className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-romantic-100 card"
+            className="cat-card p-4 sm:p-6 hover:scale-105 transition-all duration-300 group"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+            <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+              <div className={`w-12 h-12 sm:w-16 sm:h-16 ${stat.gradient} rounded-2xl flex items-center justify-center text-white shadow-paw group-hover:animate-purr`}>
+                <span className="text-xl sm:text-2xl">{stat.emoji}</span>
               </div>
-              <stat.icon className={`w-8 h-8 ${stat.color}`} />
+              <div className="text-center">
+                <p className="text-xs sm:text-sm text-gray-600 mb-1 font-elegant">
+                  {stat.title}
+                </p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 font-cat">
+                  {stat.value}
+                </p>
+              </div>
             </div>
           </Link>
         ))}
@@ -186,22 +209,26 @@ export default function Dashboard() {
 
       {/* Hızlı İşlemler */}
       <div>
-        <h2 className="text-2xl font-romantic text-romantic-700 mb-6 flex items-center">
-          <Star className="w-6 h-6 mr-2" />
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-cat text-gray-800 mb-4 sm:mb-6 flex items-center justify-center sm:justify-start">
+          <span className="text-2xl sm:text-3xl mr-2 sm:mr-3 animate-wiggle">⭐</span>
           Hızlı İşlemler
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {quickActions.map((action, index) => (
             <Link
               key={index}
               to={action.link}
-              className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-romantic-100"
+              className="cat-card p-4 sm:p-6 hover:scale-105 transition-all duration-300 group"
             >
-              <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-4`}>
-                <action.icon className="w-6 h-6" />
+              <div className={`w-14 h-14 sm:w-16 sm:h-16 ${action.gradient} rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-paw group-hover:animate-purr mx-auto sm:mx-0`}>
+                <span className="text-2xl sm:text-3xl">{action.emoji}</span>
               </div>
-              <h3 className="font-semibold text-gray-800 mb-2">{action.title}</h3>
-              <p className="text-sm text-gray-600">{action.description}</p>
+              <h3 className="font-cat text-lg sm:text-xl text-gray-800 mb-2 text-center sm:text-left">
+                {action.title}
+              </h3>
+              <p className="text-sm sm:text-base text-gray-700 font-elegant text-center sm:text-left">
+                {action.description}
+              </p>
             </Link>
           ))}
         </div>
@@ -210,31 +237,32 @@ export default function Dashboard() {
       {/* Son Mektuplar */}
       {recentLetters.length > 0 && (
         <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-romantic text-romantic-700 flex items-center">
-              <Clock className="w-6 h-6 mr-2" />
-              Son Yazılan Mektuplar
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-cat text-gray-800 flex items-center justify-center sm:justify-start">
+              <span className="text-2xl sm:text-3xl mr-2 sm:mr-3 animate-float">💌</span>
+              Son Mektuplar
             </h2>
             <Link
               to="/letters"
-              className="text-romantic-600 hover:text-romantic-700 text-sm font-medium"
+              className="text-gray-700 hover:text-gray-800 text-sm sm:text-base font-elegant transition-colors text-center sm:text-right paw-trail"
             >
-              Tümünü Gör
+              Tümünü Gör →
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {recentLetters.map((letter) => (
               <div
                 key={letter.id}
-                className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-romantic-100"
+                className="cat-card p-4 sm:p-6 group"
               >
-                <h3 className="font-handwriting text-lg text-romantic-700 mb-2">
-                  {letter.title || 'Başlıksız Mektup'}
+                <h3 className="font-handwriting text-lg sm:text-xl text-gray-800 mb-2 sm:mb-3 group-hover:text-gray-900 transition-colors">
+                  {letter.title || 'Başlıksız Mektup'} 💕
                 </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+                <p className="text-sm sm:text-base text-gray-700 mb-3 sm:mb-4 line-clamp-3 font-elegant">
                   {letter.content.substring(0, 100)}...
                 </p>
-                <p className="text-xs text-romantic-500">
+                <p className="text-xs sm:text-sm text-gray-600 font-elegant">
+                  <span className="mr-2">📅</span>
                   {letter.date?.toDate?.()?.toLocaleDateString('tr-TR') || 'Tarih yok'}
                 </p>
               </div>
@@ -244,14 +272,23 @@ export default function Dashboard() {
       )}
 
       {/* Motivasyon Mesajı */}
-      <div className="bg-love-gradient rounded-xl p-8 text-center text-white">
-        <Heart className="w-12 h-12 mx-auto mb-4 animate-pulse" />
-        <h3 className="text-2xl font-romantic mb-2">
-          Aşk, paylaştığınız her anla büyür 💕
-        </h3>
-        <p className="font-elegant text-lg opacity-90">
-          Birlikte yarattığınız anılar sonsuza kadar burada kalacak...
-        </p>
+      <div className="bg-love-gradient rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 text-center text-white shadow-paw relative overflow-hidden">
+        {/* Arka plan süslemeleri */}
+        <div className="absolute top-4 left-4 text-3xl sm:text-4xl opacity-20 animate-float">💕</div>
+        <div className="absolute top-4 right-4 text-3xl sm:text-4xl opacity-20 animate-float" style={{animationDelay: '1s'}}>😺</div>
+        <div className="absolute bottom-4 left-4 text-3xl sm:text-4xl opacity-20 animate-float" style={{animationDelay: '2s'}}>🐾</div>
+        <div className="absolute bottom-4 right-4 text-3xl sm:text-4xl opacity-20 animate-float" style={{animationDelay: '0.5s'}}>💖</div>
+        
+        <div className="relative z-10">
+          <div className="text-4xl sm:text-5xl lg:text-6xl mb-4 sm:mb-6 animate-purr">💕</div>
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-cat mb-2 sm:mb-4 text-gray-800">
+            Aşk, paylaştığınız her anla büyür
+          </h3>
+          <p className="font-elegant text-base sm:text-lg lg:text-xl opacity-90 max-w-2xl mx-auto px-4 text-gray-100">
+            Birlikte yarattığınız anılar kedili dünyamızda sonsuza kadar kalacak... 
+            <span className="inline-block animate-wiggle ml-2">🐱💖</span>
+          </p>
+        </div>
       </div>
     </div>
   );

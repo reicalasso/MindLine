@@ -262,13 +262,13 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
                       <div className="flex space-x-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                         <button
                           onClick={() => startEditing(folder)}
-                          className="p-2 text-blue-600 hover:text-blue-800"
+                          className="p-1 text-blue-600 hover:bg-blue-50 rounded"
                         >
                           <Edit className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteFolder(folder.id)}
-                          className="p-2 text-red-600 hover:text-red-800"
+                          className="p-1 text-red-600 hover:bg-red-50 rounded"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

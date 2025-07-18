@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import ParticleEffect from './components/ParticleEffect';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -18,15 +19,40 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-futuristic-gradient font-futuristic">
+        <div className="min-h-screen bg-sunset-gradient font-elegant relative">
+          <ParticleEffect />
+          
           <Toaster 
             position="top-center"
             toastOptions={{
-              duration: 3000,
+              duration: 4000,
               style: {
-                background: '#f6f8fa',
-                color: '#24292f',
-                border: '1px solid #cbd5e1'
+                background: 'linear-gradient(135deg, #fef7ee 0%, #fde8d1 100%)',
+                color: '#374151',
+                border: '2px solid #f8b668',
+                borderRadius: '1rem',
+                boxShadow: '0 4px 25px rgba(242, 113, 28, 0.2)',
+                fontFamily: 'Montserrat, sans-serif',
+                fontSize: '14px',
+                fontWeight: '500'
+              },
+              success: {
+                iconTheme: {
+                  primary: '#10b981',
+                  secondary: '#ffffff',
+                },
+                style: {
+                  border: '2px solid #10b981',
+                }
+              },
+              error: {
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#ffffff',
+                },
+                style: {
+                  border: '2px solid #ef4444',
+                }
               }
             }}
           />
@@ -36,7 +62,7 @@ function App() {
             <Route path="/*" element={
               <ProtectedRoute>
                 <Navbar />
-                <main className="container mx-auto px-2 py-6">
+                <main className="container mx-auto px-2 py-6 relative z-10">
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/letters" element={<Letters />} />
