@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
     }
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      console.log('Kayıt başarılı:', result.user.email);
+      // Kayıt başarılı
       return result;
     } catch (error) {
       console.error('Kayıt hatası:', error);
@@ -54,7 +54,7 @@ export function AuthProvider({ children }) {
     }
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
-      console.log('Giriş başarılı:', result.user.email);
+      // Giriş başarılı
       return result;
     } catch (error) {
       console.error('Giriş hatası:', error);

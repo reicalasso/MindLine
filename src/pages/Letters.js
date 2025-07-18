@@ -47,7 +47,7 @@ export default function Letters() {
 
   const fetchLetters = async () => {
     try {
-      console.log('Mektuplar yükleniyor...');
+      // Mektuplar yükleniyor
       let lettersQuery;
       
       if (selectedFolder) {
@@ -68,7 +68,7 @@ export default function Letters() {
         id: doc.id,
         ...doc.data()
       }));
-      console.log('Yüklenen mektup sayısı:', lettersData.length);
+      // Mektuplar başarıyla yüklendi
       setLetters(lettersData);
     } catch (error) {
       console.error('Mektuplar yüklenirken hata:', error);
@@ -93,7 +93,7 @@ export default function Letters() {
     }
 
     try {
-      console.log('Mektup kaydediliyor...');
+      // Mektup kaydediliyor
       const letterData = {
         title: formData.title.trim(),
         content: formData.content.trim(),
@@ -109,11 +109,11 @@ export default function Letters() {
           ...letterData,
           createdAt: editingLetter.createdAt
         });
-        console.log('Mektup güncellendi');
+        // Mektup güncellendi
         toast.success('Mektup güncellendi! 💕');
       } else {
         const docRef = await addDoc(collection(db, 'letters'), letterData);
-        console.log('Mektup eklendi, ID:', docRef.id);
+        // Mektup eklendi
         toast.success('Mektup kaydedildi! 💕');
       }
 
