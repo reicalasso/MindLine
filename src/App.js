@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Letters from './pages/Letters';
+import Chat from './pages/Chat';
 import Movies from './pages/Movies';
 import Todos from './pages/Todos';
 import Music from './pages/Music';
@@ -66,6 +67,7 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/letters" element={<Letters />} />
+                    <Route path="/chat" element={<Chat />} />
                     <Route path="/movies" element={<Movies />} />
                     <Route path="/todos" element={<Todos />} />
                     <Route path="/music" element={<Music />} />

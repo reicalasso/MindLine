@@ -36,7 +36,8 @@ export default function Navbar() {
       icon: MessageSquare,
       emoji: '💌',
       items: [
-        { path: '/letters', icon: Mail, label: 'Mektuplar', emoji: '💌' }
+        { path: '/letters', icon: Mail, label: 'Mektuplar', emoji: '💌' },
+        { path: '/chat', icon: MessageSquare, label: 'Sohbet', emoji: '💬' }
       ]
     },
     {

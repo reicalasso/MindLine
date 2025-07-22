@@ -71,8 +71,8 @@ export default function Gallery() {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 32 * 1024 * 1024) { // 2MB limit
-        toast.error('Dosya boyutu 2MB\'dan küçük olmalıdır');
+      if (file.size > 25 * 1024 * 1024) { // 25MB limit
+        toast.error('Dosya boyutu 25MB\'dan küçük olmalıdır');
         return;
       }
       if (!file.type.startsWith('image/')) {
@@ -266,7 +266,7 @@ export default function Gallery() {
                           <p className="mb-2 text-sm text-romantic-600">
                             <span className="font-semibold">Yüklemek için tıklayın</span>
                           </p>
-                          <p className="text-xs text-romantic-500">PNG, JPG veya JPEG (Max. 2MB)</p>
+                          <p className="text-xs text-romantic-500">PNG, JPG veya JPEG (Max. 25MB)</p>
                         </div>
                         <input
                           type="file"
