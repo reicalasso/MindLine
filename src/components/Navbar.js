@@ -142,6 +142,16 @@ export default function Navbar() {
     );
   };
 
+  // Body scroll engelleme (mobil menü açıkken)
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
+
   return (
     <nav className="cat-decoration-1 cat-decoration-2 cat-decoration-3 cat-decoration-4 love-decoration-1 love-decoration-2 love-decoration-3">
       <div className="bg-white/90 backdrop-blur-xl shadow-magic border-b-2 border-cat-200/30 sticky top-0 z-40">
@@ -247,6 +257,7 @@ export default function Navbar() {
               <button 
                 className="lg:hidden p-2 text-gray-700 hover:bg-cat-100 rounded-full transition-all duration-300 emoji-interactive"
                 onClick={toggleMobileMenu}
+                aria-label={mobileMenuOpen ? "Menüyü Kapat" : "Menüyü Aç"}
               >
                 {mobileMenuOpen ? (
                   <X className="w-6 h-6" />
@@ -256,12 +267,32 @@ export default function Navbar() {
               </button>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Mobile Navigation - gelişmiş tasarım */}
-          <div className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out ${
-            mobileMenuOpen ? 'max-h-screen opacity-100 pb-4' : 'max-h-0 opacity-0'
-          }`}>
-            {/* Mobile User Info - daha sevimli */}
+      {/* Mobil Menü Arka Planı ve Menü */}
+      {/* Arka plan blur ve fade ile, menü sağdan kayarak açılır */}
+      <div
+        className={`fixed inset-0 z-50 lg:hidden transition-all duration-300 ${
+          mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
+        }`}
+        aria-hidden={!mobileMenuOpen}
+      >
+        {/* Arka plan */}
+        <div
+          className={`absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
+            mobileMenuOpen ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={closeMobileMenu}
+        />
+        {/* Menü paneli */}
+        <div
+          className={`absolute top-0 right-0 h-full w-80 max-w-full bg-white/95 backdrop-blur-xl shadow-xl border-l-2 border-cat-200/50 rounded-l-3xl transition-transform duration-300 ${
+            mobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+          }`}
+        >
+          <div className="p-6">
+            {/* Mobile User Info */}
             <Link
               to="/profile"
               className="bg-cat-50 rounded-3xl p-4 mb-4 border-2 border-cat-200/50 shadow-soft block hover:bg-cat-100 transition-colors"
@@ -291,8 +322,7 @@ export default function Navbar() {
                 </div>
               </div>
             </Link>
-
-            {/* Mobile Menu Items - daha güzel */}
+            {/* Menü Kategorileri */}
             <div className="space-y-3">
               {navCategories.map((category) => (
                 <div key={category.id} className="border-b border-cat-100 pb-3 last:border-b-0">
@@ -312,8 +342,7 @@ export default function Navbar() {
                       openCategory === category.id ? 'rotate-180' : ''
                     }`} />
                   </button>
-                  
-                  {/* Mobile Submenu - daha güzel animasyon */}
+                  {/* Submenu */}
                   <div className={`mt-3 space-y-2 transition-all duration-300 ${
                     openCategory === category.id ? 'block' : 'hidden'
                   }`}>
@@ -336,6 +365,14 @@ export default function Navbar() {
                 </div>
               ))}
             </div>
+            {/* Çıkış Butonu */}
+            <button
+              onClick={handleLogout}
+              className="mt-6 w-full flex items-center justify-center space-x-2 px-4 py-3 text-gray-700 hover:bg-love-gradient hover:text-white rounded-full transition-all duration-300 font-medium text-base group hover-glow"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Çıkış</span>
+            </button>
           </div>
         </div>
       </div>
