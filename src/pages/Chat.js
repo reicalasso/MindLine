@@ -4,6 +4,7 @@ import {
   collection,
   addDoc,
   deleteDoc,
+  updateDoc,
   doc,
   query,
   orderBy,
@@ -12,7 +13,7 @@ import {
   limit
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X } from 'lucide-react';
+import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X, Edit, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Chat() {
@@ -25,9 +26,12 @@ export default function Chat() {
   const [previewImage, setPreviewImage] = useState(null);
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState(null);
+  const [editingMessage, setEditingMessage] = useState(null);
+  const [editText, setEditText] = useState('');
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+  const editInputRef = useRef(null);
 
   const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑', '🌹', '🌺', '🌸', '🌼', '🌻', '🦋', '✨', '⭐', '🌟', '💫', '🔥', '💎'];
 
@@ -156,6 +160,44 @@ export default function Chat() {
     }
   };
 
+  const handleEditMessage = (message) => {
+    if (message.type !== 'text') {
+      toast.error('Sadece metin mesajları düzenlenebilir');
+      return;
+    }
+    setEditingMessage(message.id);
+    setEditText(message.content);
+    setTimeout(() => {
+      editInputRef.current?.focus();
+    }, 100);
+  };
+
+  const handleSaveEdit = async (messageId) => {
+    if (!editText.trim()) {
+      toast.error('Mesaj boş olamaz');
+      return;
+    }
+
+    try {
+      await updateDoc(doc(db, 'messages', messageId), {
+        content: editText.trim(),
+        updatedAt: serverTimestamp(),
+        edited: true
+      });
+      toast.success('Mesaj düzenlendi');
+      setEditingMessage(null);
+      setEditText('');
+    } catch (error) {
+      console.error('Mesaj düzenlenirken hata:', error);
+      toast.error('Mesaj düzenlenemedi');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMessage(null);
+    setEditText('');
+  };
+
   const addEmoji = (emoji) => {
     setNewMessage(prev => prev + emoji);
   };
@@ -232,6 +274,49 @@ export default function Chat() {
   };
 
   const renderMessage = (message) => {
+    if (editingMessage === message.id) {
+      return (
+        <div className="space-y-2">
+          <textarea
+            ref={editInputRef}
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            className="w-full p-2 text-sm bg-white/90 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows="2"
+            style={{ minHeight: '40px' }}
+            onInput={(e) => {
+              e.target.style.height = '40px';
+              e.target.style.height = e.target.scrollHeight + 'px';
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSaveEdit(message.id);
+              } else if (e.key === 'Escape') {
+                handleCancelEdit();
+              }
+            }}
+          />
+          <div className="flex space-x-2">
+            <button
+              onClick={() => handleSaveEdit(message.id)}
+              className="p-1 text-green-600 hover:bg-green-50 rounded text-xs flex items-center space-x-1"
+            >
+              <Check className="w-3 h-3" />
+              <span>Kaydet</span>
+            </button>
+            <button
+              onClick={handleCancelEdit}
+              className="p-1 text-gray-600 hover:bg-gray-50 rounded text-xs flex items-center space-x-1"
+            >
+              <X className="w-3 h-3" />
+              <span>İptal</span>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     switch (message.type) {
       case 'image':
         return (
@@ -272,9 +357,16 @@ export default function Chat() {
       
       default:
         return (
-          <p className="font-handwriting text-base break-words">
-            {message.content}
-          </p>
+          <div className="space-y-1">
+            <p className="font-handwriting text-base break-words">
+              {message.content}
+            </p>
+            {message.edited && (
+              <p className="text-xs opacity-60 italic">
+                (düzenlendi)
+              </p>
+            )}
+          </div>
         );
     }
   };
@@ -343,13 +435,25 @@ export default function Chat() {
                     isMyMessage(message) ? 'text-white/80' : 'text-gray-500'
                   }`}>
                     <span>{formatTime(message.createdAt)}</span>
-                    {isMyMessage(message) && (
-                      <button
-                        onClick={() => handleDeleteMessage(message.id)}
-                        className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-200"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
+                    {isMyMessage(message) && editingMessage !== message.id && (
+                      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {message.type === 'text' && (
+                          <button
+                            onClick={() => handleEditMessage(message)}
+                            className="ml-1 hover:text-blue-200"
+                            title="Düzenle"
+                          >
+                            <Edit className="w-3 h-3" />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDeleteMessage(message.id)}
+                          className="ml-1 hover:text-red-200"
+                          title="Sil"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
