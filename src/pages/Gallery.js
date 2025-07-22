@@ -71,7 +71,7 @@ export default function Gallery() {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 32 * 1024 * 1024) { // 2MB limit
         toast.error('Dosya boyutu 2MB\'dan küçük olmalıdır');
         return;
       }
