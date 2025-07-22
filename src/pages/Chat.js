@@ -3,7 +3,6 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   collection,
   addDoc,
-  getDocs,
   deleteDoc,
   doc,
   query,
@@ -13,7 +12,7 @@ import {
   limit
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { MessageCircle, Send, Trash2, Heart, Smile, Camera, Paperclip, Image, Download, X } from 'lucide-react';
+import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Chat() {
@@ -37,7 +36,7 @@ export default function Chat() {
     const messagesQuery = query(
       collection(db, 'messages'),
       orderBy('createdAt', 'desc'),
-      limit(50)
+      limit(100)
     );
 
     const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
@@ -244,7 +243,7 @@ export default function Chat() {
               onClick={() => openMediaModal(message)}
             />
             {message.content !== `📎 ${message.fileName}` && (
-              <p className="font-handwriting text-base">{message.content}</p>
+              <p className="font-handwriting text-base break-words">{message.content}</p>
             )}
           </div>
         );
@@ -252,28 +251,28 @@ export default function Chat() {
       case 'file':
         return (
           <div className="space-y-2">
-            <div className="flex items-center space-x-3 p-3 bg-white/20 rounded-lg">
-              <Paperclip className="w-5 h-5" />
+            <div className="flex items-center space-x-3 p-3 bg-white/20 rounded-lg min-w-0">
+              <Paperclip className="w-5 h-5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{message.fileName}</p>
                 <p className="text-xs opacity-75">{formatFileSize(message.fileSize)}</p>
               </div>
               <button
                 onClick={() => downloadFile(message)}
-                className="p-1 hover:bg-white/20 rounded transition-colors"
+                className="p-1 hover:bg-white/20 rounded transition-colors flex-shrink-0"
               >
                 <Download className="w-4 h-4" />
               </button>
             </div>
             {message.content !== `📎 ${message.fileName}` && (
-              <p className="font-handwriting text-base">{message.content}</p>
+              <p className="font-handwriting text-base break-words">{message.content}</p>
             )}
           </div>
         );
       
       default:
         return (
-          <p className="font-handwriting text-base mb-1">
+          <p className="font-handwriting text-base break-words">
             {message.content}
           </p>
         );
@@ -289,192 +288,203 @@ export default function Chat() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="fixed inset-0 top-0 left-0 right-0 bottom-0 flex flex-col bg-white/90 backdrop-blur-sm">
       {/* Başlık */}
-      <div className="text-center">
-        <h1 className="text-4xl font-romantic text-gray-800 mb-2 flex items-center justify-center">
-          <MessageCircle className="w-8 h-8 mr-3" />
-          Kedili Sohbet
-        </h1>
-        <p className="text-lg text-gray-700 font-elegant">
-          Birlikte sohbet ettiğiniz özel alan...
-        </p>
+      <div className="bg-white/95 backdrop-blur-sm border-b border-romantic-200 p-3 flex-shrink-0 shadow-sm">
+        <div className="text-center">
+          <h1 className="text-xl font-romantic text-gray-800 flex items-center justify-center">
+            <MessageCircle className="w-5 h-5 mr-2" />
+            Kedili Sohbet
+          </h1>
+          <p className="text-xs text-gray-700 font-elegant">
+            Birlikte sohbet ettiğiniz özel alan...
+          </p>
+        </div>
       </div>
 
-      {/* Chat Container */}
-      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-romantic-200 h-[600px] flex flex-col">
-        {/* Mesajlar Listesi */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.length === 0 ? (
-            <div className="text-center py-12">
-              <MessageCircle className="w-16 h-16 text-romantic-300 mx-auto mb-4" />
-              <h3 className="text-xl font-romantic text-gray-800 mb-2">
-                Henüz mesaj yok
-              </h3>
-              <p className="text-gray-700">
-                İlk mesajınızı göndererek sohbeti başlatın! 💕
-              </p>
-            </div>
-          ) : (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${isMyMessage(message) ? 'justify-end' : 'justify-start'}`}
-              >
-                <div className={`max-w-xs lg:max-w-md relative ${
-                  isMyMessage(message) ? 'mr-2' : 'ml-2'
+      {/* Mesajlar Listesi */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-3" style={{ maxHeight: 'calc(100vh - 280px)' }}>
+        {messages.length === 0 ? (
+          <div className="text-center py-8">
+            <MessageCircle className="w-12 h-12 text-romantic-300 mx-auto mb-3" />
+            <h3 className="text-lg font-romantic text-gray-800 mb-2">
+              Henüz mesaj yok
+            </h3>
+            <p className="text-gray-700 text-sm">
+              İlk mesajınızı göndererek sohbeti başlatın! 💕
+            </p>
+          </div>
+        ) : (
+          messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${isMyMessage(message) ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`max-w-xs lg:max-w-sm relative ${
+                isMyMessage(message) ? 'mr-2' : 'ml-2'
+              }`}>
+                {/* Gönderen ismi */}
+                <div className={`text-xs text-gray-500 mb-1 ${
+                  isMyMessage(message) ? 'text-right' : 'text-left'
                 }`}>
-                  {/* Gönderen ismi */}
-                  <div className={`text-xs text-gray-500 mb-1 ${
-                    isMyMessage(message) ? 'text-right' : 'text-left'
-                  }`}>
-                    {isMyMessage(message) ? 'Sen' : getDisplayName(message.author)}
-                  </div>
-                  
-                  <div
-                    className={`px-4 py-3 rounded-2xl shadow-soft group relative ${
-                      isMyMessage(message)
-                        ? 'bg-paw-gradient text-white'
-                        : 'bg-white border border-romantic-200 text-gray-800'
-                    }`}
-                  >
-                    {renderMessage(message)}
-                    <div className={`flex items-center justify-between text-xs mt-2 ${
-                      isMyMessage(message) ? 'text-white/80' : 'text-gray-500'
-                    }`}>
-                      <span>{formatTime(message.createdAt)}</span>
-                      {isMyMessage(message) && (
-                        <button
-                          onClick={() => handleDeleteMessage(message.id)}
-                          className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-200"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  {isMyMessage(message) ? 'Sen' : getDisplayName(message.author)}
                 </div>
-              </div>
-            ))
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Dosya Önizleme */}
-        {selectedFile && (
-          <div className="border-t border-romantic-200 p-4 bg-romantic-50/50">
-            <div className="flex items-center space-x-3">
-              {previewImage ? (
-                <img 
-                  src={previewImage} 
-                  alt="Önizleme" 
-                  className="w-16 h-16 object-cover rounded-lg"
-                />
-              ) : (
-                <div className="w-16 h-16 bg-romantic-200 rounded-lg flex items-center justify-center">
-                  <Paperclip className="w-6 h-6 text-romantic-600" />
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-800 truncate">{selectedFile.name}</p>
-                <p className="text-sm text-gray-600">{formatFileSize(selectedFile.size)}</p>
-              </div>
-              <button
-                onClick={removeSelectedFile}
-                className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Emoji Picker */}
-        <div className="border-t border-romantic-200 p-2 bg-romantic-50/50">
-          <div className="flex flex-wrap gap-1 max-h-20 overflow-y-auto">
-            {emojis.slice(0, 20).map((emoji, index) => (
-              <button
-                key={index}
-                onClick={() => addEmoji(emoji)}
-                className="text-lg hover:bg-romantic-100 rounded p-1 transition-colors emoji-interactive"
-              >
-                {emoji}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Mesaj Gönderme Formu */}
-        <div className="border-t border-romantic-200 p-4 bg-white/50">
-          <form onSubmit={handleSendMessage} className="space-y-3">
-            {/* Dosya Seçme Butonları */}
-            <div className="flex space-x-2">
-              <button
-                type="button"
-                onClick={() => cameraInputRef.current?.click()}
-                className="p-2 text-romantic-600 hover:bg-romantic-100 rounded-lg transition-colors"
-                title="Kamera ile fotoğraf çek"
-              >
-                <Camera className="w-5 h-5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="p-2 text-romantic-600 hover:bg-romantic-100 rounded-lg transition-colors"
-                title="Dosya seç"
-              >
-                <Paperclip className="w-5 h-5" />
-              </button>
-              <input
-                ref={cameraInputRef}
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip,.rar"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-            </div>
-            
-            {/* Mesaj Input ve Gönder */}
-            <div className="flex space-x-3">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : "Mesajınızı yazın... 💕"}
-                  className="w-full px-4 py-3 pr-12 border border-romantic-200 rounded-full focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/70 text-gray-800 font-handwriting"
-                  maxLength={500}
-                  disabled={sending}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-romantic-400 hover:text-romantic-600 transition-colors"
+                
+                <div
+                  className={`px-3 py-2 rounded-2xl shadow-soft group relative break-words ${
+                    isMyMessage(message)
+                      ? 'bg-paw-gradient text-white'
+                      : 'bg-white border border-romantic-200 text-gray-800'
+                  }`}
+                  style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
                 >
-                  <Smile className="w-5 h-5" />
-                </button>
+                  {renderMessage(message)}
+                  <div className={`flex items-center justify-between text-xs mt-1 ${
+                    isMyMessage(message) ? 'text-white/80' : 'text-gray-500'
+                  }`}>
+                    <span>{formatTime(message.createdAt)}</span>
+                    {isMyMessage(message) && (
+                      <button
+                        onClick={() => handleDeleteMessage(message.id)}
+                        className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-200"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
+            </div>
+          ))
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Dosya Önizleme */}
+      {selectedFile && (
+        <div className="border-t border-romantic-200 p-3 bg-romantic-50/50 flex-shrink-0">
+          <div className="flex items-center space-x-3">
+            {previewImage ? (
+              <img 
+                src={previewImage} 
+                alt="Önizleme" 
+                className="w-12 h-12 object-cover rounded-lg"
+              />
+            ) : (
+              <div className="w-12 h-12 bg-romantic-200 rounded-lg flex items-center justify-center">
+                <Paperclip className="w-5 h-5 text-romantic-600" />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-gray-800 truncate text-sm">{selectedFile.name}</p>
+              <p className="text-xs text-gray-600">{formatFileSize(selectedFile.size)}</p>
+            </div>
+            <button
+              onClick={removeSelectedFile}
+              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Emoji Picker */}
+      <div className="border-t border-romantic-200 p-2 bg-romantic-50/50 flex-shrink-0">
+        <div className="flex flex-wrap gap-1 max-h-16 overflow-y-auto">
+          {emojis.slice(0, 15).map((emoji, index) => (
+            <button
+              key={index}
+              onClick={() => addEmoji(emoji)}
+              className="text-sm hover:bg-romantic-100 rounded p-1 transition-colors emoji-interactive"
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Mesaj Gönderme Formu */}
+      <div className="border-t border-romantic-200 p-3 bg-white/50 flex-shrink-0">
+        <form onSubmit={handleSendMessage} className="space-y-2">
+          {/* Dosya Seçme Butonları */}
+          <div className="flex space-x-2">
+            <button
+              type="button"
+              onClick={() => cameraInputRef.current?.click()}
+              className="p-2 text-romantic-600 hover:bg-romantic-100 rounded-lg transition-colors"
+              title="Kamera ile fotoğraf çek"
+            >
+              <Camera className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 text-romantic-600 hover:bg-romantic-100 rounded-lg transition-colors"
+              title="Dosya seç"
+            >
+              <Paperclip className="w-4 h-4" />
+            </button>
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip,.rar"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+          </div>
+          
+          {/* Mesaj Input ve Gönder */}
+          <div className="flex space-x-2">
+            <div className="flex-1 relative">
+              <textarea
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : "Mesajınızı yazın... 💕"}
+                className="w-full px-3 py-2 pr-10 border border-romantic-200 rounded-xl focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/70 text-gray-800 font-handwriting resize-none text-sm"
+                rows="1"
+                style={{ minHeight: '40px', maxHeight: '80px' }}
+                onInput={(e) => {
+                  e.target.style.height = '40px';
+                  e.target.style.height = e.target.scrollHeight + 'px';
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage(e);
+                  }
+                }}
+                maxLength={1000}
+                disabled={sending}
+              />
               <button
-                type="submit"
-                disabled={(!newMessage.trim() && !selectedFile) || sending}
-                className="px-6 py-3 bg-love-gradient text-white rounded-full hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                type="button"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-romantic-400 hover:text-romantic-600 transition-colors"
               >
-                {sending ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                ) : (
-                  <Send className="w-5 h-5" />
-                )}
+                <Smile className="w-4 h-4" />
               </button>
             </div>
-          </form>
-        </div>
+            <button
+              type="submit"
+              disabled={(!newMessage.trim() && !selectedFile) || sending}
+              className="px-4 py-2 bg-love-gradient text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1 self-end"
+            >
+              {sending ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+        </form>
       </div>
 
       {/* Media Modal */}
@@ -515,36 +525,6 @@ export default function Chat() {
           </div>
         </div>
       )}
-
-      {/* İstatistikler */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="cat-card p-4 text-center">
-          <div className="text-2xl mb-2">💬</div>
-          <p className="text-sm text-gray-600 mb-1">Toplam Mesaj</p>
-          <p className="text-xl font-bold text-gray-800">{messages.length}</p>
-        </div>
-        <div className="cat-card p-4 text-center">
-          <div className="text-2xl mb-2">💕</div>
-          <p className="text-sm text-gray-600 mb-1">Bugün Konuştunuz</p>
-          <p className="text-xl font-bold text-gray-800">
-            {messages.filter(msg => {
-              if (!msg.createdAt) return false;
-              const today = new Date();
-              const msgDate = msg.createdAt.toDate();
-              return msgDate.toDateString() === today.toDateString();
-            }).length}
-          </p>
-        </div>
-        <div className="cat-card p-4 text-center">
-          <div className="text-2xl mb-2">😺</div>
-          <p className="text-sm text-gray-600 mb-1">Son Mesaj Gönderen</p>
-          <p className="text-xl font-bold text-gray-800">
-            {messages.length > 0 ? (
-              isMyMessage(messages[messages.length - 1]) ? 'Sen' : getDisplayName(messages[messages.length - 1]?.author)
-            ) : '-'}
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
