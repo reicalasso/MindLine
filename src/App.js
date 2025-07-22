@@ -14,6 +14,7 @@ import Todos from './pages/Todos';
 import Music from './pages/Music';
 import Calendar from './pages/Calendar';
 import Gallery from './pages/Gallery';
+import Profile from './pages/Profile';
 import './index.css';
 
 function App() {
@@ -73,6 +74,7 @@ function App() {
                     <Route path="/music" element={<Music />} />
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/gallery" element={<Gallery />} />
+                    <Route path="/profile" element={<Profile />} />
                   </Routes>
                 </main>
               </ProtectedRoute>

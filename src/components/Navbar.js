@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 import { 
   Heart, Mail, Film, CheckSquare, Music, Calendar, Camera, LogOut, 
-  ChevronDown, Menu, X, MessageSquare, Home, Bookmark
+  ChevronDown, Menu, X, MessageSquare, Home, Bookmark, User
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -12,6 +14,24 @@ export default function Navbar() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openCategory, setOpenCategory] = useState(null);
+  const [profileData, setProfileData] = useState(null);
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchProfileData();
+    }
+  }, [currentUser]);
+
+  const fetchProfileData = async () => {
+    try {
+      const profileDoc = await getDoc(doc(db, 'profiles', currentUser.uid));
+      if (profileDoc.exists()) {
+        setProfileData(profileDoc.data());
+      }
+    } catch (error) {
+      console.error('Profil verisi yüklenirken hata:', error);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -68,6 +88,15 @@ export default function Navbar() {
       items: [
         { path: '/gallery', icon: Camera, label: 'Galeri', emoji: '📷' }
       ]
+    },
+    {
+      id: 'profile',
+      label: 'Profil',
+      icon: User,
+      emoji: '👤',
+      items: [
+        { path: '/profile', icon: User, label: 'Profilim', emoji: '👤' }
+      ]
     }
   ];
 
@@ -90,6 +119,27 @@ export default function Navbar() {
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
     setOpenCategory(null);
+  };
+
+  const getDisplayName = () => {
+    return profileData?.displayName || currentUser?.email?.split('@')[0] || 'Kullanıcı';
+  };
+
+  const getProfileImage = () => {
+    if (profileData?.profileImage) {
+      return (
+        <img
+          src={profileData.profileImage}
+          alt="Profil"
+          className="w-8 h-8 rounded-full object-cover"
+        />
+      );
+    }
+    return (
+      <span className="text-lg animate-wiggle">
+        {profileData?.favoriteEmoji || '😺'}
+      </span>
+    );
   };
 
   return (
@@ -163,14 +213,24 @@ export default function Navbar() {
 
             {/* User Info & Controls - daha sevimli */}
             <div className="flex items-center space-x-2 sm:space-x-3">
-              {/* User Email - daha güzel tasarım */}
-              <div className="hidden lg:flex flex-col items-end">
-                <span className="text-xs text-gray-700 font-elegant max-w-32 xl:max-w-none truncate">
-                  {currentUser?.email}
-                </span>
-                <span className="text-xs text-gray-600">
-                  <span className="emoji-interactive">😸</span> Hoş geldin!
-                </span>
+              {/* User Profile Info - gelişmiş tasarım */}
+              <div className="hidden lg:flex items-center space-x-3">
+                <Link
+                  to="/profile"
+                  className="flex items-center space-x-3 p-2 rounded-full hover:bg-romantic-50 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center overflow-hidden">
+                    {getProfileImage()}
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 max-w-24 xl:max-w-none truncate">
+                      {getDisplayName()}
+                    </span>
+                    <span className="text-xs text-gray-600">
+                      <span className="emoji-interactive">😸</span> Kedici
+                    </span>
+                  </div>
+                </Link>
               </div>
 
               {/* Logout Button - daha etkileşimli */}
@@ -202,19 +262,35 @@ export default function Navbar() {
             mobileMenuOpen ? 'max-h-screen opacity-100 pb-4' : 'max-h-0 opacity-0'
           }`}>
             {/* Mobile User Info - daha sevimli */}
-            <div className="bg-cat-50 rounded-3xl p-4 mb-4 border-2 border-cat-200/50 shadow-soft">
+            <Link
+              to="/profile"
+              className="bg-cat-50 rounded-3xl p-4 mb-4 border-2 border-cat-200/50 shadow-soft block hover:bg-cat-100 transition-colors"
+              onClick={closeMobileMenu}
+            >
               <div className="flex items-center space-x-3">
-                <span className="text-3xl emoji-interactive">😺</span>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center overflow-hidden">
+                  {profileData?.profileImage ? (
+                    <img
+                      src={profileData.profileImage}
+                      alt="Profil"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-2xl emoji-interactive">
+                      {profileData?.favoriteEmoji || '😺'}
+                    </span>
+                  )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-800 truncate">
-                    {currentUser?.email}
+                    {getDisplayName()}
                   </p>
                   <p className="text-xs text-gray-600">
                     Kedili alanda hoş geldin! <span className="emoji-interactive">🐾</span>
                   </p>
                 </div>
               </div>
-            </div>
+            </Link>
 
             {/* Mobile Menu Items - daha güzel */}
             <div className="space-y-3">

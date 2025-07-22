@@ -10,10 +10,11 @@ import {
   orderBy,
   onSnapshot,
   serverTimestamp,
-  limit
+  limit,
+  getDocs
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X, Edit, Check } from 'lucide-react';
+import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X, Edit, Check, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Chat() {
@@ -28,15 +29,21 @@ export default function Chat() {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [editingMessage, setEditingMessage] = useState(null);
   const [editText, setEditText] = useState('');
+  const [userProfiles, setUserProfiles] = useState({});
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState(null);
+  
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
   const editInputRef = useRef(null);
 
-  const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑', '🌹', '🌺', '🌸', '🌼', '🌻', '🦋', '✨', '⭐', '🌟', '💫', '🔥', '💎'];
+  const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
 
+  // Ana useEffect - messages listener
   useEffect(() => {
-    // Gerçek zamanlı mesaj dinleyici
+    if (!currentUser) return;
+
     const messagesQuery = query(
       collection(db, 'messages'),
       orderBy('createdAt', 'desc'),
@@ -47,7 +54,7 @@ export default function Chat() {
       const messagesData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      })).reverse(); // En yeni mesajlar altta olsun
+      })).reverse();
       
       setMessages(messagesData);
       setLoading(false);
@@ -55,14 +62,65 @@ export default function Chat() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [currentUser]);
 
+  // Scroll to bottom effect
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+  // User profiles effect
+  useEffect(() => {
+    if (messages.length > 0) {
+      const uniqueAuthors = [...new Set(messages.map(msg => msg.author))];
+      uniqueAuthors.forEach(author => {
+        if (!userProfiles[author]) {
+          fetchUserProfile(author);
+        }
+      });
+    }
+  }, [messages, userProfiles]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const fetchUserProfile = async (userEmail) => {
+    if (userProfiles[userEmail]) return userProfiles[userEmail];
+    
+    try {
+      const profilesQuery = query(collection(db, 'profiles'));
+      const profilesSnapshot = await getDocs(profilesQuery);
+      
+      for (const profileDoc of profilesSnapshot.docs) {
+        const profileData = profileDoc.data();
+        if (profileData.email === userEmail) {
+          const profile = {
+            uid: profileDoc.id,
+            ...profileData
+          };
+          setUserProfiles(prev => ({ ...prev, [userEmail]: profile }));
+          return profile;
+        }
+      }
+      
+      const defaultProfile = {
+        displayName: userEmail.split('@')[0],
+        favoriteEmoji: '😺',
+        email: userEmail,
+        profileImage: null
+      };
+      setUserProfiles(prev => ({ ...prev, [userEmail]: defaultProfile }));
+      return defaultProfile;
+    } catch (error) {
+      console.error('Profil yüklenirken hata:', error);
+      return {
+        displayName: userEmail.split('@')[0],
+        favoriteEmoji: '😺',
+        email: userEmail,
+        profileImage: null
+      };
+    }
   };
 
   const convertFileToBase64 = (file) => {
@@ -78,7 +136,6 @@ export default function Chat() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Dosya boyutu kontrolü (25MB)
     if (file.size > 25 * 1024 * 1024) {
       toast.error('Dosya boyutu 25MB\'dan küçük olmalıdır');
       return;
@@ -86,7 +143,6 @@ export default function Chat() {
 
     setSelectedFile(file);
 
-    // Eğer resim ise önizleme göster
     if (file.type.startsWith('image/')) {
       try {
         const base64 = await convertFileToBase64(file);
@@ -115,7 +171,6 @@ export default function Chat() {
       };
 
       if (selectedFile) {
-        // Dosya mesajı
         const fileBase64 = await convertFileToBase64(selectedFile);
         messageData = {
           ...messageData,
@@ -127,13 +182,11 @@ export default function Chat() {
           content: newMessage.trim() || `📎 ${selectedFile.name}`
         };
       } else {
-        // Text mesajı
         messageData.content = newMessage.trim();
       }
 
       await addDoc(collection(db, 'messages'), messageData);
       
-      // Formu temizle
       setNewMessage('');
       setSelectedFile(null);
       setPreviewImage(null);
@@ -227,10 +280,8 @@ export default function Chat() {
   };
 
   const getDisplayName = (email) => {
-    // Email'den isim çıkarma - @ işaretinden önceki kısmı al
     if (!email) return 'Anonim';
     const name = email.split('@')[0];
-    // İlk harfini büyük yap
     return name.charAt(0).toUpperCase() + name.slice(1);
   };
 
@@ -263,6 +314,26 @@ export default function Chat() {
   const closeMediaModal = () => {
     setSelectedMedia(null);
     setShowMediaModal(false);
+  };
+
+  const handleProfileClick = async (userEmail) => {
+    const profile = await fetchUserProfile(userEmail);
+    setSelectedProfile(profile);
+    setShowProfileModal(true);
+  };
+
+  const closeProfileModal = () => {
+    setShowProfileModal(false);
+    setSelectedProfile(null);
+  };
+
+  const getUserProfile = (userEmail) => {
+    return userProfiles[userEmail] || {
+      displayName: userEmail.split('@')[0],
+      favoriteEmoji: '😺',
+      email: userEmail,
+      profileImage: null
+    };
   };
 
   const formatFileSize = (bytes) => {
@@ -371,14 +442,6 @@ export default function Chat() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-romantic-500"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="fixed inset-0 top-0 left-0 right-0 bottom-0 flex flex-col bg-white/90 backdrop-blur-sm">
       {/* Başlık */}
@@ -407,59 +470,89 @@ export default function Chat() {
             </p>
           </div>
         ) : (
-          messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${isMyMessage(message) ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`max-w-xs lg:max-w-sm relative ${
-                isMyMessage(message) ? 'mr-2' : 'ml-2'
-              }`}>
-                {/* Gönderen ismi */}
-                <div className={`text-xs text-gray-500 mb-1 ${
-                  isMyMessage(message) ? 'text-right' : 'text-left'
-                }`}>
-                  {isMyMessage(message) ? 'Sen' : getDisplayName(message.author)}
-                </div>
-                
-                <div
-                  className={`px-3 py-2 rounded-2xl shadow-soft group relative break-words ${
-                    isMyMessage(message)
-                      ? 'bg-paw-gradient text-white'
-                      : 'bg-white border border-romantic-200 text-gray-800'
-                  }`}
-                  style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+          messages.map((message) => {
+            const userProfile = getUserProfile(message.author);
+            
+            return (
+              <div
+                key={message.id}
+                className={`flex items-start space-x-3 ${isMyMessage(message) ? 'flex-row-reverse space-x-reverse' : ''}`}
+              >
+                {/* Profil Fotoğrafı */}
+                <div 
+                  className="flex-shrink-0 cursor-pointer group"
+                  onClick={() => handleProfileClick(message.author)}
                 >
-                  {renderMessage(message)}
-                  <div className={`flex items-center justify-between text-xs mt-1 ${
-                    isMyMessage(message) ? 'text-white/80' : 'text-gray-500'
-                  }`}>
-                    <span>{formatTime(message.createdAt)}</span>
-                    {isMyMessage(message) && editingMessage !== message.id && (
-                      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {message.type === 'text' && (
-                          <button
-                            onClick={() => handleEditMessage(message)}
-                            className="ml-1 hover:text-blue-200"
-                            title="Düzenle"
-                          >
-                            <Edit className="w-3 h-3" />
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDeleteMessage(message.id)}
-                          className="ml-1 hover:text-red-200"
-                          title="Sil"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      </div>
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center border-2 border-white shadow-sm group-hover:scale-110 transition-transform">
+                    {userProfile.profileImage ? (
+                      <img
+                        src={userProfile.profileImage}
+                        alt={userProfile.displayName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-sm animate-wiggle">
+                        {userProfile.favoriteEmoji}
+                      </span>
                     )}
                   </div>
                 </div>
+
+                {/* Mesaj Baloncuğu */}
+                <div className={`max-w-xs lg:max-w-sm relative ${
+                  isMyMessage(message) ? 'mr-2' : 'ml-2'
+                }`}>
+                  {/* Gönderen ismi - sadece diğer kullanıcılar için */}
+                  {!isMyMessage(message) && (
+                    <div className="text-xs text-gray-500 mb-1 ml-1">
+                      <span 
+                        className="hover:text-gray-700 cursor-pointer font-medium"
+                        onClick={() => handleProfileClick(message.author)}
+                      >
+                        {userProfile.displayName}
+                      </span>
+                    </div>
+                  )}
+                  
+                  <div
+                    className={`px-3 py-2 rounded-2xl shadow-soft group relative break-words ${
+                      isMyMessage(message)
+                        ? 'bg-paw-gradient text-white'
+                        : 'bg-white border border-romantic-200 text-gray-800'
+                    }`}
+                    style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+                  >
+                    {renderMessage(message)}
+                    <div className={`flex items-center justify-between text-xs mt-1 ${
+                      isMyMessage(message) ? 'text-white/80' : 'text-gray-500'
+                    }`}>
+                      <span>{formatTime(message.createdAt)}</span>
+                      {isMyMessage(message) && editingMessage !== message.id && (
+                        <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {message.type === 'text' && (
+                            <button
+                              onClick={() => handleEditMessage(message)}
+                              className="ml-1 hover:text-blue-200"
+                              title="Düzenle"
+                            >
+                              <Edit className="w-3 h-3" />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDeleteMessage(message.id)}
+                            className="ml-1 hover:text-red-200"
+                            title="Sil"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
         <div ref={messagesEndRef} />
       </div>
@@ -624,6 +717,78 @@ export default function Chat() {
                 className="absolute top-4 right-4 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg"
               >
                 <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Profil Modal */}
+      {showProfileModal && selectedProfile && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={closeProfileModal}>
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl transform transition-all" onClick={(e) => e.stopPropagation()}>
+            <div className="text-center">
+              {/* Profil Fotoğrafı */}
+              <div className="flex justify-center mb-4">
+                <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center shadow-lg">
+                  {selectedProfile.profileImage ? (
+                    <img
+                      src={selectedProfile.profileImage}
+                      alt={selectedProfile.displayName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-3xl animate-bounce-cat">
+                      {selectedProfile.favoriteEmoji}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Profil Bilgileri */}
+              <h3 className="text-xl font-cat text-gray-800 mb-2">
+                {selectedProfile.displayName}
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                {selectedProfile.email}
+              </p>
+
+              {selectedProfile.bio && (
+                <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-gray-700 font-handwriting italic">
+                    "{selectedProfile.bio}"
+                  </p>
+                </div>
+              )}
+
+              {selectedProfile.favoriteQuote && (
+                <div className="bg-pink-50 rounded-lg p-3 mb-4 border-l-4 border-pink-400">
+                  <p className="text-sm text-gray-700 font-elegant">
+                    "{selectedProfile.favoriteQuote}"
+                  </p>
+                </div>
+              )}
+
+              {/* Kullanıcı Rozeti */}
+              <div className="flex justify-center items-center space-x-2 text-sm text-gray-600 mb-4">
+                <span className="bg-romantic-100 text-romantic-700 px-3 py-1 rounded-full flex items-center space-x-1">
+                  <span className="animate-wiggle">🐱</span>
+                  <span>Kedici</span>
+                </span>
+                {selectedProfile.email === currentUser.email && (
+                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+                    Sen
+                  </span>
+                )}
+              </div>
+
+              {/* Kapatma Butonu */}
+              <button
+                onClick={closeProfileModal}
+                className="w-full bg-romantic-100 hover:bg-romantic-200 text-romantic-700 px-4 py-2 rounded-lg transition-colors flex items-center justify-center space-x-2"
+              >
+                <X className="w-4 h-4" />
+                <span>Kapat</span>
               </button>
             </div>
           </div>
