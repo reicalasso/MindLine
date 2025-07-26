@@ -40,6 +40,7 @@ export default function Letters() {
     date: new Date().toISOString().split('T')[0],
     folderId: null
   });
+  const [selectedLetter, setSelectedLetter] = useState(null);
 
   useEffect(() => {
     fetchLetters();
@@ -348,7 +349,9 @@ export default function Letters() {
               {letters.map((letter) => (
                 <div
                   key={letter.id}
-                  className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-romantic-100 group"
+                  className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-romantic-100 group cursor-pointer"
+                  onClick={() => setSelectedLetter(letter)}
+                  style={{ minHeight: '220px', display: 'flex', flexDirection: 'column' }}
                 >
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="font-handwriting text-xl text-gray-800 flex-1">
@@ -356,25 +359,36 @@ export default function Letters() {
                     </h3>
                     <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
-                        onClick={() => handleEdit(letter)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(letter);
+                        }}
                         className="p-1 text-blue-600 hover:bg-blue-50 rounded"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(letter.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(letter.id);
+                        }}
                         className="p-1 text-red-600 hover:bg-red-50 rounded"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-
-                  <p className="text-gray-800 mb-4 font-handwriting text-sm line-clamp-4">
+                  <div
+                    className="text-gray-800 mb-4 font-handwriting text-sm line-clamp-4 overflow-y-auto"
+                    style={{
+                      maxHeight: '120px',
+                      minHeight: '80px',
+                      paddingRight: '4px'
+                    }}
+                  >
                     {letter.content}
-                  </p>
-
-                  <div className="flex justify-between items-center text-xs text-gray-600">
+                  </div>
+                  <div className="flex justify-between items-center text-xs text-gray-600 mt-auto">
                     <span>{letter.author}</span>
                     <span>
                       {letter.date?.toDate?.()?.toLocaleDateString('tr-TR') || 'Tarih yok'}
@@ -382,6 +396,38 @@ export default function Letters() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+          {/* Mektup Görüntüleme Modalı */}
+          {selectedLetter && (
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setSelectedLetter(null)}>
+              <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl relative" onClick={e => e.stopPropagation()}>
+                <div className="mb-6 text-center">
+                  <h2 className="text-2xl font-romantic text-gray-800 mb-2">
+                    {selectedLetter.title || 'Başlıksız Mektup'}
+                  </h2>
+                  <p className="text-sm text-gray-500 mb-2">
+                    {selectedLetter.date?.toDate?.()?.toLocaleDateString('tr-TR') || 'Tarih yok'}
+                  </p>
+                  <p className="text-xs text-gray-400 mb-2">
+                    {selectedLetter.author}
+                  </p>
+                </div>
+                <div className="mb-6 overflow-y-auto" style={{ maxHeight: '320px', minHeight: '120px', paddingRight: '4px' }}>
+                  <p className="font-handwriting text-lg text-gray-800 whitespace-pre-line">
+                    {selectedLetter.content}
+                  </p>
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <button
+                    onClick={() => setSelectedLetter(null)}
+                    className="px-4 py-2 bg-romantic-100 hover:bg-romantic-200 text-romantic-700 rounded-lg transition-colors flex items-center space-x-2"
+                  >
+                    <X className="w-4 h-4" />
+                    <span>Kapat</span>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>

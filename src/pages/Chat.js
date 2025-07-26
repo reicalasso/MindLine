@@ -16,6 +16,8 @@ import {
 import { db } from '../firebase';
 import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X, Edit, Check, User } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Linkify from 'linkify-react';
+import axios from 'axios';
 
 export default function Chat() {
   const { currentUser } = useAuth();
@@ -39,6 +41,63 @@ export default function Chat() {
   const editInputRef = useRef(null);
 
   const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
+
+  const linkifyOptions = {
+    target: '_blank',
+    rel: 'noopener noreferrer',
+    className: 'text-blue-500 underline hover:text-blue-700 transition-colors',
+  };
+
+  // Instagram-vari Link Preview Kartı
+  function LinkPreviewCard({ url }) {
+    const [preview, setPreview] = useState(null);
+
+    useEffect(() => {
+      let cancelled = false;
+      axios.get(`http://localhost:4000/preview?url=${encodeURIComponent(url)}`)
+        .then(res => {
+          if (!cancelled) setPreview(res.data);
+        })
+        .catch(() => {});
+      return () => { cancelled = true; };
+    }, [url]);
+
+    if (!preview || !preview.title) return null;
+
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block w-full max-w-xs sm:max-w-sm md:max-w-md mt-2 border border-gray-200 rounded-lg shadow hover:shadow-md transition bg-white"
+        style={{ textDecoration: 'none', overflow: 'hidden' }}
+      >
+        {preview.images?.[0] && (
+          <img
+            src={preview.images[0]}
+            alt={preview.title}
+            className="w-full h-36 object-cover rounded-t-lg"
+            style={{ maxWidth: '100%' }}
+          />
+        )}
+        <div className="p-2">
+          <div className="font-semibold text-sm line-clamp-1 text-gray-800">{preview.title}</div>
+          {preview.description && (
+            <div className="text-xs text-gray-600 line-clamp-2">{preview.description}</div>
+          )}
+          {preview.siteName && (
+            <div className="text-xs text-blue-500 mt-1">{preview.siteName}</div>
+          )}
+        </div>
+      </a>
+    );
+  }
+
+  // Mesaj içeriğinde linkleri bul
+  function extractUrls(text) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.match(urlRegex) || [];
+  }
 
   // Ana useEffect - messages listener
   useEffect(() => {
@@ -344,6 +403,88 @@ export default function Chat() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // Link preview için yardımcı fonksiyon
+  const fetchLinkPreview = async (url) => {
+    try {
+      // jsonlink.io API ile önizleme al
+      const res = await fetch(`https://jsonlink.io/api/extract?url=${encodeURIComponent(url)}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return {
+        title: data.title,
+        description: data.description,
+        image: data.images?.[0],
+        url: data.url
+      };
+    } catch {
+      return null;
+    }
+  };
+
+  // Link preview bileşeni
+  function LinkPreview({ url }) {
+    const [preview, setPreview] = useState(null);
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+      let mounted = true;
+      fetchLinkPreview(url).then(data => {
+        if (mounted) {
+          if (data && (data.title || data.description || data.image)) {
+            setPreview(data);
+          } else {
+            setError(true);
+          }
+        }
+      }).catch(() => {
+        if (mounted) setError(true);
+      });
+      return () => { mounted = false; };
+    }, [url]);
+
+    if (error) {
+      return (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mt-2 text-xs text-gray-500">
+          <span>Bağlantı önizlenemiyor.</span>
+        </div>
+      );
+    }
+
+    if (!preview) {
+      return (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mt-2 text-xs text-gray-500">
+          <span>Bağlantı önizleniyor...</span>
+        </div>
+      );
+    }
+
+    return (
+      <a href={preview.url || url} target="_blank" rel="noopener noreferrer"
+        className="block bg-gray-50 border border-gray-200 rounded-lg p-3 mt-2 hover:bg-gray-100 transition-colors"
+        style={{ textDecoration: 'none' }}>
+        <div className="flex items-center space-x-3">
+          {preview.image && (
+            <img src={preview.image} alt="preview" className="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="font-medium text-gray-800 truncate">{preview.title || url}</div>
+            {preview.description && (
+              <div className="text-xs text-gray-600 truncate">{preview.description}</div>
+            )}
+            <div className="text-xs text-blue-500 truncate">{preview.url || url}</div>
+          </div>
+        </div>
+      </a>
+    );
+  }
+
+  // Mesaj içeriğinde link varsa bul
+  function extractFirstUrl(text) {
+    const urlRegex = /(https?:\/\/[^\s]+)/;
+    const match = text.match(urlRegex);
+    return match ? match[0] : null;
+  }
+
   const renderMessage = (message) => {
     if (editingMessage === message.id) {
       return (
@@ -352,7 +493,7 @@ export default function Chat() {
             ref={editInputRef}
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
-            className="w-full p-2 text-sm bg-white/90 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 text-sm font-elegant bg-white/90 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows="2"
             style={{ minHeight: '40px' }}
             onInput={(e) => {
@@ -399,7 +540,7 @@ export default function Chat() {
               onClick={() => openMediaModal(message)}
             />
             {message.content !== `📎 ${message.fileName}` && (
-              <p className="font-handwriting text-base break-words">{message.content}</p>
+              <p className="font-elegant text-base font-medium break-words">{message.content}</p>
             )}
           </div>
         );
@@ -421,19 +562,25 @@ export default function Chat() {
               </button>
             </div>
             {message.content !== `📎 ${message.fileName}` && (
-              <p className="font-handwriting text-base break-words">{message.content}</p>
+              <p className="font-elegant text-base font-medium break-words">{message.content}</p>
             )}
           </div>
         );
       
       default:
+        const urls = extractUrls(message.content);
         return (
           <div className="space-y-1">
-            <p className="font-handwriting text-base break-words">
-              {message.content}
-            </p>
+            <div className="font-elegant text-base font-medium break-words">
+              <Linkify options={linkifyOptions}>
+                {message.content}
+              </Linkify>
+            </div>
+            {urls.map(url => (
+              <LinkPreviewCard key={url} url={url} />
+            ))}
             {message.edited && (
-              <p className="text-xs opacity-60 italic">
+              <p className="text-xs opacity-60 italic font-elegant">
                 (düzenlendi)
               </p>
             )}
@@ -458,7 +605,14 @@ export default function Chat() {
       </div>
 
       {/* Mesajlar Listesi */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3" style={{ maxHeight: 'calc(100vh - 280px)' }}>
+      <div
+        className="flex-1 overflow-y-auto p-3 space-y-3"
+        style={{
+          maxHeight: 'calc(100vh - 280px)',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}
+      >
         {messages.length === 0 ? (
           <div className="text-center py-8">
             <MessageCircle className="w-12 h-12 text-romantic-300 mx-auto mb-3" />
@@ -470,89 +624,103 @@ export default function Chat() {
             </p>
           </div>
         ) : (
-          messages.map((message) => {
-            const userProfile = getUserProfile(message.author);
-            
-            return (
-              <div
-                key={message.id}
-                className={`flex items-start space-x-3 ${isMyMessage(message) ? 'flex-row-reverse space-x-reverse' : ''}`}
-              >
-                {/* Profil Fotoğrafı */}
-                <div 
-                  className="flex-shrink-0 cursor-pointer group"
-                  onClick={() => handleProfileClick(message.author)}
+          <div className="flex flex-col gap-3 w-full">
+            {messages.map((message) => {
+              const userProfile = getUserProfile(message.author);
+              return (
+                <div
+                  key={message.id}
+                  className={`flex items-start space-x-3 ${isMyMessage(message) ? 'flex-row-reverse space-x-reverse' : ''} w-full`}
                 >
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center border-2 border-white shadow-sm group-hover:scale-110 transition-transform">
-                    {userProfile.profileImage ? (
-                      <img
-                        src={userProfile.profileImage}
-                        alt={userProfile.displayName}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-sm animate-wiggle">
-                        {userProfile.favoriteEmoji}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Mesaj Baloncuğu */}
-                <div className={`max-w-xs lg:max-w-sm relative ${
-                  isMyMessage(message) ? 'mr-2' : 'ml-2'
-                }`}>
-                  {/* Gönderen ismi - sadece diğer kullanıcılar için */}
-                  {!isMyMessage(message) && (
-                    <div className="text-xs text-gray-500 mb-1 ml-1">
-                      <span 
-                        className="hover:text-gray-700 cursor-pointer font-medium"
-                        onClick={() => handleProfileClick(message.author)}
-                      >
-                        {userProfile.displayName}
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div
-                    className={`px-3 py-2 rounded-2xl shadow-soft group relative break-words ${
-                      isMyMessage(message)
-                        ? 'bg-paw-gradient text-white'
-                        : 'bg-white border border-romantic-200 text-gray-800'
-                    }`}
-                    style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+                  {/* Profil Fotoğrafı */}
+                  <div 
+                    className="flex-shrink-0 cursor-pointer group"
+                    onClick={() => handleProfileClick(message.author)}
                   >
-                    {renderMessage(message)}
-                    <div className={`flex items-center justify-between text-xs mt-1 ${
-                      isMyMessage(message) ? 'text-white/80' : 'text-gray-500'
-                    }`}>
-                      <span>{formatTime(message.createdAt)}</span>
-                      {isMyMessage(message) && editingMessage !== message.id && (
-                        <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {message.type === 'text' && (
-                            <button
-                              onClick={() => handleEditMessage(message)}
-                              className="ml-1 hover:text-blue-200"
-                              title="Düzenle"
-                            >
-                              <Edit className="w-3 h-3" />
-                            </button>
-                          )}
-                          <button
-                            onClick={() => handleDeleteMessage(message.id)}
-                            className="ml-1 hover:text-red-200"
-                            title="Sil"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        </div>
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center border-2 border-white shadow-sm group-hover:scale-110 transition-transform">
+                      {userProfile.profileImage ? (
+                        <img
+                          src={userProfile.profileImage}
+                          alt={userProfile.displayName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-sm animate-wiggle">
+                          {userProfile.favoriteEmoji}
+                        </span>
                       )}
                     </div>
                   </div>
+
+                  {/* Mesaj Baloncuğu */}
+                  <div
+                    className={`relative ${
+                      isMyMessage(message)
+                        ? 'mr-2'
+                        : 'ml-2'
+                    }`}
+                    style={{
+                      maxWidth: '100%',
+                      width: '100%'
+                    }}
+                  >
+                    {/* Gönderen ismi - sadece diğer kullanıcılar için */}
+                    {!isMyMessage(message) && (
+                      <div className="text-xs text-gray-500 mb-1 ml-1">
+                        <span 
+                          className="hover:text-gray-700 cursor-pointer font-medium"
+                          onClick={() => handleProfileClick(message.author)}
+                        >
+                          {userProfile.displayName}
+                        </span>
+                      </div>
+                    )}
+                    
+                    <div
+                      className={`px-3 py-2 rounded-2xl shadow-soft group relative break-words ${
+                        isMyMessage(message)
+                          ? 'bg-paw-gradient text-white'
+                          : 'bg-white border border-romantic-200 text-gray-800'
+                      }`}
+                      style={{
+                        wordBreak: 'break-word',
+                        overflowWrap: 'break-word',
+                        maxWidth: '100%',
+                        width: '100%'
+                      }}
+                    >
+                      {renderMessage(message)}
+                      <div className={`flex items-center justify-between text-xs mt-1 ${
+                        isMyMessage(message) ? 'text-white/80' : 'text-gray-500'
+                      }`}>
+                        <span>{formatTime(message.createdAt)}</span>
+                        {isMyMessage(message) && editingMessage !== message.id && (
+                          <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {message.type === 'text' && (
+                              <button
+                                onClick={() => handleEditMessage(message)}
+                                className="ml-1 hover:text-blue-200"
+                                title="Düzenle"
+                              >
+                                <Edit className="w-3 h-3" />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteMessage(message.id)}
+                              className="ml-1 hover:text-red-200"
+                              title="Sil"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
         <div ref={messagesEndRef} />
       </div>
@@ -602,8 +770,8 @@ export default function Chat() {
       </div>
 
       {/* Mesaj Gönderme Formu */}
-      <div className="border-t border-romantic-200 p-3 bg-white/50 flex-shrink-0">
-        <form onSubmit={handleSendMessage} className="space-y-2">
+      <div className="border-t border-romantic-200 p-3 bg-white/50 flex-shrink-0 w-full">
+        <form onSubmit={handleSendMessage} className="space-y-2 w-full">
           {/* Dosya Seçme Butonları */}
           <div className="flex space-x-2">
             <button
@@ -640,13 +808,13 @@ export default function Chat() {
           </div>
           
           {/* Mesaj Input ve Gönder */}
-          <div className="flex space-x-2">
-            <div className="flex-1 relative">
+          <div className="flex space-x-2 w-full">
+            <div className="flex-1 relative w-full">
               <textarea
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : "Mesajınızı yazın... 💕"}
-                className="w-full px-3 py-2 pr-10 border border-romantic-200 rounded-xl focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/70 text-gray-800 font-handwriting resize-none text-sm"
+                className="w-full px-3 py-2 pr-10 border border-romantic-200 rounded-xl focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/70 text-gray-800 font-elegant font-medium resize-none text-sm"
                 rows="1"
                 style={{ minHeight: '40px', maxHeight: '80px' }}
                 onInput={(e) => {
@@ -687,13 +855,14 @@ export default function Chat() {
       {/* Media Modal */}
       {showMediaModal && selectedMedia && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={closeMediaModal}>
-          <div className="max-w-4xl max-h-full p-4" onClick={(e) => e.stopPropagation()}>
-            <div className="bg-white rounded-xl overflow-hidden relative">
+          <div className="w-full max-w-4xl max-h-full p-4" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-xl overflow-hidden relative w-full">
               {selectedMedia.type === 'image' && (
                 <img
                   src={selectedMedia.fileData}
                   alt={selectedMedia.fileName}
                   className="w-full max-h-[70vh] object-contain"
+                  style={{ maxWidth: '100%' }}
                 />
               )}
               <div className="p-4">
