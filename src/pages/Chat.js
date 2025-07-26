@@ -660,8 +660,9 @@ export default function Chat() {
                         : 'ml-2'
                     }`}
                     style={{
-                      maxWidth: '100%',
-                      width: '100%'
+                      maxWidth: '70%', // ekranın %70'i kadar genişlik
+                      width: 'fit-content', // içerik kadar genişlik
+                      minWidth: '0'
                     }}
                   >
                     {/* Gönderen ismi - sadece diğer kullanıcılar için */}
