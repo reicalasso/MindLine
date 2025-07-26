@@ -379,11 +379,12 @@ export default function Letters() {
                     </div>
                   </div>
                   <div
-                    className="text-gray-800 mb-4 font-handwriting text-sm line-clamp-4 overflow-y-auto"
+                    className="text-gray-800 mb-4 font-handwriting text-sm overflow-y-auto"
                     style={{
-                      maxHeight: '120px',
+                      maxHeight: '180px',
                       minHeight: '80px',
-                      paddingRight: '4px'
+                      paddingRight: '4px',
+                      wordBreak: 'break-word'
                     }}
                   >
                     {letter.content}

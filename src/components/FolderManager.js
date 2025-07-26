@@ -257,7 +257,7 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
                         onClick={() => onSelectFolder(folder.id)}
                       >
                         <Folder className="w-4 h-4 mr-2 text-blue-500" />
-                        <span className="truncate">{folder.name}</span>
+                        <span className="truncate text-gray-800">{folder.name}</span>
                       </div>
                       <div className="flex space-x-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                         <button
