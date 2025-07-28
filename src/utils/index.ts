@@ -312,7 +312,7 @@ export const colorUtils = {
   /**
    * Rengin kontrast oranını hesaplar
    */
-  getContrastRatio: (color1: string, color2: string): number => {
+  getContrastRatio: (_color1: string, _color2: string): number => {
     // Basit implementasyon - gerçek kullanımda daha karmaşık olabilir
     return 1;
   },
