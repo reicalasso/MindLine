@@ -149,8 +149,8 @@ body {
   }
 
   .love-button {
-    @apply bg-love-gradient text-white rounded-full shadow-love 
-           hover:shadow-love-glow hover:scale-105 
+    @apply bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full shadow-lg
+           hover:shadow-xl hover:scale-105
            transition-all duration-300 font-medium;
     background-size: 200% 200%;
     animation: gradientFlow 3s ease infinite;
