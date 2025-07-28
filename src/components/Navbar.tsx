@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
@@ -389,7 +389,7 @@ export default function Navbar() {
                 </div>
               ))}
             </div>
-            {/* Çıkı�� Butonu */}
+            {/* Çıkış Butonu */}
             <button
               onClick={handleLogout}
               className="mt-6 w-full flex items-center justify-center space-x-2 px-4 py-3 text-gray-700 hover:bg-love-gradient hover:text-white rounded-full transition-all duration-300 font-medium text-base group hover-glow"
