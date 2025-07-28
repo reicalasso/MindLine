@@ -326,7 +326,7 @@ export function useForm<T extends Record<string, any>>(
     setErrors(prev => ({ ...prev, [field]: error }));
   }, []);
 
-  const setTouched = useCallback((field: keyof T, isTouched: boolean = true) => {
+  const setFieldTouched = useCallback((field: keyof T, isTouched: boolean = true) => {
     setTouched(prev => ({ ...prev, [field]: isTouched }));
   }, []);
 
