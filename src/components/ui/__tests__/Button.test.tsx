@@ -130,47 +130,43 @@ describe('Button Component', () => {
 
   describe('Accessibility', () => {
     test('button is focusable', async () => {
-      const user = userEvent.setup();
       render(<Button>Focusable</Button>);
-      
+
       const button = screen.getByRole('button');
-      await user.tab();
-      
+      await userEvent.tab();
+
       expect(button).toHaveFocus();
     });
 
     test('disabled button is not focusable', async () => {
-      const user = userEvent.setup();
       render(<Button disabled>Not focusable</Button>);
-      
-      await user.tab();
-      
+
+      await userEvent.tab();
+
       expect(screen.getByRole('button')).not.toHaveFocus();
     });
 
     test('button responds to Enter key', async () => {
-      const user = userEvent.setup();
       const handleClick = jest.fn();
-      
+
       render(<Button onClick={handleClick}>Enter test</Button>);
-      
+
       const button = screen.getByRole('button');
       button.focus();
-      await user.keyboard('{Enter}');
-      
+      await userEvent.keyboard('{Enter}');
+
       expect(handleClick).toHaveBeenCalledTimes(1);
     });
 
     test('button responds to Space key', async () => {
-      const user = userEvent.setup();
       const handleClick = jest.fn();
-      
+
       render(<Button onClick={handleClick}>Space test</Button>);
-      
+
       const button = screen.getByRole('button');
       button.focus();
-      await user.keyboard(' ');
-      
+      await userEvent.keyboard(' ');
+
       expect(handleClick).toHaveBeenCalledTimes(1);
     });
   });
