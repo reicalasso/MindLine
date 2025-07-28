@@ -97,8 +97,8 @@ const renderApp = () => {
 renderApp();
 
 // Hot module replacement support (development only)
-if (process.env.NODE_ENV === 'development' && module.hot) {
-  module.hot.accept('./App', () => {
+if (process.env.NODE_ENV === 'development' && (module as any).hot) {
+  (module as any).hot.accept('./App', () => {
     const NextApp = require('./App').default;
     root.render(
       <React.StrictMode>
