@@ -38,17 +38,7 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 
 // Web Vitals monitoring (development only)
-if (process.env.NODE_ENV === 'development') {
-  import('web-vitals').then((webVitals) => {
-    if (webVitals.getCLS) webVitals.getCLS(console.log);
-    if (webVitals.getFID) webVitals.getFID(console.log);
-    if (webVitals.getFCP) webVitals.getFCP(console.log);
-    if (webVitals.getLCP) webVitals.getLCP(console.log);
-    if (webVitals.getTTFB) webVitals.getTTFB(console.log);
-  }).catch(() => {
-    // web-vitals package not available, silently ignore
-  });
-}
+// Disabled until web-vitals package is properly configured
 
 // Root element
 const container = document.getElementById('root');
