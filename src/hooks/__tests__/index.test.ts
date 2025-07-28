@@ -192,7 +192,7 @@ describe('useDebounce', () => {
 
   test('cancels previous timeout on new value', () => {
     const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
+      ({ value, delay }: { value: string; delay: number }) => useDebounce(value, delay),
       { initialProps: { value: 'initial', delay: 500 } }
     );
     
