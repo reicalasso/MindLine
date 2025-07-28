@@ -174,7 +174,7 @@ describe('useDebounce', () => {
 
   test('debounces value changes', () => {
     const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
+      ({ value, delay }: { value: string; delay: number }) => useDebounce(value, delay),
       { initialProps: { value: 'initial', delay: 500 } }
     );
     
