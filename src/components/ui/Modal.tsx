@@ -30,15 +30,6 @@ const Modal: React.FC<ModalProps> = ({
   // Trap focus within modal
   const focusTrapRef = useFocusTrap<HTMLDivElement>(isOpen);
 
-  // Combine refs
-  const combineRefs = useCallback((node: HTMLDivElement | null) => {
-    if (node) {
-      focusTrapRef.current = node;
-      clickOutsideRef.current = node;
-      modalRef.current = node;
-    }
-  }, []);
-
   // Close modal when clicking outside
   const clickOutsideRef = useClickOutside<HTMLDivElement>(() => {
     if (closeOnOverlayClick) {
@@ -121,7 +112,11 @@ const Modal: React.FC<ModalProps> = ({
 
       {/* Modal Container */}
       <div
-        ref={combineRefs}
+        ref={node => {
+          focusTrapRef(node);
+          clickOutsideRef(node);
+          // Do not assign to modalRef.current if it's readonly
+        }}
         className={`
           relative w-full ${sizeStyles[size]} max-h-[90vh] 
           bg-white rounded-3xl shadow-2xl 

@@ -279,11 +279,15 @@ export function useClickOutside<T extends HTMLElement = HTMLElement>(
   handler: () => void,
   exceptions: (HTMLElement | null)[] = []
 ) {
-  const ref = useRef<T>(null);
+  const nodeRef = useRef<T | null>(null);
+
+  const refCallback = useCallback((node: T | null) => {
+    nodeRef.current = node;
+  }, []);
 
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
-      const el = ref?.current;
+      const el = nodeRef.current;
       if (!el || el.contains(event.target as Node)) {
         return;
       }
@@ -307,7 +311,7 @@ export function useClickOutside<T extends HTMLElement = HTMLElement>(
     };
   }, [handler, exceptions]);
 
-  return ref;
+  return refCallback;
 }
 
 // Form hook
@@ -475,12 +479,16 @@ export function useScrollLock(isLocked: boolean = false) {
 
 // Focus trap hook
 export function useFocusTrap<T extends HTMLElement = HTMLElement>(isActive: boolean = false) {
-  const ref = useRef<T>(null);
+  const nodeRef = useRef<T | null>(null);
+
+  const refCallback = useCallback((node: T | null) => {
+    nodeRef.current = node;
+  }, []);
 
   useEffect(() => {
-    if (!isActive || !ref.current) return;
+    if (!isActive || !nodeRef.current) return;
 
-    const element = ref.current;
+    const element = nodeRef.current;
     const focusableElements = element.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
@@ -512,5 +520,5 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>(isActive: bool
     };
   }, [isActive]);
 
-  return ref;
+  return refCallback;
 }
