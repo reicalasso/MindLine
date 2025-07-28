@@ -3,7 +3,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Dinamik arka plan gradyenti */
+/* Core Reset and Base Styles */
+* {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              box-shadow 0.2s ease,
+              filter 0.2s ease,
+              opacity 0.2s ease;
+}
+
 body {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
@@ -11,143 +18,54 @@ body {
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   min-height: 100vh;
-  color: #1f2937; /* Daha koyu renk */
+  color: #1f2937;
   overflow-x: hidden;
   position: relative;
 }
 
+/* Enhanced Gradient Animation */
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Dinamik kedi süslemeleri - daha fazla çeşit */
-body::before {
-  content: "🐾";
+/* Optimized Cat Decorations - Single Unified System */
+.background-decorations {
   position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.background-decorations::before {
+  content: "🐾";
+  position: absolute;
   left: 5%;
   bottom: 10%;
   font-size: clamp(2rem, 8vw, 4rem);
   opacity: 0.12;
-  z-index: 0;
-  pointer-events: none;
   animation: float 4s ease-in-out infinite;
   filter: drop-shadow(0 0 10px rgba(242, 113, 28, 0.3));
 }
 
-body::after {
+.background-decorations::after {
   content: "😺";
-  position: fixed;
+  position: absolute;
   right: 5%;
   top: 15%;
   font-size: clamp(2rem, 8vw, 4rem);
   opacity: 0.12;
-  z-index: 0;
-  pointer-events: none;
   animation: float 3s ease-in-out infinite reverse;
   filter: drop-shadow(0 0 10px rgba(242, 113, 28, 0.3));
 }
 
-/* Daha fazla kedi süslemesi - rastgele konumlarda */
-.cat-decoration-1::before {
-  content: "😻";
-  position: fixed;
-  left: 10%;
-  top: 60%;
-  font-size: clamp(1.5rem, 6vw, 3rem);
-  opacity: 0.1;
-  z-index: 0;
-  pointer-events: none;
-  animation: wiggle 3s ease-in-out infinite;
-  filter: hue-rotate(20deg);
-}
-
-.cat-decoration-2::after {
-  content: "🐱";
-  position: fixed;
-  right: 15%;
-  bottom: 30%;
-  font-size: clamp(1.5rem, 6vw, 3rem);
-  opacity: 0.1;
-  z-index: 0;
-  pointer-events: none;
-  animation: purr 2.5s ease-in-out infinite;
-  filter: hue-rotate(-20deg);
-}
-
-.cat-decoration-3::before {
-  content: "😸";
-  position: fixed;
-  right: 30%;
-  top: 40%;
-  font-size: clamp(1rem, 5vw, 2.5rem);
-  opacity: 0.08;
-  z-index: 0;
-  pointer-events: none;
-  animation: float 4s ease-in-out infinite;
-  animation-delay: 1s;
-}
-
-.cat-decoration-4::after {
-  content: "😽";
-  position: fixed;
-  left: 70%;
-  bottom: 60%;
-  font-size: clamp(1rem, 5vw, 2.5rem);
-  opacity: 0.08;
-  z-index: 0;
-  pointer-events: none;
-  animation: wiggle 3.5s ease-in-out infinite;
-  animation-delay: 2s;
-}
-
-/* Kalp süslemeleri - daha romantik */
-.love-decoration-1::before {
-  content: "💕";
-  position: fixed;
-  left: 80%;
-  top: 70%;
-  font-size: clamp(1rem, 4vw, 2rem);
-  opacity: 0.12;
-  z-index: 0;
-  pointer-events: none;
-  animation: heartbeat 2s ease-in-out infinite;
-  filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.4));
-}
-
-.love-decoration-2::after {
-  content: "💖";
-  position: fixed;
-  left: 20%;
-  top: 20%;
-  font-size: clamp(1rem, 4vw, 2rem);
-  opacity: 0.12;
-  z-index: 0;
-  pointer-events: none;
-  animation: purr 3s ease-in-out infinite;
-  filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.4));
-}
-
-.love-decoration-3::before {
-  content: "💝";
-  position: fixed;
-  right: 60%;
-  bottom: 40%;
-  font-size: clamp(0.8rem, 3vw, 1.5rem);
-  opacity: 0.1;
-  z-index: 0;
-  pointer-events: none;
-  animation: float 3.5s ease-in-out infinite;
-  animation-delay: 1.5s;
-}
-
-/* Yeni animasyonlar */
-@keyframes heartbeat {
-  0%, 100% { transform: scale(1); }
-  25% { transform: scale(1.1); }
-  50% { transform: scale(1.05); }
-  75% { transform: scale(1.15); }
+/* Enhanced Keyframe Animations */
+@keyframes bounce-cat {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  25% { transform: translateY(-15px) rotate(-3deg) scale(1.05); }
+  50% { transform: translateY(-25px) rotate(0deg) scale(1.1); }
+  75% { transform: translateY(-10px) rotate(3deg) scale(1.02); }
 }
 
 @keyframes wiggle {
@@ -170,6 +88,13 @@ body::after {
   75% { transform: scale(1.02) rotate(-1deg); }
 }
 
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
+  75% { transform: scale(1.15); }
+}
+
 @keyframes sparkle {
   0%, 100% { opacity: 0.3; transform: scale(0.8); }
   50% { opacity: 1; transform: scale(1.2); }
@@ -181,85 +106,10 @@ body::after {
   70% { transform: translateY(-8px) scale(1.05); }
 }
 
-/* Yeni gelişmiş animasyonlar */
-@keyframes bounce-cat {
-  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
-  25% { transform: translateY(-15px) rotate(-3deg) scale(1.05); }
-  50% { transform: translateY(-25px) rotate(0deg) scale(1.1); }
-  75% { transform: translateY(-10px) rotate(3deg) scale(1.02); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { 
-    box-shadow: 0 0 0 4px rgba(242, 113, 28, 0.3), 0 0 20px rgba(242, 113, 28, 0.2); 
-    transform: scale(1);
-  }
-  50% { 
-    box-shadow: 0 0 0 8px rgba(242, 113, 28, 0.1), 0 0 30px rgba(242, 113, 28, 0.3); 
-    transform: scale(1.02);
-  }
-}
-
-@keyframes gradient-flow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Gelişmiş hover efektleri */
-.enhanced-card {
-  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.8) 100%);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.3);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.enhanced-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.05);
-  border-color: rgba(242, 113, 28, 0.4);
-}
-
-/* Gelişmiş buton animasyonları */
-.fancy-button {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(45deg, #f472b6, #ec4899, #be185d);
-  background-size: 200% 200%;
-  animation: gradient-flow 3s ease infinite;
-}
-
-.fancy-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.5s ease;
-}
-
-.fancy-button:hover::before {
-  left: 100%;
-}
-
-/* Parçacık sistemi iyileştirmeleri */
-.floating-particles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.particle-heart {
-  position: absolute;
-  animation: particleFloat 12s linear infinite;
-  font-size: 1.2rem;
-  opacity: 0.3;
+@keyframes emojiZoom {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5) rotate(10deg); }
+  100% { transform: scale(1); }
 }
 
 @keyframes particleFloat {
@@ -267,31 +117,127 @@ body::after {
     transform: translateY(110vh) rotate(0deg) scale(0.8);
     opacity: 0;
   }
-  10% {
-    opacity: 0.6;
-  }
-  90% {
-    opacity: 0.6;
-  }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
   100% {
     transform: translateY(-50px) rotate(360deg) scale(1.2);
     opacity: 0;
   }
 }
 
-/* Progress bar animasyonları */
-.progress-bar {
-  background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7);
-  background-size: 200% 100%;
-  animation: progress-flow 2s ease infinite;
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(242, 113, 28, 0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(242, 113, 28, 0.1); }
 }
 
-@keyframes progress-flow {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+/* Component Styles */
+@layer components {
+  .cat-card {
+    @apply bg-white/90 backdrop-blur-xl rounded-3xl shadow-soft border border-white/40;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .cat-card:hover {
+    @apply transform -translate-y-2 scale-[1.02] shadow-magic;
+    border-color: rgba(242, 113, 28, 0.4);
+  }
+
+  .cat-input {
+    @apply bg-white/80 border-2 border-cat-200/50 rounded-2xl 
+           focus:border-cat-400 focus:ring-4 focus:ring-cat-200/30 
+           transition-all duration-300 backdrop-blur-sm;
+  }
+
+  .love-button {
+    @apply bg-love-gradient text-white rounded-full shadow-love 
+           hover:shadow-love-glow hover:scale-105 
+           transition-all duration-300 font-medium;
+    background-size: 200% 200%;
+    animation: gradientFlow 3s ease infinite;
+  }
+
+  .love-button::before {
+    content: '';
+    @apply absolute inset-0 rounded-full opacity-0 
+           transition-opacity duration-300;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  .love-button:hover::before {
+    @apply opacity-100;
+  }
+
+  .emoji-interactive {
+    @apply transition-transform duration-300 hover:scale-110 cursor-pointer;
+  }
+
+  .emoji-interactive:hover {
+    animation: emojiZoom 0.5s ease-in-out;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+
+  .hover-glow:hover {
+    filter: drop-shadow(0 0 20px rgba(242, 113, 28, 0.4));
+    transform: translateY(-2px);
+  }
 }
 
-/* Responsive iyileştirmeler */
+/* Enhanced Focus Styles */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  @apply outline-none ring-4 ring-cat-300/60;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* Particle System */
+.floating-particles {
+  @apply fixed inset-0 pointer-events-none z-[1];
+}
+
+.particle-heart {
+  @apply absolute;
+  animation: particleFloat 12s linear infinite;
+  font-size: 1.2rem;
+  opacity: 0.3;
+}
+
+/* Loading Animations */
+.loading-cat {
+  animation: bounce-cat 1.5s ease-in-out infinite;
+}
+
+/* Shimmer Effect */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Gradient Flow */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Text Colors for Better Readability */
+.text-readable { @apply text-gray-800; }
+.text-readable-secondary { @apply text-gray-700; }
+.text-readable-muted { @apply text-gray-600; }
+
+h1, h2, h3, h4, h5, h6 { @apply text-gray-800; }
+
+input, textarea, select { @apply text-gray-800; }
+input::placeholder, textarea::placeholder { @apply text-gray-500; }
+
+a { @apply text-gray-800 hover:text-gray-700; }
+
+/* Responsive Design Enhancements */
 @media (max-width: 640px) {
   .container {
     @apply px-3;
@@ -301,18 +247,20 @@ body::after {
     @apply p-4 rounded-2xl;
   }
   
-  body::before, body::after {
+  .background-decorations::before,
+  .background-decorations::after {
     font-size: clamp(1.5rem, 6vw, 2.5rem);
   }
   
-  .enhanced-card {
-    margin: 0.5rem;
-    padding: 1rem;
+  /* Mobile-specific optimizations */
+  .mobile-optimized {
+    @apply text-sm leading-relaxed;
   }
   
-  .fancy-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.875rem;
+  /* Touch-friendly button sizes */
+  button, .btn {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 
@@ -324,190 +272,87 @@ body::after {
   .cat-card {
     @apply p-5 rounded-3xl;
   }
+  
+  /* Tablet-specific optimizations */
+  .tablet-optimized {
+    @apply text-base leading-relaxed;
+  }
 }
 
 @media (min-width: 1025px) {
-  body::before, body::after {
+  .background-decorations::before,
+  .background-decorations::after {
     font-size: clamp(3rem, 6vw, 5rem);
+  }
+  
+  /* Desktop-specific optimizations */
+  .desktop-optimized {
+    @apply text-lg leading-relaxed;
   }
 }
 
-/* Dark mode iyileştirmeleri */
+/* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
   body {
+    @apply bg-gray-900 text-gray-100;
     background: linear-gradient(135deg, #1f2937 0%, #374151 25%, #4b5563 50%, #6b7280 75%, #9ca3af 100%);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
-    color: #f9fafb;
   }
   
   .cat-card {
-    @apply bg-fur-800/85 border-fur-600/60;
+    @apply bg-gray-800/85 border-gray-600/60;
+  }
+  
+  .text-readable { @apply text-gray-100; }
+  .text-readable-secondary { @apply text-gray-200; }
+  .text-readable-muted { @apply text-gray-400; }
+  
+  h1, h2, h3, h4, h5, h6 { @apply text-gray-100; }
+  input, textarea, select { @apply text-gray-100 bg-gray-700/50; }
+  a { @apply text-gray-100 hover:text-gray-200; }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .background-decorations::before,
+  .background-decorations::after {
+    animation: none;
   }
 }
 
-/* Yeni hover efektleri */
-.hover-glow {
-  transition: all 0.3s ease;
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .cat-card {
+    @apply border-2 border-gray-800;
+  }
+  
+  button, .btn {
+    @apply border-2 border-current;
+  }
 }
 
-.hover-glow:hover {
-  filter: drop-shadow(0 0 20px rgba(242, 113, 28, 0.4));
-  transform: translateY(-2px);
-}
-
-/* Çok sevimli pati izi efekti */
-.paw-trail {
-  position: relative;
-}
-
-.paw-trail::before {
-  content: "🐾";
-  position: absolute;
-  top: -15px;
-  left: -25px;
-  font-size: 1.2rem;
-  opacity: 0.4;
-  animation: float 2s ease-in-out infinite;
-  filter: drop-shadow(0 0 8px rgba(242, 113, 28, 0.3));
-}
-
-/* Loading animasyonları */
-.loading-cat {
-  animation: bounce-cat 1.5s ease-in-out infinite;
-}
-
-/* İnteraktif focus efektleri */
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  @apply outline-none ring-4 ring-cat-300/60;
-  animation: pulseGlow 2s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(242, 113, 28, 0.3); }
-  50% { box-shadow: 0 0 0 8px rgba(242, 113, 28, 0.1); }
-}
-
-/* Son dokunuşlar */
-* {
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              box-shadow 0.2s ease,
-              filter 0.2s ease;
-}
-
-/* Özel emoji büyütme efekti */
-.emoji-zoom:hover {
-  animation: emojiZoom 0.5s ease-in-out;
-}
-
-@keyframes emojiZoom {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.5) rotate(10deg); }
-  100% { transform: scale(1); }
-}
-
-/* Özel metin renkleri - okunabilirlik için */
-.text-readable {
-  color: #1f2937 !important;
-}
-
-.text-readable-secondary {
-  color: #374151 !important;
-}
-
-.text-readable-muted {
-  color: #6b7280 !important;
-}
-
-/* Başlık renkleri düzeltme */
-h1, h2, h3, h4, h5, h6 {
-  color: #1f2937 !important;
-}
-
-/* Form elementleri için koyu metin */
-input, textarea, select {
-  color: #1f2937 !important;
-}
-
-input::placeholder, textarea::placeholder {
-  color: #6b7280 !important;
-}
-
-/* Link renkleri */
-a {
-  color: #1f2937;
-}
-
-a:hover {
-  color: #374151;
-}
-
-/* Button text colors */
-button {
-  color: inherit;
-}
-
-/* Kart içi metinler */
-.card-text {
-  color: #1f2937 !important;
-}
-
-.card-text-secondary {
-  color: #374151 !important;
-}
-
-.card-text-muted {
-  color: #6b7280 !important;
-}
-
-.text-readable-secondary {
-  color: #374151 !important;
-}
-
-.text-readable-muted {
-  color: #6b7280 !important;
-}
-
-/* Başlık renkleri düzeltme */
-h1, h2, h3, h4, h5, h6 {
-  color: #1f2937 !important;
-}
-
-/* Form elementleri için koyu metin */
-input, textarea, select {
-  color: #1f2937 !important;
-}
-
-input::placeholder, textarea::placeholder {
-  color: #6b7280 !important;
-}
-
-/* Link renkleri */
-a {
-  color: #1f2937;
-}
-
-a:hover {
-  color: #374151;
-}
-
-/* Button text colors */
-button {
-  color: inherit;
-}
-
-/* Kart içi metinler */
-.card-text {
-  color: #1f2937 !important;
-}
-
-.card-text-secondary {
-  color: #374151 !important;
-}
-
-.card-text-muted {
-  color: #6b7280 !important;
+/* Print Styles */
+@media print {
+  .background-decorations,
+  .floating-particles,
+  nav,
+  button:not(.print-friendly) {
+    @apply hidden;
+  }
+  
+  .cat-card {
+    @apply shadow-none border border-gray-300;
+  }
+  
+  body {
+    @apply bg-white text-black;
+    background-image: none;
+  }
 }
