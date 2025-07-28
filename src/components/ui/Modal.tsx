@@ -81,6 +81,7 @@ const Modal: React.FC<ModalProps> = ({
         focusManagerRef.current?.restoreFocus();
       };
     }
+    return undefined;
   }, [isOpen]);
 
   // Announce modal opening/closing to screen readers
