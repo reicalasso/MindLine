@@ -176,6 +176,10 @@ body {
     animation: emojiZoom 0.5s ease-in-out;
   }
 
+  .animate-particle-float {
+    animation: particleFloat 12s linear infinite;
+  }
+
   .hover-glow {
     @apply transition-all duration-300;
   }
