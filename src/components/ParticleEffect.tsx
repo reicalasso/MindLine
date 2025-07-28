@@ -56,12 +56,13 @@ const ParticleEffect: React.FC<ParticleEffectProps> = ({
 
     const initialParticles: Particle[] = [];
     const initialCount = Math.min(10, maxParticles);
-    
+
     for (let i = 0; i < initialCount; i++) {
       initialParticles.push(createParticle());
     }
-    
+
     setParticles(initialParticles);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [disabled, maxParticles]); // Removed createParticle from dependencies to prevent infinite loop
 
   // Clean up expired particles and add new ones
