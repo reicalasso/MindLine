@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useInterval } from '../hooks';
 
 interface Particle {
-  id: number;
+  id: string;
   emoji: string;
   left: number;
   delay: number;
@@ -27,6 +27,7 @@ const ParticleEffect: React.FC<ParticleEffectProps> = ({
   disabled = false
 }) => {
   const [particles, setParticles] = useState<Particle[]>([]);
+  const particleCounter = useRef(0);
 
   // Memoized emoji array to prevent unnecessary re-renders
   const particleEmojis = useMemo(() => emojis, [emojis]);
@@ -34,8 +35,10 @@ const ParticleEffect: React.FC<ParticleEffectProps> = ({
   // Create a new particle with random properties
   const createParticle = useCallback((): Particle => {
     const now = Date.now();
+    particleCounter.current += 1;
+    
     return {
-      id: now + Math.random(),
+      id: `particle-${now}-${particleCounter.current}`, // Ensure unique keys
       emoji: particleEmojis[Math.floor(Math.random() * particleEmojis.length)],
       left: Math.random() * 100,
       delay: Math.random() * 4,
@@ -47,16 +50,19 @@ const ParticleEffect: React.FC<ParticleEffectProps> = ({
     };
   }, [particleEmojis]);
 
-  // Initialize particles on mount
+  // Initialize particles on mount - fixed dependency array
   useEffect(() => {
     if (disabled) return;
 
-    const initialParticles: Particle[] = Array.from(
-      { length: Math.min(10, maxParticles) }, 
-      createParticle
-    );
+    const initialParticles: Particle[] = [];
+    const initialCount = Math.min(10, maxParticles);
+    
+    for (let i = 0; i < initialCount; i++) {
+      initialParticles.push(createParticle());
+    }
+    
     setParticles(initialParticles);
-  }, [createParticle, maxParticles, disabled]);
+  }, [disabled, maxParticles]); // Removed createParticle from dependencies to prevent infinite loop
 
   // Clean up expired particles and add new ones
   const updateParticles = useCallback(() => {
@@ -78,7 +84,7 @@ const ParticleEffect: React.FC<ParticleEffectProps> = ({
 
       return activeParticles;
     });
-  }, [createParticle, maxParticles, disabled]);
+  }, [disabled, maxParticles, createParticle]);
 
   // Use custom interval hook for better performance
   useInterval(updateParticles, disabled ? null : spawnRate);
