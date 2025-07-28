@@ -387,7 +387,7 @@ export function useForm<T extends Record<string, any>>(
     isValid,
     setValue,
     setError,
-    setTouched,
+    setTouched: setFieldTouched,
     validate,
     handleSubmit,
     reset
