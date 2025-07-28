@@ -262,6 +262,7 @@ export function useInterval(callback: () => void, delay: number | null) {
         }
       };
     }
+    return undefined;
   }, [delay]);
 
   const clear = useCallback(() => {
