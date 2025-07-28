@@ -463,15 +463,15 @@ export const urlUtils = {
    * Query parametrelerini string'e çevirir
    */
   stringifyQueryParams: (params: Record<string, any>): string => {
-    const searchParams = new URLSearchParams();
-    
+    const pairs: string[] = [];
+
     Object.entries(params).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
-        searchParams.append(key, String(value));
+        pairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`);
       }
     });
-    
-    return searchParams.toString();
+
+    return pairs.join('&');
   }
 };
 
