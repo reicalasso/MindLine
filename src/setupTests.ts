@@ -131,55 +131,7 @@ Object.assign(navigator, {
   },
 });
 
-// Mock URLSearchParams
-global.URLSearchParams = class URLSearchParams {
-  private params: Map<string, string> = new Map();
-  
-  constructor(init?: string | string[][] | Record<string, string> | URLSearchParams) {
-    if (typeof init === 'string') {
-      // Simple implementation for testing
-      const pairs = init.replace(/^\?/, '').split('&');
-      pairs.forEach(pair => {
-        const [key, value] = pair.split('=');
-        if (key) {
-          this.params.set(decodeURIComponent(key), decodeURIComponent(value || ''));
-        }
-      });
-    }
-  }
-  
-  append(name: string, value: string): void {
-    this.params.set(name, value);
-  }
-  
-  delete(name: string): void {
-    this.params.delete(name);
-  }
-  
-  get(name: string): string | null {
-    return this.params.get(name);
-  }
-  
-  has(name: string): boolean {
-    return this.params.has(name);
-  }
-  
-  set(name: string, value: string): void {
-    this.params.set(name, value);
-  }
-  
-  toString(): string {
-    const pairs: string[] = [];
-    this.params.forEach((value, key) => {
-      pairs.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-    });
-    return pairs.join('&');
-  }
-  
-  *[Symbol.iterator](): Iterator<[string, string]> {
-    yield* this.params;
-  }
-};
+// URLSearchParams is available in modern Node.js, no need to mock
 
 // Mock console methods for cleaner test output
 const originalError = console.error;
