@@ -68,6 +68,7 @@ const Modal: React.FC<ModalProps> = ({
       document.addEventListener('keydown', handleEscape);
       return () => document.removeEventListener('keydown', handleEscape);
     }
+    return undefined;
   }, [isOpen, closeOnEsc, onClose]);
 
   // Manage focus
