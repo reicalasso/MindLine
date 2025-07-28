@@ -128,9 +128,10 @@ export const LoadingAnnouncement: React.FC<LoadingAnnouncementProps> = ({
       const timer = setTimeout(() => {
         setAnnouncement('');
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [announcement]);
 
   if (!announcement) return null;
