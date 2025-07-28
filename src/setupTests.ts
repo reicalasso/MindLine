@@ -105,13 +105,23 @@ Object.defineProperty(window, 'sessionStorage', {
 });
 
 // Mock window.location
-delete (window as any).location;
-window.location = {
-  ...window.location,
-  assign: jest.fn(),
-  replace: jest.fn(),
-  reload: jest.fn(),
-};
+Object.defineProperty(window, 'location', {
+  value: {
+    href: 'http://localhost:3000',
+    origin: 'http://localhost:3000',
+    protocol: 'http:',
+    host: 'localhost:3000',
+    hostname: 'localhost',
+    port: '3000',
+    pathname: '/',
+    search: '',
+    hash: '',
+    assign: jest.fn(),
+    replace: jest.fn(),
+    reload: jest.fn(),
+  },
+  writable: true,
+});
 
 // Mock navigator.clipboard
 Object.assign(navigator, {
