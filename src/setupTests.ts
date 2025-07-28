@@ -184,7 +184,7 @@ expect.extend({
 });
 
 // Global test helpers
-global.testUtils = {
+(global as any).testUtils = {
   // Helper to wait for async operations
   waitForAsync: () => new Promise(resolve => setTimeout(resolve, 0)),
   
