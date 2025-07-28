@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'development') {
       console.log('🚀 Performance Metrics:', {
         'DOM Content Loaded': `${Math.round(navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart)}ms`,
         'Load Complete': `${Math.round(navigation.loadEventEnd - navigation.loadEventStart)}ms`,
-        'Total Load Time': `${Math.round(navigation.loadEventEnd - navigation.navigationStart)}ms`,
+        'Total Load Time': `${Math.round(navigation.loadEventEnd - navigation.fetchStart)}ms`,
         'DNS Lookup': `${Math.round(navigation.domainLookupEnd - navigation.domainLookupStart)}ms`,
         'TCP Connection': `${Math.round(navigation.connectEnd - navigation.connectStart)}ms`,
         'Server Response': `${Math.round(navigation.responseEnd - navigation.responseStart)}ms`
