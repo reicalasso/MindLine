@@ -230,6 +230,7 @@ export function useTimeout(callback: () => void, delay: number | null) {
         }
       };
     }
+    return undefined;
   }, [delay]);
 
   const clear = useCallback(() => {
