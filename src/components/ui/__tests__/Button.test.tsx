@@ -74,12 +74,11 @@ describe('Button Component', () => {
   });
 
   test('does not call onClick when loading', async () => {
-    const user = userEvent.setup();
     const handleClick = jest.fn();
-    
+
     render(<Button loading onClick={handleClick}>Loading</Button>);
-    
-    await user.click(screen.getByRole('button'));
+
+    await userEvent.click(screen.getByRole('button'));
     expect(handleClick).not.toHaveBeenCalled();
   });
 
