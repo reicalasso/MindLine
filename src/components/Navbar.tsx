@@ -256,8 +256,8 @@ export default function Navbar() {
                           to={item.path}
                           className={`flex items-center space-x-3 px-4 py-3 text-sm rounded-2xl transition-all duration-200 hover-glow ${
                             location.pathname === item.path
-                              ? 'bg-cat-gradient text-gray-800 shadow-soft'
-                              : 'text-gray-700 hover:bg-cat-50 hover:text-gray-800'
+                              ? (currentTheme.id === 'cyberpunk' ? 'bg-cyber-red text-cyber-primary shadow-cyber' : 'bg-cat-gradient text-gray-800 shadow-soft')
+                              : (currentTheme.id === 'cyberpunk' ? 'text-cyber-primary hover:bg-cyber-100 hover:text-cyber-secondary' : 'text-gray-700 hover:bg-cat-50 hover:text-gray-800')
                           }`}
                           onClick={() => setOpenCategory(null)}
                         >
