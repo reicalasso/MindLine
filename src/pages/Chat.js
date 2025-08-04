@@ -682,8 +682,8 @@ export default function Chat() {
                     <div
                       className={`px-3 py-2 rounded-2xl shadow-soft group relative break-words ${
                         isMyMessage(message)
-                          ? 'bg-paw-gradient text-white'
-                          : 'bg-white border border-romantic-200 text-gray-800'
+                          ? (currentTheme.id === 'cyberpunk' ? 'bg-cyber-red text-cyber-primary' : 'bg-paw-gradient text-white')
+                          : (currentTheme.id === 'cyberpunk' ? 'bg-cyber-100 border border-cyber-secondary text-cyber-primary' : 'bg-white border border-romantic-200 text-gray-800')
                       }`}
                       style={{
                         wordBreak: 'break-word',
