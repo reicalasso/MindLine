@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Heart, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -11,6 +13,7 @@ export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const { login, signup } = useAuth();
+  const { currentTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -51,7 +54,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cat-gradient px-4 py-6 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className={`min-h-screen flex items-center justify-center ${currentTheme.styles.backgroundClass} px-4 py-6 sm:px-6 lg:px-8 relative overflow-hidden`}>
       {/* Arka plan süslemeleri */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-10 left-10 text-4xl sm:text-6xl opacity-10 animate-float">😺</div>
@@ -63,7 +66,7 @@ export default function Login() {
       </div>
 
       <div className="max-w-md w-full relative z-10">
-        <div className="cat-card p-6 sm:p-8 lg:p-10 border-2 border-cat-300/30">
+        <div className={`${currentTheme.styles.cardClass} p-6 sm:p-8 lg:p-10 border-2 border-opacity-30`} style={{ borderColor: currentTheme.colors.border + '50' }}>
           {/* Logo ve başlık */}
           <div className="text-center mb-6 sm:mb-8">
             <div className="flex justify-center mb-4 sm:mb-6">
@@ -72,14 +75,14 @@ export default function Login() {
                 <span className="absolute -top-2 -right-2 text-2xl sm:text-3xl animate-wiggle">💕</span>
               </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-cat text-cat-700 mb-2 sm:mb-4">
+            <h1 className={`text-3xl sm:text-4xl lg:text-5xl font-cat ${currentTheme.styles.textClass} mb-2 sm:mb-4`}>
               MindLine
             </h1>
             <div className="flex items-center justify-center space-x-2 mb-2">
-              <span className="text-sm sm:text-base text-cat-500 font-elegant">Kedili Aşk Dünyası</span>
+              <span className={`text-sm sm:text-base font-elegant`} style={{ color: currentTheme.colors.textSecondary }}>Kedili Aşk Dünyası</span>
               <span className="animate-wiggle">🐾</span>
             </div>
-            <p className="text-cat-600 font-elegant text-sm sm:text-base lg:text-lg">
+            <p className={`font-elegant text-sm sm:text-base lg:text-lg`} style={{ color: currentTheme.colors.textSecondary }}>
               Sadece ikimizin özel kedili alanı
               <span className="inline-block animate-purr ml-2">💖</span>
             </p>
@@ -88,16 +91,16 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             {/* Email input */}
             <div>
-              <label className="block text-sm font-medium text-cat-700 mb-2 font-elegant">
+              <label className={`block text-sm font-medium mb-2 font-elegant ${currentTheme.styles.textClass}`}>
                 🐱 E-posta Adresi
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-cat-400" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: currentTheme.colors.textSecondary }} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="cat-input w-full pl-10 pr-4 py-3 sm:py-4 font-elegant text-sm sm:text-base"
+                  className={`${currentTheme.styles.inputClass} w-full pl-10 pr-4 py-3 sm:py-4 font-elegant text-sm sm:text-base`}
                   placeholder="kedici@example.com"
                   required
                 />
@@ -106,23 +109,24 @@ export default function Login() {
 
             {/* Password input */}
             <div>
-              <label className="block text-sm font-medium text-cat-700 mb-2 font-elegant">
+              <label className={`block text-sm font-medium mb-2 font-elegant ${currentTheme.styles.textClass}`}>
                 🔐 Şifre
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-cat-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: currentTheme.colors.textSecondary }} />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="cat-input w-full pl-10 pr-12 py-3 sm:py-4 font-elegant text-sm sm:text-base"
+                  className={`${currentTheme.styles.inputClass} w-full pl-10 pr-12 py-3 sm:py-4 font-elegant text-sm sm:text-base`}
                   placeholder="••••••••"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-cat-400 hover:text-cat-600 transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors"
+                  style={{ color: currentTheme.colors.textSecondary }}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -133,7 +137,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full love-button py-3 sm:py-4 text-base sm:text-lg font-cat disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+              className={`w-full ${currentTheme.styles.buttonClass} py-3 sm:py-4 text-base sm:text-lg font-cat disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden`}
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -155,7 +159,8 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-cat-600 hover:text-cat-700 text-sm sm:text-base font-elegant transition-colors paw-trail"
+              className={`text-sm sm:text-base font-elegant transition-colors paw-trail`}
+              style={{ color: currentTheme.colors.textSecondary }}
             >
               {isLogin ? (
                 <span>Kedili dünyaya katıl 🐾</span>
@@ -166,14 +171,14 @@ export default function Login() {
           </div>
 
           {/* Security note */}
-          <div className="mt-6 sm:mt-8 text-center bg-cat-50 rounded-xl p-3 sm:p-4 border border-cat-200/50">
+          <div className="mt-6 sm:mt-8 text-center rounded-xl p-3 sm:p-4 border border-opacity-50" style={{ backgroundColor: currentTheme.colors.accent + '30', borderColor: currentTheme.colors.border + '50' }}>
             <div className="flex items-center justify-center space-x-2 mb-2">
               <span className="text-lg">🔒</span>
-              <span className="text-xs sm:text-sm text-cat-600 font-elegant font-medium">
+              <span className={`text-xs sm:text-sm font-elegant font-medium`} style={{ color: currentTheme.colors.textSecondary }}>
                 Güvenli Kedili Alan
               </span>
             </div>
-            <p className="text-xs text-cat-500 font-elegant">
+            <p className={`text-xs font-elegant`} style={{ color: currentTheme.colors.textSecondary }}>
               Bu uygulama sadece özel kullanım içindir
               <span className="animate-wiggle inline-block ml-1">🐾</span>
             </p>
@@ -182,7 +187,7 @@ export default function Login() {
 
         {/* Footer cute message */}
         <div className="text-center mt-4 sm:mt-6">
-          <p className="text-cat-600 font-elegant text-xs sm:text-sm">
+          <p className={`font-elegant text-xs sm:text-sm`} style={{ color: currentTheme.colors.textSecondary }}>
             <span className="animate-float inline-block mr-1">😻</span>
             Kedilerle dolu aşk dolu anılar seni bekliyor
             <span className="animate-float inline-block ml-1">💕</span>
