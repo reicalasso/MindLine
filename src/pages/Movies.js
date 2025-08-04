@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-  collection, 
-  addDoc, 
-  getDocs, 
-  deleteDoc, 
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
   updateDoc,
-  doc, 
-  orderBy, 
+  doc,
   query,
   where,
-  serverTimestamp 
+  serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { 
