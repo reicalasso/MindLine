@@ -85,7 +85,7 @@ export default function Dashboard() {
         getDocs(collection(db, 'gallery')),
         getDocs(collection(db, 'messages')),
         getDocs(query(collection(db, 'letters'), orderBy('createdAt', 'desc'), limit(8))),
-        getDocs(query(collection(db, 'calendar'), where('date', '>=', new Date()), orderBy('date', 'asc'), limit(5)))
+        getDocs(collection(db, 'calendar'))
       ];
 
       const [
