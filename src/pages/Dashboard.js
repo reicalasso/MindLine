@@ -11,15 +11,14 @@ import {
   getDocs 
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { 
-  Heart, 
-  Mail, 
-  Film, 
-  CheckSquare, 
-  Music, 
-  Calendar, 
+import {
+  Heart,
+  Mail,
+  Film,
+  CheckSquare,
+  Music,
+  Calendar,
   Camera,
-  Plus,
   Clock,
   Star,
   MessageCircle,
@@ -30,15 +29,8 @@ import {
   Target,
   Award,
   Activity,
-  BookOpen,
   Gift,
-  Users,
-  MapPin,
-  Coffee,
-  Sunrise,
-  Moon,
-  Sun,
-  Sunset
+  Users
 } from 'lucide-react';
 
 export default function Dashboard() {
