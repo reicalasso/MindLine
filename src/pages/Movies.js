@@ -62,17 +62,23 @@ export default function Movies() {
         collection(db, 'movies'),
         where('author', '==', currentUser?.uid || '')
       ));
-      // Veriyi al ve tarih bazlı sırala
-      const moviesData = snapshot.docs.map(doc => ({
+      // Veriyi al, activeTab'a göre filtrele ve tarih bazlı sırala
+      const allMovies = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
-      moviesData.sort((a, b) => {
+
+      // Client-side filtering - aktif tab'a göre filtrele
+      const filteredMovies = allMovies.filter(movie => movie.status === activeTab);
+
+      // Client-side sorting - tarihe göre sırala
+      filteredMovies.sort((a, b) => {
         const aDate = a.date?.toDate?.() || new Date(0);
         const bDate = b.date?.toDate?.() || new Date(0);
         return bDate - aDate;
       });
-      setMovies(moviesData);
+
+      setMovies(filteredMovies);
     } catch (error) {
       console.error('Filmler yüklenirken hata:', error);
       toast.error('Filmler yüklenemedi: ' + (error.message || ''));
