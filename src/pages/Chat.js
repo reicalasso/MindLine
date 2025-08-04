@@ -828,8 +828,12 @@ export default function Chat() {
               <textarea
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : "Mesajınızı yazın... 💕"}
-                className="w-full px-3 py-2 pr-10 border border-romantic-200 rounded-xl focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/70 text-gray-800 font-elegant font-medium resize-none text-sm"
+                placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : (currentTheme.id === 'cyberpunk' ? "NEURAL_MESSAGE_INPUT..." : "Mesajınızı yazın... 💕")}
+                className={`w-full px-3 py-2 pr-10 border rounded-xl focus:ring-2 focus:border-transparent font-medium resize-none text-sm ${
+                  currentTheme.id === 'cyberpunk'
+                    ? 'border-cyber-secondary focus:ring-cyber-primary bg-cyber-100/70 text-cyber-primary font-mono'
+                    : 'border-romantic-200 focus:ring-romantic-500 bg-white/70 text-gray-800 font-elegant'
+                }`}
                 rows="1"
                 style={{ minHeight: '40px', maxHeight: '80px' }}
                 onInput={(e) => {
