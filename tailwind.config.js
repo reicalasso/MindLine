@@ -76,6 +76,24 @@ module.exports = {
           700: '#7c3aed',
           800: '#6b21a8',
           900: '#581c87',
+        },
+        // Cyberpunk renkler
+        cyber: {
+          50: '#1a1a1a',
+          100: '#2a2a2a',
+          200: '#3a3a3a',
+          300: '#4a4a4a',
+          400: '#5a5a5a',
+          500: '#6a6a6a',
+          600: '#7a7a7a',
+          700: '#8a8a8a',
+          800: '#9a9a9a',
+          900: '#aaaaaa',
+          primary: '#00ffff',
+          secondary: '#ff0040',
+          accent: '#b000ff',
+          neon: '#00ff00',
+          glow: '#ff00ff',
         }
       },
       backgroundImage: {
