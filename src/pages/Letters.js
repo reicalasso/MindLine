@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { 
   collection, 
   addDoc, 
@@ -96,7 +97,7 @@ export default function Letters() {
     e.preventDefault();
     
     if (!formData.title.trim() || !formData.content.trim()) {
-      toast.error('Başlık ve içerik boş bırakılamaz');
+      toast.error('Başlık ve i��erik boş bırakılamaz');
       return;
     }
 
