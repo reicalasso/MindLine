@@ -57,21 +57,11 @@ export default function Movies() {
   const fetchMovies = async () => {
     setLoading(true);
     try {
-      let snapshot;
-      try {
-        // Önce firestore üzerinden status + date ile sıralı sorgu dene
-        snapshot = await getDocs(query(
-          collection(db, 'movies'),
-          where('status', '==', activeTab),
-          orderBy('date', 'desc')
-        ));
-      } catch (err) {
-        console.error('Ordered query failed, fallback:', err);
-        // İndeks yoksa tümünü çek, client-side filtrele ve sırala
-        const allSnap = await getDocs(collection(db, 'movies'));
-        const filtered = allSnap.docs.filter(d => d.data().status === activeTab);
-        snapshot = { docs: filtered };
-      }
+      // Sadece kullanıcının filmlerini al - index gerektirmeyen basit query
+      const snapshot = await getDocs(query(
+        collection(db, 'movies'),
+        where('author', '==', currentUser?.uid || '')
+      ));
       // Veriyi al ve tarih bazlı sırala
       const moviesData = snapshot.docs.map(doc => ({
         id: doc.id,
