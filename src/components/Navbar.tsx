@@ -353,7 +353,7 @@ export default function Navbar() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className={`text-2xl emoji-interactive ${currentTheme.id === 'cyberpunk' ? 'text-cyber-primary animate-neon-flicker' : ''}`}>
+                    <span className={`text-2xl emoji-interactive ${currentTheme.id === 'cyberpunk' ? 'text-cyber-primary' : ''}`}>
                       {currentTheme.id === 'cyberpunk' ? '🤖' : (profileData?.favoriteEmoji || '😺')}
                     </span>
                   )}

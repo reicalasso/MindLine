@@ -94,17 +94,17 @@ export default function ThemeToggle({
                     className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl transition-all duration-200 text-left border-2 ${
                       themeMode === theme.id
                         ? (currentTheme.id === 'cyberpunk' 
-                          ? 'bg-cyber-red border-cyber-primary shadow-neon-red' 
+                          ? 'bg-cyber-red border-cyber-primary' 
                           : 'bg-gradient-to-r from-purple-100 to-pink-100 border-purple-300 shadow-md')
                         : (currentTheme.id === 'cyberpunk'
-                          ? 'hover:bg-cyber-100 border-cyber-accent/30 hover:border-cyber-secondary hover:shadow-neon-purple' 
+                          ? 'hover:bg-cyber-100 border-cyber-accent/30 hover:border-cyber-secondary' 
                           : 'hover:bg-gray-50 border-transparent')
                     } ${theme.id === 'cyberpunk' ? 'animate-circuit-pulse' : ''}`}
                   >
                     {/* Tema önizleme kutusu */}
                     <div 
                       className={`w-8 h-8 rounded-lg border-2 shadow-sm flex items-center justify-center text-lg ${
-                        theme.id === 'cyberpunk' ? 'border-cyber-primary animate-neon-flicker' : 'border-white'
+                        theme.id === 'cyberpunk' ? 'border-cyber-primary' : 'border-white'
                       }`}
                       style={{ 
                         background: theme.id === 'cyberpunk' 
@@ -114,7 +114,7 @@ export default function ThemeToggle({
                             : theme.colors.background)
                       }}
                     >
-                      <span className={`animate-wiggle ${theme.id === 'cyberpunk' ? 'text-cyber-primary animate-cyber-glow' : ''}`}>
+                      <span className={`animate-wiggle ${theme.id === 'cyberpunk' ? 'text-cyber-primary' : ''}`}>
                         {theme.emoji}
                       </span>
                     </div>
@@ -131,7 +131,7 @@ export default function ThemeToggle({
                         {themeMode === theme.id && (
                           <span className={`text-xs px-2 py-1 rounded-full ${
                             currentTheme.id === 'cyberpunk'
-                              ? 'bg-cyber-red text-cyber-primary font-mono animate-neon-flicker'
+                              ? 'bg-cyber-red text-cyber-primary font-mono'
                               : 'bg-purple-200 text-purple-800'
                           }`}>
                             {currentTheme.id === 'cyberpunk' ? 'ACTIVE' : 'Aktif'}
@@ -150,19 +150,19 @@ export default function ThemeToggle({
                 ))}
               </div>
               
-              {/* Theme info */}
+              {/* Theme info - simplified animations */}
               <div className={`mt-3 p-3 rounded-xl border ${
                 currentTheme.id === 'cyberpunk' 
-                  ? 'bg-gradient-to-r from-cyber-matrix/50 to-cyber-red/30 border-cyber-primary/50 shadow-neon-blue animate-hologram' 
+                  ? 'bg-gradient-to-r from-cyber-matrix/50 to-cyber-red/30 border-cyber-primary/50' 
                   : 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200'
               }`}>
                 <div className="flex items-center space-x-2 mb-1">
-                  <span className={`text-sm ${currentTheme.id === 'cyberpunk' ? 'animate-neon-flicker' : ''}`}>
+                  <span className="text-sm">
                     {currentTheme.id === 'cyberpunk' ? '⚡' : '✨'}
                   </span>
                   <span className={`text-xs font-medium ${
                     currentTheme.id === 'cyberpunk' 
-                      ? 'text-cyber-primary font-mono animate-cyber-glow' 
+                      ? 'text-cyber-primary font-mono' 
                       : 'text-purple-800'
                   }`}>
                     {currentTheme.id === 'cyberpunk' ? 'ACTIVE_THEME.exe' : 'Şu anki tema'}
@@ -177,15 +177,15 @@ export default function ThemeToggle({
                 </p>
                 {currentTheme.id === 'cyberpunk' && (
                   <>
-                    <div className="mt-2 text-xs text-cyber-secondary font-mono opacity-70 animate-data-stream">
+                    <div className="mt-2 text-xs text-cyber-secondary font-mono opacity-70">
                       &gt; Neural_interface.connected()
                     </div>
                     <div className="mt-1 text-xs text-cyber-accent font-mono opacity-60">
-                      &gt; Reality.hacked = true
+                      &gt; Performance_mode.enabled
                     </div>
                     <div className="mt-1 flex items-center space-x-1">
                       <div className="w-2 h-2 bg-cyber-green rounded-full animate-pulse"></div>
-                      <span className="text-xs text-cyber-green font-mono">SYSTEM_ONLINE</span>
+                      <span className="text-xs text-cyber-green font-mono">OPTIMIZED</span>
                     </div>
                   </>
                 )}

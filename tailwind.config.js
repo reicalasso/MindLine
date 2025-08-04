@@ -144,13 +144,15 @@ module.exports = {
         'particle-float': 'particleFloat 8s linear infinite',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'emoji-zoom': 'emojiZoom 0.5s ease-in-out',
-        'cyber-glow': 'cyberGlow 2s ease-in-out infinite',
-        'glitch': 'glitch 0.5s infinite',
-        'neon-flicker': 'neonFlicker 1.5s infinite',
-        'data-stream': 'dataStream 20s linear infinite',
-        'matrix-rain': 'matrixRain 10s linear infinite',
-        'hologram': 'hologram 3s ease-in-out infinite',
-        'circuit-pulse': 'circuitPulse 2s ease-in-out infinite',
+        'cyber-glow': 'cyberGlow 3s ease-in-out infinite',
+        'glitch': 'glitch 0.8s infinite',
+        'neon-flicker': 'neonFlicker 2s infinite',
+        'data-stream': 'dataStream 25s linear infinite',
+        'matrix-rain': 'matrixRain 15s linear infinite',
+        'hologram': 'hologram 4s ease-in-out infinite',
+        'circuit-pulse': 'circuitPulse 3s ease-in-out infinite',
+        'cyber-glow-lite': 'cyberGlowLite 4s ease-in-out infinite',
+        'neon-flicker-lite': 'neonFlickerLite 3s infinite',
       },
       keyframes: {
         'bounce-cat': {
@@ -213,49 +215,54 @@ module.exports = {
         },
         cyberGlow: {
           '0%, 100%': {
-            boxShadow: '0 0 5px #ff0040, 0 0 10px #ff0040, 0 0 15px #ff0040',
-            textShadow: '0 0 5px #ff0040, 0 0 10px #ff0040'
+            boxShadow: '0 0 3px #ff0040, 0 0 6px #ff0040',
+            textShadow: '0 0 3px #ff0040'
           },
-          '33%': {
-            boxShadow: '0 0 5px #b000ff, 0 0 10px #b000ff, 0 0 15px #b000ff',
-            textShadow: '0 0 5px #b000ff, 0 0 10px #b000ff'
+          '50%': {
+            boxShadow: '0 0 6px #00ffff, 0 0 12px #00ffff',
+            textShadow: '0 0 6px #00ffff'
           },
-          '66%': {
-            boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff',
-            textShadow: '0 0 5px #00ffff, 0 0 10px #00ffff'
+        },
+        cyberGlowLite: {
+          '0%, 100%': {
+            textShadow: '0 0 3px currentColor'
+          },
+          '50%': {
+            textShadow: '0 0 6px currentColor'
           },
         },
         glitch: {
           '0%, 100%': { transform: 'translate(0)' },
-          '20%': { transform: 'translate(-2px, 2px)' },
-          '40%': { transform: 'translate(-2px, -2px)' },
-          '60%': { transform: 'translate(2px, 2px)' },
-          '80%': { transform: 'translate(2px, -2px)' },
+          '25%': { transform: 'translate(-1px, 1px)' },
+          '50%': { transform: 'translate(1px, -1px)' },
+          '75%': { transform: 'translate(-1px, -1px)' },
         },
         neonFlicker: {
-          '0%, 100%': { opacity: '1', textShadow: '0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor' },
-          '50%': { opacity: '0.8', textShadow: '0 0 2px currentColor' },
-          '75%': { opacity: '0.9', textShadow: '0 0 7px currentColor' },
+          '0%, 100%': { opacity: '1', textShadow: '0 0 3px currentColor, 0 0 6px currentColor' },
+          '25%': { opacity: '0.9', textShadow: '0 0 2px currentColor' },
+          '50%': { opacity: '0.95', textShadow: '0 0 4px currentColor' },
+        },
+        neonFlickerLite: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.9' },
         },
         dataStream: {
-          '0%': { transform: 'translateY(100vh) rotate(0deg)', opacity: '0' },
-          '10%': { opacity: '0.8' },
-          '90%': { opacity: '0.8' },
-          '100%': { transform: 'translateY(-100px) rotate(360deg)', opacity: '0' },
+          '0%': { transform: 'translateY(100vh)', opacity: '0' },
+          '5%': { opacity: '0.6' },
+          '95%': { opacity: '0.6' },
+          '100%': { transform: 'translateY(-50px)', opacity: '0' },
         },
         matrixRain: {
-          '0%': { transform: 'translateY(-100vh)', opacity: '1' },
+          '0%': { transform: 'translateY(-50vh)', opacity: '0.8' },
           '100%': { transform: 'translateY(100vh)', opacity: '0' },
         },
         hologram: {
-          '0%, 100%': { transform: 'skew(0deg, 0deg)', filter: 'hue-rotate(0deg)' },
-          '25%': { transform: 'skew(1deg, 1deg)', filter: 'hue-rotate(90deg)' },
-          '50%': { transform: 'skew(0deg, 1deg)', filter: 'hue-rotate(180deg)' },
-          '75%': { transform: 'skew(1deg, 0deg)', filter: 'hue-rotate(270deg)' },
+          '0%, 100%': { transform: 'skew(0deg, 0deg)' },
+          '50%': { transform: 'skew(0.3deg, 0.3deg)' },
         },
         circuitPulse: {
-          '0%, 100%': { borderColor: 'rgba(0, 255, 255, 0.3)', boxShadow: '0 0 5px rgba(0, 255, 255, 0.3)' },
-          '50%': { borderColor: 'rgba(255, 0, 64, 0.6)', boxShadow: '0 0 15px rgba(255, 0, 64, 0.5), 0 0 25px rgba(255, 0, 64, 0.3)' },
+          '0%, 100%': { borderColor: 'rgba(0, 255, 255, 0.3)' },
+          '50%': { borderColor: 'rgba(255, 0, 64, 0.4)' },
         },
       },
       screens: {

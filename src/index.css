@@ -23,16 +23,17 @@ body {
   position: relative;
 }
 
-/* Cyberpunk body theme */
+/* Optimized Cyberpunk Body Theme */
 body.theme-cyberpunk {
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 25%, #0a1a1a 50%, #1a0a0a 75%, #0a0a0a 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 20s ease infinite;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 50%, #0a0a0a 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 30s ease infinite;
   color: #00ffff;
   font-family: 'Courier New', monospace;
   position: relative;
 }
 
+/* Simplified background effects for performance */
 body.theme-cyberpunk::before {
   content: '';
   position: fixed;
@@ -44,17 +45,23 @@ body.theme-cyberpunk::before {
     repeating-linear-gradient(
       0deg,
       transparent,
-      transparent 2px,
-      rgba(0, 255, 255, 0.03) 2px,
-      rgba(0, 255, 255, 0.03) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 2px,
-      rgba(255, 0, 64, 0.03) 2px,
-      rgba(255, 0, 64, 0.03) 4px
+      transparent 4px,
+      rgba(0, 255, 255, 0.02) 4px,
+      rgba(0, 255, 255, 0.02) 6px
     );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Simplified after effect */
+body.theme-cyberpunk::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 70%);
   pointer-events: none;
   z-index: 1;
 }
@@ -220,96 +227,68 @@ body.theme-cyberpunk::after {
   50% { box-shadow: 0 0 0 8px rgba(242, 113, 28, 0.1); }
 }
 
-/* Enhanced Cyberpunk Animations */
-@keyframes cyber-glow {
+/* Optimized Cyberpunk Animations */
+@keyframes cyber-glow-lite {
   0%, 100% {
-    box-shadow: 
-      0 0 5px #00ffff, 
-      0 0 10px #00ffff, 
-      0 0 15px #00ffff,
-      inset 0 0 5px rgba(0, 255, 255, 0.2);
-    text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
-  }
-  25% {
-    box-shadow: 
-      0 0 5px #ff0040, 
-      0 0 10px #ff0040, 
-      0 0 20px #ff0040,
-      inset 0 0 5px rgba(255, 0, 64, 0.2);
-    text-shadow: 0 0 5px #ff0040, 0 0 10px #ff0040;
+    text-shadow: 0 0 3px currentColor;
   }
   50% {
-    box-shadow: 
-      0 0 5px #b000ff, 
-      0 0 10px #b000ff, 
-      0 0 15px #b000ff,
-      inset 0 0 5px rgba(176, 0, 255, 0.2);
-    text-shadow: 0 0 5px #b000ff, 0 0 10px #b000ff;
-  }
-  75% {
-    box-shadow: 
-      0 0 5px #00ff41, 
-      0 0 10px #00ff41, 
-      0 0 15px #00ff41,
-      inset 0 0 5px rgba(0, 255, 65, 0.2);
-    text-shadow: 0 0 5px #00ff41, 0 0 10px #00ff41;
+    text-shadow: 0 0 6px currentColor;
   }
 }
 
-@keyframes matrix-rain {
-  0% {
-    transform: translateY(-100vh);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
+/* Simplified glitch effect */
+@keyframes glitch-lite {
+  0%, 100% { transform: translate(0); }
+  25% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, -1px); }
 }
 
-@keyframes hologram {
-  0%, 100% {
-    transform: skew(0deg, 0deg);
-    filter: hue-rotate(0deg) brightness(1);
-  }
-  25% {
-    transform: skew(0.5deg, 0.2deg);
-    filter: hue-rotate(90deg) brightness(1.1);
-  }
-  50% {
-    transform: skew(0deg, 0.5deg);
-    filter: hue-rotate(180deg) brightness(0.9);
-  }
-  75% {
-    transform: skew(0.2deg, 0deg);
-    filter: hue-rotate(270deg) brightness(1.05);
-  }
+/* Optimized neon flicker */
+@keyframes neon-flicker-lite {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.9; }
 }
 
-@keyframes circuit-pulse {
-  0%, 100% {
-    border-color: rgba(0, 255, 255, 0.3);
-    box-shadow: 
-      0 0 5px rgba(0, 255, 255, 0.3),
-      inset 0 0 5px rgba(0, 255, 255, 0.1);
-  }
-  50% {
-    border-color: rgba(255, 0, 64, 0.6);
-    box-shadow: 
-      0 0 15px rgba(255, 0, 64, 0.5),
-      0 0 25px rgba(255, 0, 64, 0.3),
-      inset 0 0 10px rgba(255, 0, 64, 0.2);
-  }
+/* Performance-optimized cyber components */
+.cyber-card-lite {
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(42, 42, 42, 0.9) 100%);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-/* Theme Support */
-:root {
-  --theme-primary: #f21c1cff;
-  --theme-secondary: #f8b668;
-  --theme-accent: #fbd2a2;
-  --theme-text: #374151;
-  --theme-text-secondary: #6b7280;
-  --theme-border: #f8b668;
+.cyber-card-lite:hover {
+  border-color: #ff0040;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(255, 0, 64, 0.2);
+}
+
+/* Simplified cyber button */
+.cyber-button-lite {
+  background: linear-gradient(45deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 64, 0.1));
+  border: 1px solid var(--cyber-primary);
+  color: var(--cyber-primary);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.cyber-button-lite:hover {
+  background: linear-gradient(45deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 64, 0.2));
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Optimized text effects */
+.text-cyber-primary-lite {
+  color: #00ffff !important;
+  text-shadow: 0 0 3px #00ffff;
+}
+
+.text-cyber-secondary-lite {
+  color: #ff0040 !important;
+  text-shadow: 0 0 3px #ff0040;
 }
 
 /* Theme Classes */
@@ -1271,6 +1250,26 @@ a { @apply text-gray-800 hover:text-gray-700; }
     @apply border-2 border-current;
   }
 }
+
+/* Print Styles */
+@media print {
+  .background-decorations,
+  .floating-particles,
+  nav,
+  button:not(.print-friendly) {
+    @apply hidden;
+  }
+  
+  .cat-card {
+    @apply shadow-none border border-gray-300;
+  }
+  
+  body {
+    @apply bg-white text-black;
+    background-image: none;
+  }
+}
+
 
 /* Print Styles */
 @media print {
