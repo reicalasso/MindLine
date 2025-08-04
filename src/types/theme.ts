@@ -27,7 +27,7 @@ export interface Theme {
   };
 }
 
-export type ThemeMode = 'cat' | 'romantic' | 'magic' | 'fur' | 'pink';
+export type ThemeMode = 'cat' | 'romantic' | 'magic' | 'fur' | 'pink' | 'cyberpunk';
 
 export const themes: Record<ThemeMode, Theme> = {
   cat: {
@@ -158,6 +158,32 @@ export const themes: Record<ThemeMode, Theme> = {
       backgroundClass: 'bg-fur-gradient',
       textClass: 'text-fur-700',
       decorationClass: 'fur-decoration-1'
+    }
+  },
+  cyberpunk: {
+    id: 'cyberpunk',
+    name: 'Cyberpunk Tema',
+    emoji: '🤖',
+    description: 'Futuristik cyberpunk tema',
+    colors: {
+      primary: '#ff0040',
+      secondary: '#b000ff',
+      accent: '#00ffff',
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 25%, #0a1a1a 50%, #1a0a0a 75%, #0a0a0a 100%)',
+      surface: '#1a1a1a',
+      text: '#00ffff',
+      textSecondary: '#ff0040',
+      border: '#ff0040',
+      gradient: 'bg-cyberpunk-gradient',
+      shadow: 'shadow-cyber'
+    },
+    styles: {
+      cardClass: 'cyber-card',
+      buttonClass: 'cyber-button',
+      inputClass: 'cyber-input',
+      backgroundClass: 'bg-cyberpunk-gradient',
+      textClass: 'text-cyber-primary',
+      decorationClass: 'cyber-decoration-1 cyber-decoration-2'
     }
   }
 };
