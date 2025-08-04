@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import {
   collection,
   addDoc,
@@ -403,7 +404,7 @@ export default function Chat() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  // Link preview için yardımcı fonksiyon
+  // Link preview için yard��mcı fonksiyon
   const fetchLinkPreview = async (url) => {
     try {
       // jsonlink.io API ile önizleme al
