@@ -205,7 +205,7 @@ export default function Letters() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Klasör Sidebar */}
         <div className="md:col-span-1">
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-romantic-200">
+          <div className={`${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/90 border-cyber-secondary shadow-cyber' : 'bg-white/90 border-romantic-200 shadow-lg'} backdrop-blur-sm rounded-xl p-4 border`}>
             <FolderManager 
               collectionName="letters" 
               onSelectFolder={setSelectedFolder} 
