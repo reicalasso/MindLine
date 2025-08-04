@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 import ParticleEffect from './components/ParticleEffect';
@@ -86,7 +87,8 @@ const toastConfig = {
 const App: React.FC = () => {
   return (
     <ErrorBoundary>
-      <AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
         <Router>
           <div className="min-h-screen bg-pink-gradient font-elegant relative">
             {/* Background decorations */}
@@ -153,7 +155,8 @@ const App: React.FC = () => {
             </Suspense>
           </div>
         </Router>
-      </AuthProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 };
