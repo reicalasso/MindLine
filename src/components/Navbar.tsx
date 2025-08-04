@@ -204,20 +204,24 @@ export default function Navbar() {
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <div className="flex justify-between items-center py-3 sm:py-4">
             {/* Logo - daha etkileşimli */}
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="flex items-center space-x-2 sm:space-x-3 group hover-glow"
               onClick={closeMobileMenu}
             >
-              <span className="text-2xl sm:text-3xl animate-bounce-cat group-hover:animate-purr emoji-interactive">
-                😺
+              <span className={`text-2xl sm:text-3xl ${currentTheme.id === 'cyberpunk' ? 'animate-cyber-glow' : 'animate-bounce-cat'} ${currentTheme.id === 'cyberpunk' ? 'group-hover:animate-glitch' : 'group-hover:animate-purr'} emoji-interactive ${currentTheme.id === 'cyberpunk' ? 'text-cyber-primary' : ''}`}>
+                {currentTheme.id === 'cyberpunk' ? '🤖' : '😺'}
               </span>
               <div className="flex flex-col">
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-cat text-gray-800 font-bold group-hover:text-gray-900 transition-colors">
-                  MindLine
+                <h1 className={`text-lg sm:text-xl lg:text-2xl ${currentTheme.id === 'cyberpunk' ? 'font-mono' : 'font-cat'} ${currentTheme.styles.textClass} font-bold transition-colors ${currentTheme.id === 'cyberpunk' ? 'animate-neon-flicker' : ''}`}>
+                  {currentTheme.id === 'cyberpunk' ? 'CYBER_MIND' : 'MindLine'}
                 </h1>
-                <span className="text-xs text-gray-600 font-elegant hidden sm:block">
-                  Kedili Aşk Dünyası <span className="emoji-interactive">🐾</span>
+                <span className={`text-xs ${currentTheme.styles.textClass} opacity-80 ${currentTheme.id === 'cyberpunk' ? 'font-mono' : 'font-elegant'} hidden sm:block`}>
+                  {currentTheme.id === 'cyberpunk' ? (
+                    <>NEURAL_NET_ACTIVE <span className="emoji-interactive animate-neon-flicker">⚡</span></>
+                  ) : (
+                    <>Kedili Aşk Dünyası <span className="emoji-interactive">🐾</span></>
+                  )}
                 </span>
               </div>
             </Link>
