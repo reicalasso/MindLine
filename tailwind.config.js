@@ -105,6 +105,10 @@ module.exports = {
         'romantic-gradient': 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 30%, #fecaca 70%, #fca5a5 100%)',
         'sunset-gradient': 'linear-gradient(135deg, #fef7ee 0%, #fde8d1 25%, #fbd2a2 50%, #f8b668 75%, #f59133 100%)',
         'pink-gradient': 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 25%, #fbcfe8 50%, #f9a8d4 75%, #f472b6 100%)',
+        'cyberpunk-gradient': 'linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 25%, #0a1a1a 50%, #1a0a0a 75%, #0a0a0a 100%)',
+        'cyber-red': 'linear-gradient(135deg, #ff0040 0%, #b000ff 50%, #0a0a0a 100%)',
+        'cyber-blue': 'linear-gradient(135deg, #00ffff 0%, #b000ff 50%, #0a0a0a 100%)',
+        'cyber-purple': 'linear-gradient(135deg, #b000ff 0%, #ff0040 50%, #00ffff 100%)',
       },
       boxShadow: {
         'cat': '0 4px 25px rgba(242, 113, 28, 0.2), 0 2px 10px rgba(242, 113, 28, 0.1)',
