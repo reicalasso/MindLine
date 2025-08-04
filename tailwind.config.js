@@ -200,6 +200,38 @@ module.exports = {
           '50%': { transform: 'scale(1.5) rotate(10deg)' },
           '100%': { transform: 'scale(1)' },
         },
+        cyberGlow: {
+          '0%, 100%': {
+            boxShadow: '0 0 5px #ff0040, 0 0 10px #ff0040, 0 0 15px #ff0040',
+            textShadow: '0 0 5px #ff0040'
+          },
+          '33%': {
+            boxShadow: '0 0 5px #b000ff, 0 0 10px #b000ff, 0 0 15px #b000ff',
+            textShadow: '0 0 5px #b000ff'
+          },
+          '66%': {
+            boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff',
+            textShadow: '0 0 5px #00ffff'
+          },
+        },
+        glitch: {
+          '0%, 100%': { transform: 'translate(0)' },
+          '20%': { transform: 'translate(-2px, 2px)' },
+          '40%': { transform: 'translate(-2px, -2px)' },
+          '60%': { transform: 'translate(2px, 2px)' },
+          '80%': { transform: 'translate(2px, -2px)' },
+        },
+        neonFlicker: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.8' },
+          '75%': { opacity: '0.9' },
+        },
+        dataStream: {
+          '0%': { transform: 'translateY(100vh) rotate(0deg)', opacity: '0' },
+          '10%': { opacity: '0.8' },
+          '90%': { opacity: '0.8' },
+          '100%': { transform: 'translateY(-100px) rotate(360deg)', opacity: '0' },
+        },
       },
       screens: {
         'xs': '475px',
