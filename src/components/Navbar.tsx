@@ -350,7 +350,7 @@ export default function Navbar() {
         />
         {/* Menü paneli */}
         <div
-          className={`absolute top-0 right-0 h-full w-80 max-w-full bg-white/95 backdrop-blur-xl shadow-xl border-l-2 border-cat-200/50 rounded-l-3xl transition-transform duration-300 ${
+          className={`absolute top-0 right-0 h-full w-80 max-w-full ${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/95 border-cyber-secondary shadow-cyber' : 'bg-white/95 border-cat-200/50 shadow-xl'} backdrop-blur-xl border-l-2 rounded-l-3xl transition-transform duration-300 ${
             mobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
           }`}
         >
@@ -358,11 +358,11 @@ export default function Navbar() {
             {/* Mobile User Info */}
             <Link
               to="/profile"
-              className="bg-cat-50 rounded-3xl p-4 mb-4 border-2 border-cat-200/50 shadow-soft block hover:bg-cat-100 transition-colors"
+              className={`${currentTheme.id === 'cyberpunk' ? 'bg-cyber-100 border-cyber-secondary shadow-cyber hover:bg-cyber-200' : 'bg-cat-50 border-cat-200/50 shadow-soft hover:bg-cat-100'} rounded-3xl p-4 mb-4 border-2 block transition-colors`}
               onClick={closeMobileMenu}
             >
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center overflow-hidden">
+                <div className={`w-12 h-12 rounded-full ${currentTheme.id === 'cyberpunk' ? 'bg-cyber-red' : 'bg-gradient-to-br from-pink-200 to-purple-300'} flex items-center justify-center overflow-hidden`}>
                   {profileData?.profileImage ? (
                     <img
                       src={profileData.profileImage}
@@ -370,17 +370,21 @@ export default function Navbar() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className="text-2xl emoji-interactive">
-                      {profileData?.favoriteEmoji || '😺'}
+                    <span className={`text-2xl emoji-interactive ${currentTheme.id === 'cyberpunk' ? 'text-cyber-primary animate-neon-flicker' : ''}`}>
+                      {currentTheme.id === 'cyberpunk' ? '🤖' : (profileData?.favoriteEmoji || '😺')}
                     </span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">
+                  <p className={`text-sm font-medium truncate ${currentTheme.id === 'cyberpunk' ? 'text-cyber-primary' : 'text-gray-800'}`}>
                     {getDisplayName()}
                   </p>
-                  <p className="text-xs text-gray-600">
-                    Kedili alanda hoş geldin! <span className="emoji-interactive">🐾</span>
+                  <p className={`text-xs ${currentTheme.id === 'cyberpunk' ? 'text-cyber-secondary' : 'text-gray-600'}`}>
+                    {currentTheme.id === 'cyberpunk' ? (
+                      <>NEURAL_ACCESS_GRANTED <span className="emoji-interactive animate-neon-flicker">⚡</span></>
+                    ) : (
+                      <>Kedili alanda hoş geldin! <span className="emoji-interactive">🐾</span></>
+                    )}
                   </p>
                 </div>
               </div>
