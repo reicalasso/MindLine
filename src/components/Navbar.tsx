@@ -199,136 +199,119 @@ export default function Navbar() {
   }, [mobileMenuOpen]);
 
   return (
-    <nav className={`${currentTheme.id === 'cyberpunk' ? 'cyber-decoration-1 cyber-decoration-2' : 'cat-decoration-1 cat-decoration-2 cat-decoration-3 cat-decoration-4 love-decoration-1 love-decoration-2 love-decoration-3'}`}>
-      <div className={`${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/90 border-cyber-secondary shadow-cyber' : 'bg-white/90 shadow-magic border-cat-200/30'} backdrop-blur-xl border-b-2 sticky top-0 z-40`}>
-        <div className="container mx-auto px-3 sm:px-4 lg:px-6">
-          <div className="flex justify-between items-center py-3 sm:py-4">
-            {/* Logo - daha etkileşimli */}
-            <Link
-              to="/"
-              className="flex items-center space-x-2 sm:space-x-3 group hover-glow"
-              onClick={closeMobileMenu}
-            >
-              <span className={`text-2xl sm:text-3xl ${currentTheme.id === 'cyberpunk' ? 'animate-cyber-glow' : 'animate-bounce-cat'} ${currentTheme.id === 'cyberpunk' ? 'group-hover:animate-glitch' : 'group-hover:animate-purr'} emoji-interactive ${currentTheme.id === 'cyberpunk' ? 'text-cyber-primary' : ''}`}>
-                {currentTheme.id === 'cyberpunk' ? '🤖' : '😺'}
-              </span>
-              <div className="flex flex-col">
-                <h1 className={`text-lg sm:text-xl lg:text-2xl ${currentTheme.id === 'cyberpunk' ? 'font-mono' : 'font-cat'} ${currentTheme.styles.textClass} font-bold transition-colors ${currentTheme.id === 'cyberpunk' ? 'animate-neon-flicker' : ''}`}>
-                  {currentTheme.id === 'cyberpunk' ? 'CYBER_MIND' : 'MindLine'}
-                </h1>
-                <span className={`text-xs ${currentTheme.styles.textClass} opacity-80 ${currentTheme.id === 'cyberpunk' ? 'font-mono' : 'font-elegant'} hidden sm:block`}>
-                  {currentTheme.id === 'cyberpunk' ? (
-                    <>NEURAL_NET_ACTIVE <span className="emoji-interactive animate-neon-flicker">⚡</span></>
-                  ) : (
-                    <>Kedili Aşk Dünyası <span className="emoji-interactive">🐾</span></>
-                  )}
-                </span>
-              </div>
-            </Link>
+    <nav className="bg-black/90 backdrop-blur-md border-b border-cyan-500/30 sticky top-0 z-50">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link 
+            to="/" 
+            className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent hover:scale-105 transition-transform"
+          >
+            MindLine
+          </Link>
 
-            {/* Desktop Navigation - gelişmiş efektler */}
-            <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
-              {navCategories.map((category) => (
-                <div key={category.id} className="relative group">
-                  <button
-                    className={`flex items-center space-x-2 px-3 xl:px-4 py-2 rounded-full transition-all duration-300 font-medium text-sm xl:text-base hover-glow ${
-                      currentCategory?.id === category.id
-                        ? (currentTheme.id === 'cyberpunk' ? 'bg-cyber-red text-cyber-primary shadow-cyber' : 'bg-cat-gradient text-gray-800 shadow-cat')
-                        : (currentTheme.id === 'cyberpunk' ? 'text-cyber-primary hover:bg-cyber-100 hover:text-cyber-secondary hover:shadow-cyber' : 'text-gray-700 hover:bg-cat-100 hover:text-gray-800 hover:shadow-soft')
-                    }`}
-                    onClick={() => toggleCategory(category.id)}
-                  >
-                    <span className="text-lg emoji-interactive">{category.emoji}</span>
-                    <span className="hidden xl:block">{category.label}</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${
-                      openCategory === category.id ? 'rotate-180' : ''
-                    }`} />
-                  </button>
-                  
-                  {/* Desktop Dropdown - gelişmiş tasarım */}
-                  <div className={`absolute left-0 mt-2 w-56 ${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/95 border-cyber-secondary shadow-cyber' : 'bg-white/95 border-cat-200/50 shadow-magic'} backdrop-blur-xl rounded-3xl border-2 transition-all duration-300 origin-top-left z-50 ${
-                    openCategory === category.id ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'
-                  }`}>
-                    <div className="p-3">
-                      {category.items.map((item) => (
-                        <Link
-                          key={item.path}
-                          to={item.path}
-                          className={`flex items-center space-x-3 px-4 py-3 text-sm rounded-2xl transition-all duration-200 hover-glow ${
-                            location.pathname === item.path
-                              ? (currentTheme.id === 'cyberpunk' ? 'bg-cyber-red text-cyber-primary shadow-cyber' : 'bg-cat-gradient text-gray-800 shadow-soft')
-                              : (currentTheme.id === 'cyberpunk' ? 'text-cyber-primary hover:bg-cyber-100 hover:text-cyber-secondary' : 'text-gray-700 hover:bg-cat-50 hover:text-gray-800')
-                          }`}
-                          onClick={() => setOpenCategory(null)}
-                        >
-                          <span className="text-lg emoji-interactive">{item.emoji}</span>
-                          <span className="font-medium">{item.label}</span>
-                        </Link>
-                      ))}
-                    </div>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            {navCategories.map((category) => (
+              <div key={category.id} className="relative group">
+                <button
+                  className={`flex items-center space-x-2 px-3 xl:px-4 py-2 rounded-full transition-all duration-300 font-medium text-sm xl:text-base hover-glow ${
+                    currentCategory?.id === category.id
+                      ? (currentTheme.id === 'cyberpunk' ? 'bg-cyber-red text-cyber-primary shadow-cyber' : 'bg-cat-gradient text-gray-800 shadow-cat')
+                      : (currentTheme.id === 'cyberpunk' ? 'text-cyber-primary hover:bg-cyber-100 hover:text-cyber-secondary hover:shadow-cyber' : 'text-gray-700 hover:bg-cat-100 hover:text-gray-800 hover:shadow-soft')
+                  }`}
+                  onClick={() => toggleCategory(category.id)}
+                >
+                  <span className="text-lg emoji-interactive">{category.emoji}</span>
+                  <span className="hidden xl:block">{category.label}</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${
+                    openCategory === category.id ? 'rotate-180' : ''
+                  }`} />
+                </button>
+                
+                {/* Desktop Dropdown - gelişmiş tasarım */}
+                <div className={`absolute left-0 mt-2 w-56 ${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/95 border-cyber-secondary shadow-cyber' : 'bg-white/95 border-cat-200/50 shadow-magic'} backdrop-blur-xl rounded-3xl border-2 transition-all duration-300 origin-top-left z-50 ${
+                  openCategory === category.id ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'
+                }`}>
+                  <div className="p-3">
+                    {category.items.map((item) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className={`flex items-center space-x-3 px-4 py-3 text-sm rounded-2xl transition-all duration-200 hover-glow ${
+                          location.pathname === item.path
+                            ? (currentTheme.id === 'cyberpunk' ? 'bg-cyber-red text-cyber-primary shadow-cyber' : 'bg-cat-gradient text-gray-800 shadow-soft')
+                            : (currentTheme.id === 'cyberpunk' ? 'text-cyber-primary hover:bg-cyber-100 hover:text-cyber-secondary' : 'text-gray-700 hover:bg-cat-50 hover:text-gray-800')
+                        }`}
+                        onClick={() => setOpenCategory(null)}
+                      >
+                        <span className="text-lg emoji-interactive">{item.emoji}</span>
+                        <span className="font-medium">{item.label}</span>
+                      </Link>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {/* User Info & Controls - daha sevimli */}
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              {/* Theme Toggle */}
-              <ThemeToggle
-                variant="dropdown"
-                showLabel={false}
-                className="hidden md:block"
-              />
-              {/* User Profile Info - gelişmiş tasarım */}
-              <div className="hidden lg:flex items-center space-x-3">
-                <Link
-                  to="/profile"
-                  className="flex items-center space-x-3 p-2 rounded-full hover:bg-romantic-50 transition-colors group"
-                >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center overflow-hidden">
-                    {getProfileImage()}
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 max-w-24 xl:max-w-none truncate">
-                      {getDisplayName()}
-                    </span>
-                    <span className="text-xs text-gray-600">
-                      <span className="emoji-interactive">😸</span> Kedici
-                    </span>
-                  </div>
-                </Link>
               </div>
+            ))}
+          </div>
 
-              {/* Mobile Theme Toggle */}
-              <ThemeToggle
-                variant="button"
-                showLabel={false}
-                className="md:hidden"
-              />
-
-              {/* Logout Button - daha etkileşimli */}
-              <button
-                onClick={handleLogout}
-                className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 text-gray-700 hover:bg-love-gradient hover:text-white rounded-full transition-all duration-300 font-medium text-sm group hover-glow ${currentTheme.styles.buttonClass}`}
+          {/* User Info & Controls - daha sevimli */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Theme Toggle */}
+            <ThemeToggle
+              variant="dropdown"
+              showLabel={false}
+              className="hidden md:block"
+            />
+            {/* User Profile Info - gelişmiş tasarım */}
+            <div className="hidden lg:flex items-center space-x-3">
+              <Link
+                to="/profile"
+                className="flex items-center space-x-3 p-2 rounded-full hover:bg-romantic-50 transition-colors group"
               >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:block">Çıkış</span>
-                <span className="sm:hidden emoji-interactive">🚪</span>
-              </button>
-
-              {/* Mobile Menu Button - daha sevimli */}
-              <button 
-                className="lg:hidden p-2 text-gray-700 hover:bg-cat-100 rounded-full transition-all duration-300 emoji-interactive"
-                onClick={toggleMobileMenu}
-                aria-label={mobileMenuOpen ? "Menüyü Kapat" : "Menüyü Aç"}
-              >
-                {mobileMenuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
-              </button>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center overflow-hidden">
+                  {getProfileImage()}
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 max-w-24 xl:max-w-none truncate">
+                    {getDisplayName()}
+                  </span>
+                  <span className="text-xs text-gray-600">
+                    <span className="emoji-interactive">😸</span> Kedici
+                  </span>
+                </div>
+              </Link>
             </div>
+
+            {/* Mobile Theme Toggle */}
+            <ThemeToggle
+              variant="button"
+              showLabel={false}
+              className="md:hidden"
+            />
+
+            {/* Logout Button - daha etkileşimli */}
+            <button
+              onClick={handleLogout}
+              className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 text-gray-700 hover:bg-love-gradient hover:text-white rounded-full transition-all duration-300 font-medium text-sm group hover-glow ${currentTheme.styles.buttonClass}`}
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:block">Çıkış</span>
+              <span className="sm:hidden emoji-interactive">🚪</span>
+            </button>
+
+            {/* Mobile Menu Button - daha sevimli */}
+            <button 
+              className="lg:hidden p-2 text-gray-700 hover:bg-cat-100 rounded-full transition-all duration-300 emoji-interactive"
+              onClick={toggleMobileMenu}
+              aria-label={mobileMenuOpen ? "Menüyü Kapat" : "Menüyü Aç"}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
           </div>
         </div>
       </div>

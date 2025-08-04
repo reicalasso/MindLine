@@ -25,6 +25,12 @@ export interface Theme {
     textClass: string;
     decorationClass: string;
   };
+  animations?: {
+    glitch?: string;
+    neonFlicker?: string;
+    dataStream?: string;
+    pulse?: string;
+  };
 }
 
 export type ThemeMode = 'cat' | 'romantic' | 'magic' | 'fur' | 'pink' | 'cyberpunk';
@@ -162,28 +168,34 @@ export const themes: Record<ThemeMode, Theme> = {
   },
   cyberpunk: {
     id: 'cyberpunk',
-    name: 'Cyberpunk Tema',
-    emoji: '🤖',
-    description: 'Futuristik cyberpunk tema',
+    name: 'Cyber Matrix',
+    emoji: '🕶️',
+    description: 'Fütüristik cyberpunk tema',
     colors: {
-      primary: '#ff0040',
-      secondary: '#b000ff',
-      accent: '#00ffff',
-      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 25%, #0a1a1a 50%, #1a0a0a 75%, #0a0a0a 100%)',
-      surface: '#1a1a1a',
+      primary: '#00ffff',
+      secondary: '#ff0080',
+      accent: '#00ff41',
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0033 50%, #001122 100%)',
+      surface: 'rgba(0, 255, 255, 0.1)',
       text: '#00ffff',
-      textSecondary: '#ff0040',
-      border: '#ff0040',
-      gradient: 'bg-cyberpunk-gradient',
+      textSecondary: '#ff0080',
+      border: '#00ff41',
+      gradient: 'bg-cyber-gradient',
       shadow: 'shadow-cyber'
     },
     styles: {
       cardClass: 'cyber-card',
-      buttonClass: 'cyber-button',
+      buttonClass: 'btn-cyber',
       inputClass: 'cyber-input',
-      backgroundClass: 'bg-cyberpunk-gradient',
+      backgroundClass: 'bg-cyber-matrix',
       textClass: 'text-cyber-primary',
-      decorationClass: 'cyber-decoration-1 cyber-decoration-2'
+      decorationClass: 'cyber-decorations'
+    },
+    animations: {
+      glitch: 'animate-glitch',
+      neonFlicker: 'animate-neon-flicker',
+      dataStream: 'animate-data-stream',
+      pulse: 'animate-cyber-pulse'
     }
   }
 };

@@ -4,11 +4,11 @@ import {
   collection,
   addDoc,
   getDocs,
-  deleteDoc,
   updateDoc,
+  deleteDoc,
   doc,
   query,
-  where,
+  orderBy,
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -44,7 +44,12 @@ export default function Movies() {
     posterUrl: '',
     note: '',
     date: new Date().toISOString().split('T')[0],
-    status: 'watchlist'
+    status: 'watchlist',
+    year: '',
+    rating: '',
+    watchDate: new Date().toISOString().split('T')[0],
+    notes: '',
+    folderId: null
   });
   const [selectedFolder, setSelectedFolder] = useState(null);
 
@@ -56,12 +61,12 @@ export default function Movies() {
   const fetchMovies = async () => {
     setLoading(true);
     try {
-      // Sadece kullanıcının filmlerini al - index gerektirmeyen basit query
+      // Tüm kullanıcıların filmlerini al - ortak kullanım için
       const snapshot = await getDocs(query(
         collection(db, 'movies'),
-        where('author', '==', currentUser?.uid || '')
+        orderBy('createdAt', 'desc')
       ));
-      // Veriyi al, activeTab'a göre filtrele ve tarih bazlı sırala
+      // Veriyi al, activeTab'a göre filtrele
       const allMovies = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -96,9 +101,12 @@ export default function Movies() {
       const movieData = {
         title: formData.title.trim(),
         posterUrl: formData.posterUrl.trim(),
-        note: formData.note.trim(),
-        date: new Date(formData.date),
-        status: formData.status,
+        note: formData.notes.trim(), // notes alanını note olarak kaydet
+        date: new Date(formData.watchDate || formData.date),
+        status: activeTab, // Aktif tab'ı status olarak kullan
+        year: formData.year,
+        rating: formData.rating,
+        folderId: formData.folderId,
         author: currentUser.email,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
@@ -118,7 +126,12 @@ export default function Movies() {
         posterUrl: '',
         note: '',
         date: new Date().toISOString().split('T')[0],
-        status: activeTab
+        status: activeTab,
+        year: '',
+        rating: '',
+        watchDate: new Date().toISOString().split('T')[0],
+        notes: '',
+        folderId: selectedFolder
       });
       setShowForm(false);
       setEditingMovie(null);
@@ -132,10 +145,15 @@ export default function Movies() {
     setEditingMovie(movie);
     setFormData({
       title: movie.title,
-      posterUrl: movie.posterUrl,
-      note: movie.note,
+      posterUrl: movie.posterUrl || '',
+      note: movie.note || '',
       date: movie.date?.toDate?.()?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0],
-      status: movie.status
+      status: movie.status,
+      year: movie.year || '',
+      rating: movie.rating || '',
+      watchDate: movie.date?.toDate?.()?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0],
+      notes: movie.note || '',
+      folderId: movie.folderId || null
     });
     setShowForm(true);
   };
@@ -158,7 +176,12 @@ export default function Movies() {
       posterUrl: '',
       note: '',
       date: new Date().toISOString().split('T')[0],
-      status: activeTab
+      status: activeTab,
+      year: '',
+      rating: '',
+      watchDate: new Date().toISOString().split('T')[0],
+      notes: '',
+      folderId: selectedFolder
     });
     setShowForm(false);
     setEditingMovie(null);
@@ -214,6 +237,24 @@ export default function Movies() {
 
         {/* Filmler İçeriği */}
         <div className="md:col-span-3">
+          {/* Tab Navigation */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-1 shadow-lg border border-romantic-200 mb-6">
+            <div className="flex space-x-1">
+              {LIST_TYPES.map((type) => (
+                <button
+                  key={type.key}
+                  onClick={() => setActiveTab(type.key)}
+                  className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
+                    activeTab === type.key
+                      ? 'bg-love-gradient text-white shadow-md'
+                      : 'text-romantic-600 hover:bg-romantic-100'
+                  }`}
+                >
+                  {type.label}
+                </button>
+              ))}
+            </div>
+          </div>
           {/* Film Formu */}
           {showForm && (
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-romantic-200 mb-8">
