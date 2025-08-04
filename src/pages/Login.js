@@ -57,12 +57,25 @@ export default function Login() {
     <div className={`min-h-screen flex items-center justify-center ${currentTheme.styles.backgroundClass} px-4 py-6 sm:px-6 lg:px-8 relative overflow-hidden`}>
       {/* Arka plan süslemeleri */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 text-4xl sm:text-6xl opacity-10 animate-float">😺</div>
-        <div className="absolute top-20 right-16 text-3xl sm:text-5xl opacity-10 animate-wiggle">🐾</div>
-        <div className="absolute bottom-20 left-16 text-3xl sm:text-5xl opacity-10 animate-purr">💕</div>
-        <div className="absolute bottom-32 right-10 text-4xl sm:text-6xl opacity-10 animate-float" style={{animationDelay: '1s'}}>🐱</div>
-        <div className="absolute top-1/2 left-4 text-2xl sm:text-4xl opacity-10 animate-wiggle" style={{animationDelay: '2s'}}>💖</div>
-        <div className="absolute top-1/3 right-4 text-2xl sm:text-4xl opacity-10 animate-purr" style={{animationDelay: '0.5s'}}>😻</div>
+        {currentTheme.id === 'cyberpunk' ? (
+          <>
+            <div className="absolute top-10 left-10 text-4xl sm:text-6xl opacity-20 animate-cyber-glow text-cyber-primary">🤖</div>
+            <div className="absolute top-20 right-16 text-3xl sm:text-5xl opacity-20 animate-neon-flicker text-cyber-secondary">⚡</div>
+            <div className="absolute bottom-20 left-16 text-3xl sm:text-5xl opacity-20 animate-glitch text-cyber-accent">💻</div>
+            <div className="absolute bottom-32 right-10 text-4xl sm:text-6xl opacity-20 animate-cyber-glow text-cyber-primary" style={{animationDelay: '1s'}}>🔍</div>
+            <div className="absolute top-1/2 left-4 text-2xl sm:text-4xl opacity-20 animate-neon-flicker text-cyber-secondary" style={{animationDelay: '2s'}}>🎆</div>
+            <div className="absolute top-1/3 right-4 text-2xl sm:text-4xl opacity-20 animate-glitch text-cyber-accent" style={{animationDelay: '0.5s'}}>🚀</div>
+          </>
+        ) : (
+          <>
+            <div className="absolute top-10 left-10 text-4xl sm:text-6xl opacity-10 animate-float">😺</div>
+            <div className="absolute top-20 right-16 text-3xl sm:text-5xl opacity-10 animate-wiggle">🐾</div>
+            <div className="absolute bottom-20 left-16 text-3xl sm:text-5xl opacity-10 animate-purr">💕</div>
+            <div className="absolute bottom-32 right-10 text-4xl sm:text-6xl opacity-10 animate-float" style={{animationDelay: '1s'}}>🐱</div>
+            <div className="absolute top-1/2 left-4 text-2xl sm:text-4xl opacity-10 animate-wiggle" style={{animationDelay: '2s'}}>💖</div>
+            <div className="absolute top-1/3 right-4 text-2xl sm:text-4xl opacity-10 animate-purr" style={{animationDelay: '0.5s'}}>😻</div>
+          </>
+        )}
       </div>
 
       <div className="max-w-md w-full relative z-10">
@@ -84,16 +97,20 @@ export default function Login() {
                 </span>
               </div>
             </div>
-            <h1 className={`text-3xl sm:text-4xl lg:text-5xl font-cat ${currentTheme.styles.textClass} mb-2 sm:mb-4`}>
-              MindLine
+            <h1 className={`text-3xl sm:text-4xl lg:text-5xl ${currentTheme.id === 'cyberpunk' ? 'font-mono' : 'font-cat'} ${currentTheme.styles.textClass} mb-2 sm:mb-4 ${currentTheme.id === 'cyberpunk' ? 'animate-glitch' : ''}`}>
+              {currentTheme.id === 'cyberpunk' ? 'CYBER_MIND.exe' : 'MindLine'}
             </h1>
             <div className="flex items-center justify-center space-x-2 mb-2">
-              <span className={`text-sm sm:text-base font-elegant`} style={{ color: currentTheme.colors.textSecondary }}>Kedili Aşk Dünyası</span>
+              <span className={`text-sm sm:text-base ${currentTheme.id === 'cyberpunk' ? 'font-mono' : 'font-elegant'}`} style={{ color: currentTheme.colors.textSecondary }}>
+                {currentTheme.id === 'cyberpunk' ? '>>> NEURAL_NETWORK_ACTIVATED <<<' : 'Kedili Aşk Dünyası'}
+              </span>
               <span className="animate-wiggle">🐾</span>
             </div>
-            <p className={`font-elegant text-sm sm:text-base lg:text-lg`} style={{ color: currentTheme.colors.textSecondary }}>
-              Sadece ikimizin özel kedili alanı
-              <span className="inline-block animate-purr ml-2">💖</span>
+            <p className={`${currentTheme.id === 'cyberpunk' ? 'font-mono' : 'font-elegant'} text-sm sm:text-base lg:text-lg`} style={{ color: currentTheme.colors.textSecondary }}>
+              {currentTheme.id === 'cyberpunk' ? 'ACCESS_RESTRICTED: AUTHORIZED_USERS_ONLY' : 'Sadece ikimizin özel kedili alanı'}
+              <span className={`inline-block ml-2 ${currentTheme.id === 'cyberpunk' ? 'animate-neon-flicker' : 'animate-purr'}`}>
+                {currentTheme.id === 'cyberpunk' ? '🔒' : '💖'}
+              </span>
             </p>
           </div>
 
