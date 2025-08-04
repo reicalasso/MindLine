@@ -111,6 +111,45 @@ body.theme-cyberpunk::after {
   filter: drop-shadow(0 0 10px rgba(242, 113, 28, 0.3));
 }
 
+/* Cyberpunk Decorations */
+.theme-cyberpunk .background-decorations::before {
+  content: "🤖";
+  color: #ff0040;
+  text-shadow: 0 0 20px #ff0040, 0 0 40px #ff0040;
+  animation: cyber-glow 3s ease-in-out infinite, float 4s ease-in-out infinite;
+  filter: none;
+}
+
+.theme-cyberpunk .background-decorations::after {
+  content: "⚡";
+  color: #00ffff;
+  text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+  animation: cyber-glow 2s ease-in-out infinite reverse, float 3s ease-in-out infinite reverse;
+  filter: none;
+}
+
+.cyber-decoration-1::before,
+.cyber-decoration-2::before {
+  content: '';
+  position: fixed;
+  width: 2px;
+  height: 100vh;
+  background: linear-gradient(to bottom, transparent, #ff0040, transparent);
+  z-index: 1;
+  animation: dataStream 15s linear infinite;
+}
+
+.cyber-decoration-1::before {
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.cyber-decoration-2::before {
+  right: 15%;
+  background: linear-gradient(to bottom, transparent, #00ffff, transparent);
+  animation-delay: 7s;
+}
+
 /* Enhanced Keyframe Animations */
 @keyframes bounce-cat {
   0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
