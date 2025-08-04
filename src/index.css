@@ -186,6 +186,15 @@ body {
   --theme-border: #9ca3af;
 }
 
+.theme-cyberpunk {
+  --theme-primary: #ff0040;
+  --theme-secondary: #b000ff;
+  --theme-accent: #00ffff;
+  --theme-text: #00ffff;
+  --theme-text-secondary: #ff0040;
+  --theme-border: #ff0040;
+}
+
 /* Component Styles */
 @layer components {
   .cat-card {
