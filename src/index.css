@@ -551,12 +551,57 @@ select:focus-visible {
 .text-readable-secondary { @apply text-gray-700; }
 .text-readable-muted { @apply text-gray-600; }
 
+/* Cyberpunk text colors */
+.text-cyber-primary {
+  color: #00ffff !important;
+  text-shadow: 0 0 5px #00ffff;
+}
+.text-cyber-secondary {
+  color: #ff0040 !important;
+  text-shadow: 0 0 5px #ff0040;
+}
+.text-cyber-accent {
+  color: #b000ff !important;
+  text-shadow: 0 0 5px #b000ff;
+}
+
 h1, h2, h3, h4, h5, h6 { @apply text-gray-800; }
+
+/* Cyberpunk headings */
+.theme-cyberpunk h1,
+.theme-cyberpunk h2,
+.theme-cyberpunk h3,
+.theme-cyberpunk h4,
+.theme-cyberpunk h5,
+.theme-cyberpunk h6 {
+  color: #00ffff !important;
+  text-shadow: 0 0 10px #00ffff;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.05em;
+}
 
 input, textarea, select { @apply text-gray-800; }
 input::placeholder, textarea::placeholder { @apply text-gray-500; }
 
 a { @apply text-gray-800 hover:text-gray-700; }
+
+/* Cyberpunk inputs and links */
+.theme-cyberpunk input,
+.theme-cyberpunk textarea,
+.theme-cyberpunk select {
+  color: #00ffff !important;
+  background: rgba(26, 26, 26, 0.8) !important;
+}
+
+.theme-cyberpunk a {
+  color: #00ffff !important;
+  text-shadow: 0 0 5px #00ffff;
+}
+
+.theme-cyberpunk a:hover {
+  color: #ff0040 !important;
+  text-shadow: 0 0 5px #ff0040;
+}
 
 /* Responsive Design Enhancements */
 @media (max-width: 640px) {
