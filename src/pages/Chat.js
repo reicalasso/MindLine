@@ -22,6 +22,7 @@ import axios from 'axios';
 
 export default function Chat() {
   const { currentUser } = useAuth();
+  const { currentTheme } = useTheme();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -262,7 +263,7 @@ export default function Chat() {
   };
 
   const handleDeleteMessage = async (messageId) => {
-    if (window.confirm('Bu mesajı silmek istediğinizden emin misiniz?')) {
+    if (window.confirm('Bu mesaj�� silmek istediğinizden emin misiniz?')) {
       try {
         await deleteDoc(doc(db, 'messages', messageId));
         toast.success('Mesaj silindi');
