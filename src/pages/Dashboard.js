@@ -173,12 +173,27 @@ export default function Dashboard() {
       activities.sort((a, b) => (b.time || 0) - (a.time || 0));
       setRecentActivities(activities.slice(0, 8));
 
-      // Yaklaşan etkinlikler
-      const events = eventsSnap.docs.map(doc => ({
+      // Yaklaşan etkinlikler - client-side filtering ve sorting
+      const allEvents = eventsSnap.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
-      setUpcomingEvents(events);
+
+      // Bugünden sonraki etkinlikleri filtrele ve sırala
+      const now = new Date();
+      const upcomingEvents = allEvents
+        .filter(event => {
+          const eventDate = event.date?.toDate?.() || new Date(event.date);
+          return eventDate >= now;
+        })
+        .sort((a, b) => {
+          const aDate = a.date?.toDate?.() || new Date(a.date);
+          const bDate = b.date?.toDate?.() || new Date(b.date);
+          return aDate - bDate;
+        })
+        .slice(0, 5); // Sadece ilk 5 etkinlik
+
+      setUpcomingEvents(upcomingEvents);
 
     } catch (error) {
       console.error('Dashboard verileri yüklenirken hata:', error);
