@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import {
   collection,
   addDoc,
@@ -21,6 +22,7 @@ import axios from 'axios';
 
 export default function Chat() {
   const { currentUser } = useAuth();
+  const { currentTheme } = useTheme();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -261,7 +263,7 @@ export default function Chat() {
   };
 
   const handleDeleteMessage = async (messageId) => {
-    if (window.confirm('Bu mesajı silmek istediğinizden emin misiniz?')) {
+    if (window.confirm('Bu mesaj�� silmek istediğinizden emin misiniz?')) {
       try {
         await deleteDoc(doc(db, 'messages', messageId));
         toast.success('Mesaj silindi');
@@ -403,7 +405,7 @@ export default function Chat() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  // Link preview için yardımcı fonksiyon
+  // Link preview için yard��mcı fonksiyon
   const fetchLinkPreview = async (url) => {
     try {
       // jsonlink.io API ile önizleme al
@@ -590,16 +592,16 @@ export default function Chat() {
   };
 
   return (
-    <div className="fixed inset-0 top-0 left-0 right-0 bottom-0 flex flex-col bg-white/90 backdrop-blur-sm">
+    <div className={`fixed inset-0 top-0 left-0 right-0 bottom-0 flex flex-col ${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/90' : 'bg-white/90'} backdrop-blur-sm`}>
       {/* Başlık */}
-      <div className="bg-white/95 backdrop-blur-sm border-b border-romantic-200 p-3 flex-shrink-0 shadow-sm">
+      <div className={`${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/95 border-cyber-secondary shadow-cyber' : 'bg-white/95 border-romantic-200 shadow-sm'} backdrop-blur-sm border-b p-3 flex-shrink-0`}>
         <div className="text-center">
-          <h1 className="text-xl font-romantic text-gray-800 flex items-center justify-center">
+          <h1 className={`text-xl ${currentTheme.id === 'cyberpunk' ? 'font-mono text-cyber-primary' : 'font-romantic text-gray-800'} flex items-center justify-center ${currentTheme.id === 'cyberpunk' ? 'animate-neon-flicker' : ''}`}>
             <MessageCircle className="w-5 h-5 mr-2" />
-            Kedili Sohbet
+            {currentTheme.id === 'cyberpunk' ? 'NEURAL_CHAT.exe' : 'Kedili Sohbet'}
           </h1>
-          <p className="text-xs text-gray-700 font-elegant">
-            Birlikte sohbet ettiğiniz özel alan...
+          <p className={`text-xs ${currentTheme.id === 'cyberpunk' ? 'text-cyber-secondary font-mono' : 'text-gray-700 font-elegant'}`}>
+            {currentTheme.id === 'cyberpunk' ? 'SECURE_CHANNEL_ACTIVE...' : 'Birlikte sohbet ettiğiniz özel alan...'}
           </p>
         </div>
       </div>
@@ -680,8 +682,8 @@ export default function Chat() {
                     <div
                       className={`px-3 py-2 rounded-2xl shadow-soft group relative break-words ${
                         isMyMessage(message)
-                          ? 'bg-paw-gradient text-white'
-                          : 'bg-white border border-romantic-200 text-gray-800'
+                          ? (currentTheme.id === 'cyberpunk' ? 'bg-cyber-red text-cyber-primary' : 'bg-paw-gradient text-white')
+                          : (currentTheme.id === 'cyberpunk' ? 'bg-cyber-100 border border-cyber-secondary text-cyber-primary' : 'bg-white border border-romantic-200 text-gray-800')
                       }`}
                       style={{
                         wordBreak: 'break-word',
@@ -771,14 +773,22 @@ export default function Chat() {
       </div>
 
       {/* Mesaj Gönderme Formu */}
-      <div className="border-t border-romantic-200 p-3 bg-white/50 flex-shrink-0 w-full">
+      <div className={`border-t p-3 flex-shrink-0 w-full ${
+        currentTheme.id === 'cyberpunk'
+          ? 'border-cyber-secondary bg-cyber-50/50'
+          : 'border-romantic-200 bg-white/50'
+      }`}>
         <form onSubmit={handleSendMessage} className="space-y-2 w-full">
           {/* Dosya Seçme Butonları */}
           <div className="flex space-x-2">
             <button
               type="button"
               onClick={() => cameraInputRef.current?.click()}
-              className="p-2 text-romantic-600 hover:bg-romantic-100 rounded-lg transition-colors"
+              className={`p-2 rounded-lg transition-colors ${
+                currentTheme.id === 'cyberpunk'
+                  ? 'text-cyber-secondary hover:bg-cyber-100'
+                  : 'text-romantic-600 hover:bg-romantic-100'
+              }`}
               title="Kamera ile fotoğraf çek"
             >
               <Camera className="w-4 h-4" />
@@ -786,7 +796,11 @@ export default function Chat() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-2 text-romantic-600 hover:bg-romantic-100 rounded-lg transition-colors"
+              className={`p-2 rounded-lg transition-colors ${
+                currentTheme.id === 'cyberpunk'
+                  ? 'text-cyber-secondary hover:bg-cyber-100'
+                  : 'text-romantic-600 hover:bg-romantic-100'
+              }`}
               title="Dosya seç"
             >
               <Paperclip className="w-4 h-4" />
@@ -814,8 +828,12 @@ export default function Chat() {
               <textarea
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : "Mesajınızı yazın... 💕"}
-                className="w-full px-3 py-2 pr-10 border border-romantic-200 rounded-xl focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/70 text-gray-800 font-elegant font-medium resize-none text-sm"
+                placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : (currentTheme.id === 'cyberpunk' ? "NEURAL_MESSAGE_INPUT..." : "Mesajınızı yazın... 💕")}
+                className={`w-full px-3 py-2 pr-10 border rounded-xl focus:ring-2 focus:border-transparent font-medium resize-none text-sm ${
+                  currentTheme.id === 'cyberpunk'
+                    ? 'border-cyber-secondary focus:ring-cyber-primary bg-cyber-100/70 text-cyber-primary font-mono'
+                    : 'border-romantic-200 focus:ring-romantic-500 bg-white/70 text-gray-800 font-elegant'
+                }`}
                 rows="1"
                 style={{ minHeight: '40px', maxHeight: '80px' }}
                 onInput={(e) => {

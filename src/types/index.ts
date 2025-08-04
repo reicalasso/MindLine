@@ -253,23 +253,8 @@ export interface Option {
   disabled?: boolean;
 }
 
-// Tema tipi
-export interface Theme {
-  name: string;
-  colors: {
-    primary: string;
-    secondary: string;
-    accent: string;
-    background: string;
-    text: string;
-  };
-  fonts: {
-    primary: string;
-    secondary: string;
-    heading: string;
-  };
-  animations: boolean;
-}
+// Theme types - import from theme.ts
+export * from './theme';
 
 // Component props tipleri
 export interface BaseComponentProps {

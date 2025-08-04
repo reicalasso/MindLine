@@ -76,6 +76,24 @@ module.exports = {
           700: '#7c3aed',
           800: '#6b21a8',
           900: '#581c87',
+        },
+        // Cyberpunk renkler
+        cyber: {
+          50: '#1a1a1a',
+          100: '#2a2a2a',
+          200: '#3a3a3a',
+          300: '#4a4a4a',
+          400: '#5a5a5a',
+          500: '#6a6a6a',
+          600: '#7a7a7a',
+          700: '#8a8a8a',
+          800: '#9a9a9a',
+          900: '#aaaaaa',
+          primary: '#00ffff',
+          secondary: '#ff0040',
+          accent: '#b000ff',
+          neon: '#00ff00',
+          glow: '#ff00ff',
         }
       },
       backgroundImage: {
@@ -87,6 +105,10 @@ module.exports = {
         'romantic-gradient': 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 30%, #fecaca 70%, #fca5a5 100%)',
         'sunset-gradient': 'linear-gradient(135deg, #fef7ee 0%, #fde8d1 25%, #fbd2a2 50%, #f8b668 75%, #f59133 100%)',
         'pink-gradient': 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 25%, #fbcfe8 50%, #f9a8d4 75%, #f472b6 100%)',
+        'cyberpunk-gradient': 'linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 25%, #0a1a1a 50%, #1a0a0a 75%, #0a0a0a 100%)',
+        'cyber-red': 'linear-gradient(135deg, #ff0040 0%, #b000ff 50%, #0a0a0a 100%)',
+        'cyber-blue': 'linear-gradient(135deg, #00ffff 0%, #b000ff 50%, #0a0a0a 100%)',
+        'cyber-purple': 'linear-gradient(135deg, #b000ff 0%, #ff0040 50%, #00ffff 100%)',
       },
       boxShadow: {
         'cat': '0 4px 25px rgba(242, 113, 28, 0.2), 0 2px 10px rgba(242, 113, 28, 0.1)',
@@ -96,6 +118,11 @@ module.exports = {
         'glow': '0 0 30px rgba(242, 113, 28, 0.4), 0 0 60px rgba(242, 113, 28, 0.2)',
         'magic': '0 4px 25px rgba(168, 85, 247, 0.2), 0 2px 10px rgba(168, 85, 247, 0.1)',
         'love-glow': '0 0 25px rgba(236, 72, 153, 0.4), 0 0 50px rgba(236, 72, 153, 0.2)',
+        'cyber': '0 0 20px rgba(255, 0, 64, 0.5), 0 0 40px rgba(176, 0, 255, 0.3), 0 0 60px rgba(0, 255, 255, 0.2)',
+        'cyber-intense': '0 0 30px rgba(255, 0, 64, 0.8), 0 0 60px rgba(176, 0, 255, 0.6), 0 0 90px rgba(0, 255, 255, 0.4)',
+        'neon-red': '0 0 10px #ff0040, 0 0 20px #ff0040, 0 0 30px #ff0040',
+        'neon-blue': '0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff',
+        'neon-purple': '0 0 10px #b000ff, 0 0 20px #b000ff, 0 0 30px #b000ff',
       },
       animation: {
         'bounce-cat': 'bounce-cat 2s infinite',
@@ -109,6 +136,10 @@ module.exports = {
         'particle-float': 'particleFloat 8s linear infinite',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'emoji-zoom': 'emojiZoom 0.5s ease-in-out',
+        'cyber-glow': 'cyberGlow 2s ease-in-out infinite',
+        'glitch': 'glitch 0.5s infinite',
+        'neon-flicker': 'neonFlicker 1.5s infinite',
+        'data-stream': 'dataStream 20s linear infinite',
       },
       keyframes: {
         'bounce-cat': {
@@ -168,6 +199,38 @@ module.exports = {
           '0%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(1.5) rotate(10deg)' },
           '100%': { transform: 'scale(1)' },
+        },
+        cyberGlow: {
+          '0%, 100%': {
+            boxShadow: '0 0 5px #ff0040, 0 0 10px #ff0040, 0 0 15px #ff0040',
+            textShadow: '0 0 5px #ff0040'
+          },
+          '33%': {
+            boxShadow: '0 0 5px #b000ff, 0 0 10px #b000ff, 0 0 15px #b000ff',
+            textShadow: '0 0 5px #b000ff'
+          },
+          '66%': {
+            boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff',
+            textShadow: '0 0 5px #00ffff'
+          },
+        },
+        glitch: {
+          '0%, 100%': { transform: 'translate(0)' },
+          '20%': { transform: 'translate(-2px, 2px)' },
+          '40%': { transform: 'translate(-2px, -2px)' },
+          '60%': { transform: 'translate(2px, 2px)' },
+          '80%': { transform: 'translate(2px, -2px)' },
+        },
+        neonFlicker: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.8' },
+          '75%': { opacity: '0.9' },
+        },
+        dataStream: {
+          '0%': { transform: 'translateY(100vh) rotate(0deg)', opacity: '0' },
+          '10%': { opacity: '0.8' },
+          '90%': { opacity: '0.8' },
+          '100%': { transform: 'translateY(-100px) rotate(360deg)', opacity: '0' },
         },
       },
       screens: {

@@ -12,7 +12,7 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Music, Plus, Edit, Trash2, Save, X, ExternalLink, Youtube, Heart } from 'lucide-react';
+import { Music, Plus, Edit, Save, X, Trash2, ExternalLink, Youtube } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function MusicPage() {
@@ -332,6 +332,7 @@ export default function MusicPage() {
                 {spotifyId && (
                   <div className="mb-3">
                     <iframe
+                      title={`Music player for ${song.title}`}
                       src={`https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator&theme=0`}
                       width="100%"
                       height="152"

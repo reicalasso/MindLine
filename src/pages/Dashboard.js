@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { 
   collection, 
   query, 
@@ -10,15 +11,14 @@ import {
   getDocs 
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { 
-  Heart, 
-  Mail, 
-  Film, 
-  CheckSquare, 
-  Music, 
-  Calendar, 
+import {
+  Heart,
+  Mail,
+  Film,
+  CheckSquare,
+  Music,
+  Calendar,
   Camera,
-  Plus,
   Clock,
   Star,
   MessageCircle,
@@ -29,19 +29,13 @@ import {
   Target,
   Award,
   Activity,
-  BookOpen,
   Gift,
-  Users,
-  MapPin,
-  Coffee,
-  Sunrise,
-  Moon,
-  Sun,
-  Sunset
+  Users
 } from 'lucide-react';
 
 export default function Dashboard() {
   const { currentUser } = useAuth();
+  const { currentTheme } = useTheme();
   const [stats, setStats] = useState({
     letters: 0,
     movies: 0,
@@ -91,7 +85,7 @@ export default function Dashboard() {
         getDocs(collection(db, 'gallery')),
         getDocs(collection(db, 'messages')),
         getDocs(query(collection(db, 'letters'), orderBy('createdAt', 'desc'), limit(8))),
-        getDocs(query(collection(db, 'calendar'), where('date', '>=', new Date()), orderBy('date', 'asc'), limit(5)))
+        getDocs(collection(db, 'calendar'))
       ];
 
       const [
@@ -179,12 +173,27 @@ export default function Dashboard() {
       activities.sort((a, b) => (b.time || 0) - (a.time || 0));
       setRecentActivities(activities.slice(0, 8));
 
-      // Yaklaşan etkinlikler
-      const events = eventsSnap.docs.map(doc => ({
+      // Yaklaşan etkinlikler - client-side filtering ve sorting
+      const allEvents = eventsSnap.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
-      setUpcomingEvents(events);
+
+      // Bugünden sonraki etkinlikleri filtrele ve sırala
+      const now = new Date();
+      const upcomingEvents = allEvents
+        .filter(event => {
+          const eventDate = event.date?.toDate?.() || new Date(event.date);
+          return eventDate >= now;
+        })
+        .sort((a, b) => {
+          const aDate = a.date?.toDate?.() || new Date(a.date);
+          const bDate = b.date?.toDate?.() || new Date(b.date);
+          return aDate - bDate;
+        })
+        .slice(0, 5); // Sadece ilk 5 etkinlik
+
+      setUpcomingEvents(upcomingEvents);
 
     } catch (error) {
       console.error('Dashboard verileri yüklenirken hata:', error);
@@ -342,7 +351,7 @@ export default function Dashboard() {
   const getGreeting = () => {
     const hour = currentTime.getHours();
     if (hour < 6) return { text: 'Gece Kedisi', emoji: '🌙', color: 'from-indigo-500 to-purple-600' };
-    if (hour < 12) return { text: 'Günaydın Sevgilim', emoji: '🌅', color: 'from-orange-400 to-pink-500' };
+    if (hour < 12) return { text: 'Günayd��n Sevgilim', emoji: '🌅', color: 'from-orange-400 to-pink-500' };
     if (hour < 17) return { text: 'İyi Günler Aşkım', emoji: '☀️', color: 'from-yellow-400 to-orange-500' };
     if (hour < 21) return { text: 'İyi Akşamlar Canım', emoji: '🌆', color: 'from-purple-400 to-pink-500' };
     return { text: 'İyi Geceler Tatlım', emoji: '🌃', color: 'from-blue-600 to-purple-700' };
@@ -465,7 +474,7 @@ export default function Dashboard() {
             <Link
               key={index}
               to={stat.link}
-              className="group relative overflow-hidden cat-card p-4 sm:p-6 hover:scale-105 transition-all duration-300"
+              className={`group relative overflow-hidden ${currentTheme.styles.cardClass} p-4 sm:p-6 hover:scale-105 transition-all duration-300`}
             >
               <div className={`absolute inset-0 ${stat.gradient} opacity-10 group-hover:opacity-20 transition-opacity`}></div>
               
@@ -512,7 +521,7 @@ export default function Dashboard() {
               <Link
                 key={index}
                 to={action.link}
-                className="group relative overflow-hidden cat-card p-6 hover:scale-105 transition-all duration-300"
+                className={`group relative overflow-hidden ${currentTheme.styles.cardClass} p-6 hover:scale-105 transition-all duration-300`}
               >
                 <div className={`absolute inset-0 ${action.gradient} opacity-0 group-hover:opacity-10 transition-opacity`}></div>
                 
@@ -546,10 +555,10 @@ export default function Dashboard() {
         {/* Enhanced Sidebar */}
         <div className="space-y-6">
           {/* Recent Activities */}
-          <div className="cat-card p-6">
-            <h3 className="text-xl font-cat text-gray-800 mb-4 flex items-center">
+          <div className={`${currentTheme.styles.cardClass} p-6`}>
+            <h3 className={`text-xl mb-4 flex items-center ${currentTheme.id === 'cyberpunk' ? 'font-mono text-cyber-primary' : 'font-cat text-gray-800'}`}>
               <Activity className="w-5 h-5 mr-2" />
-              Son Aktiviteler
+              {currentTheme.id === 'cyberpunk' ? 'RECENT_LOGS.dat' : 'Son Aktiviteler'}
             </h3>
             
             {recentActivities.length > 0 ? (
@@ -590,7 +599,7 @@ export default function Dashboard() {
 
           {/* Upcoming Events */}
           {upcomingEvents.length > 0 && (
-            <div className="cat-card p-6">
+            <div className={`${currentTheme.styles.cardClass} p-6`}>
               <h3 className="text-xl font-cat text-gray-800 mb-4 flex items-center">
                 <Star className="w-5 h-5 mr-2 text-yellow-500" />
                 Yaklaşan Özel Günler
@@ -624,7 +633,7 @@ export default function Dashboard() {
           )}
 
           {/* Progress Overview */}
-          <div className="cat-card p-6">
+          <div className={`${currentTheme.styles.cardClass} p-6`}>
             <h3 className="text-xl font-cat text-gray-800 mb-4 flex items-center">
               <Award className="w-5 h-5 mr-2 text-purple-500" />
               İlerleme Durumu
