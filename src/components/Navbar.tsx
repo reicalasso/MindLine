@@ -199,8 +199,8 @@ export default function Navbar() {
   }, [mobileMenuOpen]);
 
   return (
-    <nav className="cat-decoration-1 cat-decoration-2 cat-decoration-3 cat-decoration-4 love-decoration-1 love-decoration-2 love-decoration-3">
-      <div className="bg-white/90 backdrop-blur-xl shadow-magic border-b-2 border-cat-200/30 sticky top-0 z-40">
+    <nav className={`${currentTheme.id === 'cyberpunk' ? 'cyber-decoration-1 cyber-decoration-2' : 'cat-decoration-1 cat-decoration-2 cat-decoration-3 cat-decoration-4 love-decoration-1 love-decoration-2 love-decoration-3'}`}>
+      <div className={`${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/90 border-cyber-secondary shadow-cyber' : 'bg-white/90 shadow-magic border-cat-200/30'} backdrop-blur-xl border-b-2 sticky top-0 z-40`}>
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <div className="flex justify-between items-center py-3 sm:py-4">
             {/* Logo - daha etkileşimli */}
