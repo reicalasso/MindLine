@@ -506,7 +506,7 @@ export default function Dashboard() {
               <Link
                 key={index}
                 to={action.link}
-                className="group relative overflow-hidden cat-card p-6 hover:scale-105 transition-all duration-300"
+                className={`group relative overflow-hidden ${currentTheme.styles.cardClass} p-6 hover:scale-105 transition-all duration-300`}
               >
                 <div className={`absolute inset-0 ${action.gradient} opacity-0 group-hover:opacity-10 transition-opacity`}></div>
                 
