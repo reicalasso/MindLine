@@ -22,6 +22,8 @@ export default function ThemeToggle({
     setIsOpen(false);
   };
 
+  const filteredThemes = availableThemes.filter(theme => theme.id === 'cyberpunk' || theme.id === 'cat');
+
   if (variant === 'button') {
     return (
       <button
@@ -87,7 +89,7 @@ export default function ThemeToggle({
               </div>
               
               <div className="space-y-1">
-                {availableThemes.map((theme) => (
+                {filteredThemes.map((theme) => (
                   <button
                     key={theme.id}
                     onClick={() => handleThemeSelect(theme.id as ThemeMode)}
