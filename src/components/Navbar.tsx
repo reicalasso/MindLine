@@ -230,11 +230,11 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
               {navCategories.map((category) => (
                 <div key={category.id} className="relative group">
-                  <button 
+                  <button
                     className={`flex items-center space-x-2 px-3 xl:px-4 py-2 rounded-full transition-all duration-300 font-medium text-sm xl:text-base hover-glow ${
-                      currentCategory?.id === category.id 
-                        ? 'bg-cat-gradient text-gray-800 shadow-cat' 
-                        : 'text-gray-700 hover:bg-cat-100 hover:text-gray-800 hover:shadow-soft'
+                      currentCategory?.id === category.id
+                        ? (currentTheme.id === 'cyberpunk' ? 'bg-cyber-red text-cyber-primary shadow-cyber' : 'bg-cat-gradient text-gray-800 shadow-cat')
+                        : (currentTheme.id === 'cyberpunk' ? 'text-cyber-primary hover:bg-cyber-100 hover:text-cyber-secondary hover:shadow-cyber' : 'text-gray-700 hover:bg-cat-100 hover:text-gray-800 hover:shadow-soft')
                     }`}
                     onClick={() => toggleCategory(category.id)}
                   >
