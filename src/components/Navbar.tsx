@@ -246,7 +246,7 @@ export default function Navbar() {
                   </button>
                   
                   {/* Desktop Dropdown - gelişmiş tasarım */}
-                  <div className={`absolute left-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-3xl shadow-magic border-2 border-cat-200/50 transition-all duration-300 origin-top-left z-50 ${
+                  <div className={`absolute left-0 mt-2 w-56 ${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/95 border-cyber-secondary shadow-cyber' : 'bg-white/95 border-cat-200/50 shadow-magic'} backdrop-blur-xl rounded-3xl border-2 transition-all duration-300 origin-top-left z-50 ${
                     openCategory === category.id ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'
                   }`}>
                     <div className="p-3">
