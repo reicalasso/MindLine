@@ -336,7 +336,7 @@ export default function Dashboard() {
   const getGreeting = () => {
     const hour = currentTime.getHours();
     if (hour < 6) return { text: 'Gece Kedisi', emoji: '🌙', color: 'from-indigo-500 to-purple-600' };
-    if (hour < 12) return { text: 'Günaydın Sevgilim', emoji: '🌅', color: 'from-orange-400 to-pink-500' };
+    if (hour < 12) return { text: 'Günayd��n Sevgilim', emoji: '🌅', color: 'from-orange-400 to-pink-500' };
     if (hour < 17) return { text: 'İyi Günler Aşkım', emoji: '☀️', color: 'from-yellow-400 to-orange-500' };
     if (hour < 21) return { text: 'İyi Akşamlar Canım', emoji: '🌆', color: 'from-purple-400 to-pink-500' };
     return { text: 'İyi Geceler Tatlım', emoji: '🌃', color: 'from-blue-600 to-purple-700' };
@@ -459,7 +459,7 @@ export default function Dashboard() {
             <Link
               key={index}
               to={stat.link}
-              className="group relative overflow-hidden cat-card p-4 sm:p-6 hover:scale-105 transition-all duration-300"
+              className={`group relative overflow-hidden ${currentTheme.styles.cardClass} p-4 sm:p-6 hover:scale-105 transition-all duration-300`}
             >
               <div className={`absolute inset-0 ${stat.gradient} opacity-10 group-hover:opacity-20 transition-opacity`}></div>
               
