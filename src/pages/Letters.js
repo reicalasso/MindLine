@@ -440,7 +440,7 @@ export default function Letters() {
 }
 
 // Klasör seçenekleri için alt bileşen
-function FolderOptions({ collectionName }) {
+export function FolderOptions({ collectionName }) {
   const [folders, setFolders] = useState([]);
   
   useEffect(() => {
