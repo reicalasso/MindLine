@@ -169,23 +169,23 @@ export const themes: Record<ThemeMode, Theme> = {
   cyberpunk: {
     id: 'cyberpunk',
     name: 'Cyber Matrix',
-    emoji: '🕶️',
-    description: 'Fütüristik cyberpunk tema',
+    emoji: '🤖',
+    description: 'Neural network accessed - Reality hacked',
     colors: {
       primary: '#00ffff',
-      secondary: '#ff0080',
-      accent: '#00ff41',
-      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0033 50%, #001122 100%)',
-      surface: 'rgba(0, 255, 255, 0.1)',
+      secondary: '#ff0040',
+      accent: '#b000ff',
+      background: 'linear-gradient(135deg, #001122 0%, #0a0a0a 25%, #1a0033 50%, #0a0a0a 75%, #001122 100%)',
+      surface: 'rgba(0, 15, 30, 0.9)',
       text: '#00ffff',
-      textSecondary: '#ff0080',
-      border: '#00ff41',
-      gradient: 'bg-cyber-gradient',
-      shadow: 'shadow-cyber'
+      textSecondary: '#ff0040',
+      border: '#00ffff',
+      gradient: 'bg-cyber-matrix',
+      shadow: 'shadow-cyber-intense'
     },
     styles: {
       cardClass: 'cyber-card',
-      buttonClass: 'btn-cyber',
+      buttonClass: 'cyber-button',
       inputClass: 'cyber-input',
       backgroundClass: 'bg-cyber-matrix',
       textClass: 'text-cyber-primary',
@@ -195,7 +195,7 @@ export const themes: Record<ThemeMode, Theme> = {
       glitch: 'animate-glitch',
       neonFlicker: 'animate-neon-flicker',
       dataStream: 'animate-data-stream',
-      pulse: 'animate-cyber-pulse'
+      pulse: 'animate-circuit-pulse'
     }
   }
 };
