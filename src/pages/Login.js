@@ -66,7 +66,12 @@ export default function Login() {
       </div>
 
       <div className="max-w-md w-full relative z-10">
-        <div className={`${currentTheme.styles.cardClass} p-6 sm:p-8 lg:p-10 border-2 border-opacity-30`} style={{ borderColor: currentTheme.colors.border + '50' }}>
+        <div className={`${currentTheme.styles.cardClass} p-6 sm:p-8 lg:p-10 border-2 border-opacity-30 relative`} style={{ borderColor: currentTheme.colors.border + '50' }}>
+          {/* Theme Toggle - Top Right */}
+          <div className="absolute top-4 right-4">
+            <ThemeToggle variant="button" showLabel={false} />
+          </div>
+
           {/* Logo ve başlık */}
           <div className="text-center mb-6 sm:mb-8">
             <div className="flex justify-center mb-4 sm:mb-6">
