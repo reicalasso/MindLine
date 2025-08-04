@@ -30,6 +30,7 @@ import FolderManager from '../components/FolderManager';
 
 export default function Letters() {
   const { currentUser } = useAuth();
+  const { currentTheme } = useTheme();
   const [letters, setLetters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
