@@ -67,62 +67,81 @@ export default function Navbar() {
     }
   };
 
+  // Cyberpunk tema için emoji'leri değiştir
+  const getCyberEmoji = (originalEmoji: string) => {
+    if (currentTheme.id !== 'cyberpunk') return originalEmoji;
+
+    const cyberMap: Record<string, string> = {
+      '🏠': '🏢',
+      '💌': '📡',
+      '💬': '💻',
+      '🎬': '📱',
+      '🎵': '🎚️',
+      '📝': '⚡',
+      '📅': '🔮',
+      '📷': '💾',
+      '👤': '🤖'
+    };
+
+    return cyberMap[originalEmoji] || originalEmoji;
+  };
+
   const navCategories: NavCategory[] = [
     {
       id: 'main',
-      label: 'Ana Sayfa',
+      label: currentTheme.id === 'cyberpunk' ? 'MAIN_HUB' : 'Ana Sayfa',
       icon: Home,
-      emoji: '🏠',
+      emoji: getCyberEmoji('🏠'),
       items: [
-        { path: '/', icon: Heart, label: 'Ana Sayfa', emoji: '🏠' }
+        { path: '/', icon: Heart, label: currentTheme.id === 'cyberpunk' ? 'MAIN_HUB' : 'Ana Sayfa', emoji: getCyberEmoji('🏠') }
       ]
     },
     {
       id: 'communication',
-      label: 'İletişim',
+      label: currentTheme.id === 'cyberpunk' ? 'NET_COMM' : 'İletişim',
       icon: MessageSquare,
-      emoji: '💌',
+      emoji: getCyberEmoji('💌'),
       items: [
-        { path: '/letters', icon: Mail, label: 'Mektuplar', emoji: '💌' },
-        { path: '/chat', icon: MessageSquare, label: 'Sohbet', emoji: '💬' }
+        { path: '/letters', icon: Mail, label: currentTheme.id === 'cyberpunk' ? 'DATA_MAILS' : 'Mektuplar', emoji: getCyberEmoji('💌') },
+        { path: '/chat', icon: MessageSquare, label: currentTheme.id === 'cyberpunk' ? 'NEURAL_CHAT' : 'Sohbet', emoji: getCyberEmoji('💬') }
       ]
     },
     {
       id: 'entertainment',
-      label: 'Eğlence',
+      label: currentTheme.id === 'cyberpunk' ? 'MEDIA_HUB' : 'Eğlence',
       icon: Film,
-      emoji: '🎬',
+      emoji: getCyberEmoji('🎬'),
       items: [
-        { path: '/movies', icon: Film, label: 'Filmler', emoji: '🎬' },
-        { path: '/music', icon: Music, label: 'Müzik', emoji: '🎵' }
+        { path: '/movies', icon: Film, label: currentTheme.id === 'cyberpunk' ? 'HOLO_FILMS' : 'Filmler', emoji: getCyberEmoji('🎬') },
+        { path: '/music', icon: Music, label: currentTheme.id === 'cyberpunk' ? 'AUDIO_SYNC' : 'Müzik', emoji: getCyberEmoji('🎵') }
       ]
     },
     {
       id: 'productivity',
-      label: 'Verimlilik',
+      label: currentTheme.id === 'cyberpunk' ? 'TASK_MATRIX' : 'Verimlilik',
       icon: CheckSquare,
-      emoji: '📝',
+      emoji: getCyberEmoji('📝'),
       items: [
-        { path: '/todos', icon: CheckSquare, label: 'Yapılacaklar', emoji: '📝' },
-        { path: '/calendar', icon: Calendar, label: 'Takvim', emoji: '📅' }
+        { path: '/todos', icon: CheckSquare, label: currentTheme.id === 'cyberpunk' ? 'EXEC_TASKS' : 'Yapılacaklar', emoji: getCyberEmoji('📝') },
+        { path: '/calendar', icon: Calendar, label: currentTheme.id === 'cyberpunk' ? 'TIME_GRID' : 'Takvim', emoji: getCyberEmoji('📅') }
       ]
     },
     {
       id: 'memories',
-      label: 'Anılar',
+      label: currentTheme.id === 'cyberpunk' ? 'DATA_VAULT' : 'Anılar',
       icon: Bookmark,
-      emoji: '📷',
+      emoji: getCyberEmoji('📷'),
       items: [
-        { path: '/gallery', icon: Camera, label: 'Galeri', emoji: '📷' }
+        { path: '/gallery', icon: Camera, label: currentTheme.id === 'cyberpunk' ? 'IMG_ARCHIVE' : 'Galeri', emoji: getCyberEmoji('📷') }
       ]
     },
     {
       id: 'profile',
-      label: 'Profil',
+      label: currentTheme.id === 'cyberpunk' ? 'USER_PROFILE' : 'Profil',
       icon: User,
-      emoji: '👤',
+      emoji: getCyberEmoji('👤'),
       items: [
-        { path: '/profile', icon: User, label: 'Profilim', emoji: '👤' }
+        { path: '/profile', icon: User, label: currentTheme.id === 'cyberpunk' ? 'AVATAR_CONFIG' : 'Profilim', emoji: getCyberEmoji('👤') }
       ]
     }
   ];
