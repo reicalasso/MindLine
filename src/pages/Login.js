@@ -76,8 +76,12 @@ export default function Login() {
           <div className="text-center mb-6 sm:mb-8">
             <div className="flex justify-center mb-4 sm:mb-6">
               <div className="relative">
-                <span className="text-6xl sm:text-7xl lg:text-8xl animate-bounce-cat">😺</span>
-                <span className="absolute -top-2 -right-2 text-2xl sm:text-3xl animate-wiggle">💕</span>
+                <span className={`text-6xl sm:text-7xl lg:text-8xl ${currentTheme.id === 'cyberpunk' ? 'animate-cyber-glow' : 'animate-bounce-cat'} ${currentTheme.styles.textClass}`}>
+                  {currentTheme.id === 'cyberpunk' ? '🤖' : '😺'}
+                </span>
+                <span className={`absolute -top-2 -right-2 text-2xl sm:text-3xl ${currentTheme.id === 'cyberpunk' ? 'animate-neon-flicker' : 'animate-wiggle'}`}>
+                  {currentTheme.id === 'cyberpunk' ? '⚡' : '💕'}
+                </span>
               </div>
             </div>
             <h1 className={`text-3xl sm:text-4xl lg:text-5xl font-cat ${currentTheme.styles.textClass} mb-2 sm:mb-4`}>
