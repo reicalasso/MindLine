@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import ThemeToggle from './ThemeToggle';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { 
@@ -31,6 +33,7 @@ interface NavCategory {
 
 export default function Navbar() {
   const { logout, currentUser } = useAuth();
+  const { currentTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -247,6 +250,12 @@ export default function Navbar() {
 
             {/* User Info & Controls - daha sevimli */}
             <div className="flex items-center space-x-2 sm:space-x-3">
+              {/* Theme Toggle */}
+              <ThemeToggle
+                variant="dropdown"
+                showLabel={false}
+                className="hidden md:block"
+              />
               {/* User Profile Info - gelişmiş tasarım */}
               <div className="hidden lg:flex items-center space-x-3">
                 <Link
@@ -267,10 +276,17 @@ export default function Navbar() {
                 </Link>
               </div>
 
+              {/* Mobile Theme Toggle */}
+              <ThemeToggle
+                variant="button"
+                showLabel={false}
+                className="md:hidden"
+              />
+
               {/* Logout Button - daha etkileşimli */}
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 text-gray-700 hover:bg-love-gradient hover:text-white rounded-full transition-all duration-300 font-medium text-sm group hover-glow"
+                className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 text-gray-700 hover:bg-love-gradient hover:text-white rounded-full transition-all duration-300 font-medium text-sm group hover-glow ${currentTheme.styles.buttonClass}`}
               >
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:block">Çıkış</span>
