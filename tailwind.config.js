@@ -118,6 +118,11 @@ module.exports = {
         'glow': '0 0 30px rgba(242, 113, 28, 0.4), 0 0 60px rgba(242, 113, 28, 0.2)',
         'magic': '0 4px 25px rgba(168, 85, 247, 0.2), 0 2px 10px rgba(168, 85, 247, 0.1)',
         'love-glow': '0 0 25px rgba(236, 72, 153, 0.4), 0 0 50px rgba(236, 72, 153, 0.2)',
+        'cyber': '0 0 20px rgba(255, 0, 64, 0.5), 0 0 40px rgba(176, 0, 255, 0.3), 0 0 60px rgba(0, 255, 255, 0.2)',
+        'cyber-intense': '0 0 30px rgba(255, 0, 64, 0.8), 0 0 60px rgba(176, 0, 255, 0.6), 0 0 90px rgba(0, 255, 255, 0.4)',
+        'neon-red': '0 0 10px #ff0040, 0 0 20px #ff0040, 0 0 30px #ff0040',
+        'neon-blue': '0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff',
+        'neon-purple': '0 0 10px #b000ff, 0 0 20px #b000ff, 0 0 30px #b000ff',
       },
       animation: {
         'bounce-cat': 'bounce-cat 2s infinite',
