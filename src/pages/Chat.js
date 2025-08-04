@@ -773,7 +773,11 @@ export default function Chat() {
       </div>
 
       {/* Mesaj Gönderme Formu */}
-      <div className="border-t border-romantic-200 p-3 bg-white/50 flex-shrink-0 w-full">
+      <div className={`border-t p-3 flex-shrink-0 w-full ${
+        currentTheme.id === 'cyberpunk'
+          ? 'border-cyber-secondary bg-cyber-50/50'
+          : 'border-romantic-200 bg-white/50'
+      }`}>
         <form onSubmit={handleSendMessage} className="space-y-2 w-full">
           {/* Dosya Seçme Butonları */}
           <div className="flex space-x-2">
