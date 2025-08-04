@@ -136,6 +136,10 @@ module.exports = {
         'particle-float': 'particleFloat 8s linear infinite',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'emoji-zoom': 'emojiZoom 0.5s ease-in-out',
+        'cyber-glow': 'cyberGlow 2s ease-in-out infinite',
+        'glitch': 'glitch 0.5s infinite',
+        'neon-flicker': 'neonFlicker 1.5s infinite',
+        'data-stream': 'dataStream 20s linear infinite',
       },
       keyframes: {
         'bounce-cat': {
