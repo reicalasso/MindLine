@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { 
   collection, 
   query, 
@@ -42,6 +43,7 @@ import {
 
 export default function Dashboard() {
   const { currentUser } = useAuth();
+  const { currentTheme } = useTheme();
   const [stats, setStats] = useState({
     letters: 0,
     movies: 0,
