@@ -393,11 +393,11 @@ export default function Navbar() {
             <div className="space-y-3">
               {navCategories.map((category) => (
                 <div key={category.id} className="border-b border-cat-100 pb-3 last:border-b-0">
-                  <button 
+                  <button
                     className={`flex items-center justify-between w-full px-4 py-3 rounded-2xl transition-all duration-300 font-medium hover-glow ${
-                      currentCategory?.id === category.id 
-                        ? 'bg-cat-gradient text-gray-800 shadow-soft' 
-                        : 'text-gray-700 hover:bg-cat-50'
+                      currentCategory?.id === category.id
+                        ? (currentTheme.id === 'cyberpunk' ? 'bg-cyber-red text-cyber-primary shadow-cyber' : 'bg-cat-gradient text-gray-800 shadow-soft')
+                        : (currentTheme.id === 'cyberpunk' ? 'text-cyber-primary hover:bg-cyber-100' : 'text-gray-700 hover:bg-cat-50')
                     }`}
                     onClick={() => toggleCategory(category.id)}
                   >
@@ -419,8 +419,8 @@ export default function Navbar() {
                         to={item.path}
                         className={`flex items-center space-x-3 px-6 py-3 rounded-2xl transition-all duration-200 text-sm hover-glow ${
                           location.pathname === item.path
-                            ? 'bg-paw-gradient text-white shadow-paw'
-                            : 'text-gray-700 hover:bg-cat-50 hover:text-gray-800'
+                            ? (currentTheme.id === 'cyberpunk' ? 'bg-cyber-purple text-cyber-primary shadow-cyber' : 'bg-paw-gradient text-white shadow-paw')
+                            : (currentTheme.id === 'cyberpunk' ? 'text-cyber-primary hover:bg-cyber-100 hover:text-cyber-secondary' : 'text-gray-700 hover:bg-cat-50 hover:text-gray-800')
                         }`}
                         onClick={closeMobileMenu}
                       >
@@ -435,7 +435,11 @@ export default function Navbar() {
             {/* Çıkış Butonu */}
             <button
               onClick={handleLogout}
-              className="mt-6 w-full flex items-center justify-center space-x-2 px-4 py-3 text-gray-700 hover:bg-love-gradient hover:text-white rounded-full transition-all duration-300 font-medium text-base group hover-glow"
+              className={`mt-6 w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-full transition-all duration-300 font-medium text-base group hover-glow ${
+                currentTheme.id === 'cyberpunk'
+                  ? 'text-cyber-secondary hover:bg-cyber-red hover:text-cyber-primary'
+                  : 'text-gray-700 hover:bg-love-gradient hover:text-white'
+              }`}
             >
               <LogOut className="w-5 h-5" />
               <span>Çıkış</span>
