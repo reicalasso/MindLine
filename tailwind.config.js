@@ -144,15 +144,14 @@ module.exports = {
         'particle-float': 'particleFloat 8s linear infinite',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'emoji-zoom': 'emojiZoom 0.5s ease-in-out',
-        // Hafifletilmiş cyberpunk animasyonlar
-        'cyber-glow': 'cyberGlowLite 5s ease-in-out infinite',
-        'glitch': 'glitchLite 1.2s infinite',
-        'neon-flicker': 'neonFlickerLite 3s infinite',
-        'data-stream': 'dataStreamLite 25s linear infinite',
-        'matrix-rain': 'matrixRainLite 15s linear infinite',
-        'hologram': 'hologramLite 5s ease-in-out infinite',
-        'circuit-pulse': 'circuitPulseLite 4s ease-in-out infinite',
-        'cyber-glow-lite': 'cyberGlowLite 5s ease-in-out infinite',
+        'cyber-glow': 'cyberGlow 3s ease-in-out infinite',
+        'glitch': 'glitch 0.8s infinite',
+        'neon-flicker': 'neonFlicker 2s infinite',
+        'data-stream': 'dataStream 25s linear infinite',
+        'matrix-rain': 'matrixRain 15s linear infinite',
+        'hologram': 'hologram 4s ease-in-out infinite',
+        'circuit-pulse': 'circuitPulse 3s ease-in-out infinite',
+        'cyber-glow-lite': 'cyberGlowLite 4s ease-in-out infinite',
         'neon-flicker-lite': 'neonFlickerLite 3s infinite',
       },
       keyframes: {
@@ -214,41 +213,56 @@ module.exports = {
           '50%': { transform: 'scale(1.5) rotate(10deg)' },
           '100%': { transform: 'scale(1)' },
         },
-        // Optimize edilmiş cyberpunk animasyonlar
-        cyberGlowLite: {
+        cyberGlow: {
           '0%, 100%': {
-            textShadow: '0 0 2px currentColor'
+            boxShadow: '0 0 3px #ff0040, 0 0 6px #ff0040',
+            textShadow: '0 0 3px #ff0040'
           },
           '50%': {
-            textShadow: '0 0 4px currentColor'
+            boxShadow: '0 0 6px #00ffff, 0 0 12px #00ffff',
+            textShadow: '0 0 6px #00ffff'
           },
         },
-        glitchLite: {
+        cyberGlowLite: {
+          '0%, 100%': {
+            textShadow: '0 0 3px currentColor'
+          },
+          '50%': {
+            textShadow: '0 0 6px currentColor'
+          },
+        },
+        glitch: {
           '0%, 100%': { transform: 'translate(0)' },
           '25%': { transform: 'translate(-1px, 1px)' },
-          '75%': { transform: 'translate(1px, -1px)' },
+          '50%': { transform: 'translate(1px, -1px)' },
+          '75%': { transform: 'translate(-1px, -1px)' },
+        },
+        neonFlicker: {
+          '0%, 100%': { opacity: '1', textShadow: '0 0 3px currentColor, 0 0 6px currentColor' },
+          '25%': { opacity: '0.9', textShadow: '0 0 2px currentColor' },
+          '50%': { opacity: '0.95', textShadow: '0 0 4px currentColor' },
         },
         neonFlickerLite: {
           '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.92' },
+          '50%': { opacity: '0.9' },
         },
-        dataStreamLite: {
-          '0%': { transform: 'translateY(120vh)', opacity: '0' },
-          '5%': { opacity: '0.5' },
-          '95%': { opacity: '0.5' },
+        dataStream: {
+          '0%': { transform: 'translateY(100vh)', opacity: '0' },
+          '5%': { opacity: '0.6' },
+          '95%': { opacity: '0.6' },
           '100%': { transform: 'translateY(-50px)', opacity: '0' },
         },
-        matrixRainLite: {
-          '0%': { transform: 'translateY(-50vh)', opacity: '0.6' },
-          '100%': { transform: 'translateY(120vh)', opacity: '0' },
+        matrixRain: {
+          '0%': { transform: 'translateY(-50vh)', opacity: '0.8' },
+          '100%': { transform: 'translateY(100vh)', opacity: '0' },
         },
-        hologramLite: {
+        hologram: {
           '0%, 100%': { transform: 'skew(0deg, 0deg)' },
-          '50%': { transform: 'skew(0.2deg, 0.2deg)' },
+          '50%': { transform: 'skew(0.3deg, 0.3deg)' },
         },
-        circuitPulseLite: {
-          '0%, 100%': { borderColor: 'rgba(0, 255, 255, 0.2)' },
-          '50%': { borderColor: 'rgba(255, 0, 64, 0.3)' },
+        circuitPulse: {
+          '0%, 100%': { borderColor: 'rgba(0, 255, 255, 0.3)' },
+          '50%': { borderColor: 'rgba(255, 0, 64, 0.4)' },
         },
       },
       screens: {

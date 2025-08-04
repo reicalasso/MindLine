@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { Palette, ChevronDown } from 'lucide-react';
 import { ThemeMode } from '../types/theme';
@@ -9,7 +9,7 @@ interface ThemeToggleProps {
   variant?: 'dropdown' | 'button';
 }
 
-// Optimize performans için React.memo ve useCallback/useMemo kullanımı
+// Optimize filteredThemes calculation
 const ThemeToggle = React.memo(function ThemeToggle({ 
   className = '', 
   showLabel = true, 
@@ -18,27 +18,23 @@ const ThemeToggle = React.memo(function ThemeToggle({
   const { currentTheme, themeMode, setThemeMode, toggleTheme, availableThemes } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Callback ile memoize edilmiş fonksiyon
-  const handleThemeSelect = useCallback((mode: ThemeMode) => {
+  const handleThemeSelect = (mode: ThemeMode) => {
     setThemeMode(mode);
     setIsOpen(false);
-  }, [setThemeMode]);
+  };
 
-  // Filtrelenmiş temaları hafızaya alarak gereksiz hesaplamaları önleme
-  const filteredThemes = useMemo(() => 
-    availableThemes.filter(theme => theme.id === 'cyberpunk' || theme.id === 'cat'), 
-    [availableThemes]);
+  const filteredThemes = useMemo(() => availableThemes.filter(theme => theme.id === 'cyberpunk' || theme.id === 'cat'), [availableThemes]);
 
   if (variant === 'button') {
     return (
       <button
         onClick={toggleTheme}
-        className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-colors ${
+        className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-300 hover:shadow-lg ${
           currentTheme.styles.buttonClass
         } ${className}`}
         title={`Tema: ${currentTheme.name}`}
       >
-        <span className="text-lg">{currentTheme.emoji}</span>
+        <span className="text-lg animate-wiggle">{currentTheme.emoji}</span>
         {showLabel && (
           <span className="text-sm font-medium hidden sm:block">
             {currentTheme.name}
@@ -52,13 +48,13 @@ const ThemeToggle = React.memo(function ThemeToggle({
     <div className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-colors ${
+        className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-300 hover:shadow-lg ${
           currentTheme.styles.buttonClass
         }`}
         title="Tema Değiştir"
       >
         <Palette className="w-4 h-4" />
-        <span className="text-lg">{currentTheme.emoji}</span>
+        <span className="text-lg animate-wiggle">{currentTheme.emoji}</span>
         {showLabel && (
           <span className="text-sm font-medium hidden sm:block">
             {currentTheme.name}
@@ -79,9 +75,9 @@ const ThemeToggle = React.memo(function ThemeToggle({
           />
           
           {/* Menu */}
-          <div className={`absolute right-0 top-full mt-2 w-64 backdrop-blur-sm rounded-2xl border-2 z-50 overflow-hidden ${
+          <div className={`absolute right-0 top-full mt-2 w-64 backdrop-blur-xl rounded-2xl border-2 z-50 overflow-hidden ${
             currentTheme.id === 'cyberpunk' 
-              ? 'bg-cyber-50/95 border-cyber-primary' 
+              ? 'bg-cyber-50/95 border-cyber-primary shadow-neon-blue' 
               : 'bg-white/95 border-cat-200/50 shadow-magic'
           }`}>
             <div className="p-3">
@@ -106,7 +102,7 @@ const ThemeToggle = React.memo(function ThemeToggle({
                         : (currentTheme.id === 'cyberpunk'
                           ? 'hover:bg-cyber-100 border-cyber-accent/30 hover:border-cyber-secondary' 
                           : 'hover:bg-gray-50 border-transparent')
-                    }`}
+                    } ${theme.id === 'cyberpunk' ? 'animate-circuit-pulse' : ''}`}
                   >
                     {/* Tema önizleme kutusu */}
                     <div 
@@ -121,7 +117,7 @@ const ThemeToggle = React.memo(function ThemeToggle({
                             : theme.colors.background)
                       }}
                     >
-                      <span className={theme.id === 'cyberpunk' ? 'text-cyber-primary' : ''}>
+                      <span className={`animate-wiggle ${theme.id === 'cyberpunk' ? 'text-cyber-primary' : ''}`}>
                         {theme.emoji}
                       </span>
                     </div>
@@ -160,7 +156,7 @@ const ThemeToggle = React.memo(function ThemeToggle({
               {/* Theme info - simplified animations */}
               <div className={`mt-3 p-3 rounded-xl border ${
                 currentTheme.id === 'cyberpunk' 
-                  ? 'bg-cyber-100 border-cyber-primary/50' 
+                  ? 'bg-gradient-to-r from-cyber-matrix/50 to-cyber-red/30 border-cyber-primary/50' 
                   : 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200'
               }`}>
                 <div className="flex items-center space-x-2 mb-1">
@@ -191,7 +187,7 @@ const ThemeToggle = React.memo(function ThemeToggle({
                       &gt; Performance_mode.enabled
                     </div>
                     <div className="mt-1 flex items-center space-x-1">
-                      <div className="w-2 h-2 bg-cyber-green rounded-full"></div>
+                      <div className="w-2 h-2 bg-cyber-green rounded-full animate-pulse"></div>
                       <span className="text-xs text-cyber-green font-mono">OPTIMIZED</span>
                     </div>
                   </>

@@ -71,27 +71,27 @@ export const themes: Record<ThemeMode, Theme> = {
       primary: '#00ffff',
       secondary: '#ff0040',
       accent: '#b000ff',
-      background: '#001122',
+      background: 'linear-gradient(135deg, #001122 0%, #0a0a0a 25%, #1a0033 50%, #0a0a0a 75%, #001122 100%)',
       surface: 'rgba(0, 15, 30, 0.9)',
       text: '#00ffff',
       textSecondary: '#ff0040',
       border: '#00ffff',
-      gradient: 'bg-cyber-100',
-      shadow: 'shadow-none'
+      gradient: 'bg-cyber-matrix',
+      shadow: 'shadow-cyber-intense'
     },
     styles: {
-      cardClass: 'cyber-card-lite',
-      buttonClass: 'cyber-button-lite',
+      cardClass: 'cyber-card',
+      buttonClass: 'cyber-button',
       inputClass: 'cyber-input',
-      backgroundClass: 'bg-cyber-50',
-      textClass: 'text-cyber-primary-lite',
-      decorationClass: 'cyber-decorations-lite'
+      backgroundClass: 'bg-cyber-matrix',
+      textClass: 'text-cyber-primary',
+      decorationClass: 'cyber-decorations'
     },
     animations: {
-      glitch: 'animate-glitch-lite',
-      neonFlicker: 'animate-neon-flicker-lite',
-      dataStream: '',
-      pulse: ''
+      glitch: 'animate-glitch',
+      neonFlicker: 'animate-neon-flicker',
+      dataStream: 'animate-data-stream',
+      pulse: 'animate-circuit-pulse'
     }
   }
 };

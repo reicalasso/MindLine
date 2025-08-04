@@ -27,13 +27,13 @@ body {
 body.theme-cyberpunk {
   background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 50%, #0a0a0a 100%);
   background-size: 200% 200%;
-  animation: gradientShift 60s ease infinite; /* Daha yavaş animasyon */
+  animation: gradientShift 30s ease infinite;
   color: #00ffff;
   font-family: 'Courier New', monospace;
   position: relative;
 }
 
-/* Daha hafif arka plan efektleri */
+/* Simplified background effects for performance */
 body.theme-cyberpunk::before {
   content: '';
   position: fixed;
@@ -45,15 +45,15 @@ body.theme-cyberpunk::before {
     repeating-linear-gradient(
       0deg,
       transparent,
-      transparent 8px,
-      rgba(0, 255, 255, 0.01) 8px, /* Daha az belirgin */
-      rgba(0, 255, 255, 0.01) 10px
+      transparent 4px,
+      rgba(0, 255, 255, 0.02) 4px,
+      rgba(0, 255, 255, 0.02) 6px
     );
   pointer-events: none;
   z-index: 1;
 }
 
-/* Daha basit after efekti - tek radial gradient */
+/* Simplified after effect */
 body.theme-cyberpunk::after {
   content: '';
   position: fixed;
@@ -61,10 +61,24 @@ body.theme-cyberpunk::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.03) 0%, transparent 70%);
+  background: radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 70%);
   pointer-events: none;
   z-index: 1;
-  animation: none; /* Animasyonu kaldır */
+}
+
+body.theme-cyberpunk::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(255, 0, 64, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(176, 0, 255, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 40% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+  animation: neonFlicker 3s ease-in-out infinite;
 }
 
 /* Enhanced Gradient Animation */
@@ -104,27 +118,43 @@ body.theme-cyberpunk::after {
   filter: drop-shadow(0 0 10px rgba(242, 113, 28, 0.3));
 }
 
-/* Cyberpunk Decorations - Optimize edildi */
+/* Cyberpunk Decorations */
 .theme-cyberpunk .background-decorations::before {
   content: "🤖";
   color: #ff0040;
-  text-shadow: 0 0 10px #ff0040; /* Daha az gölge */
-  animation: cyber-glow-lite 4s ease-in-out infinite, float 6s ease-in-out infinite; /* Daha yavaş animasyon */
+  text-shadow: 0 0 20px #ff0040, 0 0 40px #ff0040;
+  animation: cyber-glow 3s ease-in-out infinite, float 4s ease-in-out infinite;
   filter: none;
 }
 
 .theme-cyberpunk .background-decorations::after {
   content: "⚡";
   color: #00ffff;
-  text-shadow: 0 0 10px #00ffff; /* Daha az gölge */
-  animation: cyber-glow-lite 3s ease-in-out infinite reverse, float 5s ease-in-out infinite reverse; /* Daha yavaş animasyon */
+  text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+  animation: cyber-glow 2s ease-in-out infinite reverse, float 3s ease-in-out infinite reverse;
   filter: none;
 }
 
-/* Veri akış dekorasyonlarını kaldırdık - performans iyileştirmesi */
 .cyber-decoration-1::before,
 .cyber-decoration-2::before {
-  content: none; /* Dekorasyon kaldırıldı */
+  content: '';
+  position: fixed;
+  width: 2px;
+  height: 100vh;
+  background: linear-gradient(to bottom, transparent, #ff0040, transparent);
+  z-index: 1;
+  animation: dataStream 15s linear infinite;
+}
+
+.cyber-decoration-1::before {
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.cyber-decoration-2::before {
+  right: 15%;
+  background: linear-gradient(to bottom, transparent, #00ffff, transparent);
+  animation-delay: 7s;
 }
 
 /* Enhanced Keyframe Animations */
