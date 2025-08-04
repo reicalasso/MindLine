@@ -784,7 +784,11 @@ export default function Chat() {
             <button
               type="button"
               onClick={() => cameraInputRef.current?.click()}
-              className="p-2 text-romantic-600 hover:bg-romantic-100 rounded-lg transition-colors"
+              className={`p-2 rounded-lg transition-colors ${
+                currentTheme.id === 'cyberpunk'
+                  ? 'text-cyber-secondary hover:bg-cyber-100'
+                  : 'text-romantic-600 hover:bg-romantic-100'
+              }`}
               title="Kamera ile fotoğraf çek"
             >
               <Camera className="w-4 h-4" />
