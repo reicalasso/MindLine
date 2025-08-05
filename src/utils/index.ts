@@ -536,10 +536,13 @@ export const errorUtils = {
   },
 
   /**
-   * Error'u log'lar
+   * Error'u log'lar - Üretim ortamında console.error kullanımını engeller
    */
   logError: (error: any, context?: string): void => {
-    console.error(`Error${context ? ` in ${context}` : ''}:`, error);
+    // Üretim ortamında konsola yazdırmayı engelle
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`Error${context ? ` in ${context}` : ''}:`, error);
+    }
     
     // Production'da error tracking servise gönderebilirsiniz
     // örn: Sentry, LogRocket, etc.

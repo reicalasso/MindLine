@@ -403,9 +403,9 @@ export default function Dashboard() {
   const completionRate = getProgressPercentage(stats.completedTodos, stats.todos + stats.completedTodos);
 
   return (
-    <div className="space-y-8 px-2 sm:px-0">
+    <div className="space-y-8 px-2 sm:px-0 max-w-full overflow-x-hidden">
       {/* Enhanced Hero Section */}
-      <div className={`relative overflow-hidden bg-gradient-to-br ${greeting.color} rounded-3xl p-6 sm:p-8 lg:p-12 shadow-2xl border border-white/20`}>
+      <div className={`relative overflow-hidden bg-gradient-to-br ${greeting.color} rounded-3xl p-6 sm:p-8 lg:p-12 shadow-2xl border border-white/20 max-w-full`}>
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl animate-float"></div>

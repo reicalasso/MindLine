@@ -116,7 +116,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="relative">
         {/* Left Icon */}
         {Icon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-[1]">
             <Icon className={`${iconStyles} ${leftIconStyles}`} />
           </div>
         )}

@@ -45,7 +45,8 @@
     "test:ci": "npm test -- --coverage --coverageDirectory=coverage --watchAll=false",
     "bundle-analyzer": "npm run build && npx bundle-analyzer build/static/js/*.js",
     "lighthouse": "npm run build && npx lighthouse http://localhost:3000 --view",
-    "prepare": "npm run type-check"
+    "prepare": "npm run type-check",
+    "clean:logs": "find . -type f -name \"*.log\" -delete"
   },
   "eslintConfig": {
     "extends": [
@@ -65,9 +66,7 @@
       "not op_mini all"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      "last 1 chrome version"
     ]
   },
   "jest": {

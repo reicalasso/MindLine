@@ -56,9 +56,9 @@ export const SkipLink: React.FC<SkipLinkProps> = ({
       href={href}
       className={`
         sr-only focus:not-sr-only 
-        focus:absolute focus:top-4 focus:left-4 
+        focus:fixed focus:top-4 focus:left-4 
         bg-blue-600 text-white px-4 py-2 rounded 
-        z-[9999] focus:z-[9999]
+        z-[9999999] focus:z-[9999999]
         transition-all duration-200
         ${className}
       `.replace(/\s+/g, ' ').trim()}

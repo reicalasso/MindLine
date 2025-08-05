@@ -94,7 +94,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         {...props}
       >
         {loading && (
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-10 rounded-3xl">
+          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-[1] rounded-3xl">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 border-4 border-pink-300 border-t-pink-600 rounded-full animate-spin"></div>
               <span className="text-gray-600 font-medium">Yükleniyor...</span>

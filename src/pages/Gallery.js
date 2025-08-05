@@ -447,7 +447,7 @@ export default function Gallery() {
 
       {/* Modal */}
       {selectedImage && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={closeModal}>
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[1600]" onClick={closeModal}>
           <div className="max-w-4xl max-h-full p-4" onClick={(e) => e.stopPropagation()}>
             <div className="bg-white rounded-xl overflow-hidden relative">
               <img

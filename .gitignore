@@ -18,9 +18,11 @@ node_modules/
 
 # Logs
 npm-debug.log*
+bug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+*.log
 
 # Runtime data
 pids

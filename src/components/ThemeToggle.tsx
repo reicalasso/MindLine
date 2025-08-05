@@ -45,7 +45,7 @@ const ThemeToggle = React.memo(function ThemeToggle({
   }
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative z-[20] ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-300 hover:shadow-lg ${
@@ -70,12 +70,12 @@ const ThemeToggle = React.memo(function ThemeToggle({
         <>
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 z-40" 
+            className="fixed inset-0 z-[90]" 
             onClick={() => setIsOpen(false)}
           />
           
           {/* Menu */}
-          <div className={`absolute right-0 top-full mt-2 w-64 backdrop-blur-xl rounded-2xl border-2 z-50 overflow-hidden ${
+          <div className={`absolute right-0 top-full mt-2 w-64 backdrop-blur-xl rounded-2xl border-2 z-[100] overflow-hidden ${
             currentTheme.id === 'cyberpunk' 
               ? 'bg-cyber-50/95 border-cyber-primary shadow-neon-blue' 
               : 'bg-white/95 border-cat-200/50 shadow-magic'

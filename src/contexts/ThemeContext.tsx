@@ -37,7 +37,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         setThemeModeState(savedTheme);
       }
     } catch (error) {
-      console.error('Tema yüklenirken hata:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Tema yüklenirken hata:', error);
+      }
     }
   }, []);
 
@@ -47,7 +49,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       setThemeModeState(mode);
       localStorage.setItem(THEME_STORAGE_KEY, mode);
     } catch (error) {
-      console.error('Tema kaydedilirken hata:', error);
+      // Üretim ortamında hata yönetimi için burada bir izleme servisi kullanılabilir
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Tema kaydedilirken hata:', error);
+      }
     }
   };
 

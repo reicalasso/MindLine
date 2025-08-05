@@ -592,7 +592,7 @@ export default function Chat() {
   };
 
   return (
-    <div className={`fixed inset-0 top-0 left-0 right-0 bottom-0 flex flex-col ${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/90' : 'bg-white/90'} backdrop-blur-sm`}>
+    <div className={`fixed inset-0 top-0 left-0 right-0 bottom-0 flex flex-col ${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/90' : 'bg-white/90'} backdrop-blur-sm z-[100]`}>
       {/* Başlık */}
       <div className={`${currentTheme.id === 'cyberpunk' ? 'bg-cyber-50/95 border-cyber-secondary shadow-cyber' : 'bg-white/95 border-romantic-200 shadow-sm'} backdrop-blur-sm border-b p-3 flex-shrink-0`}>
         <div className="text-center">
@@ -873,7 +873,7 @@ export default function Chat() {
 
       {/* Media Modal */}
       {showMediaModal && selectedMedia && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={closeMediaModal}>
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[1600]" onClick={closeMediaModal}>
           <div className="w-full max-w-4xl max-h-full p-4" onClick={(e) => e.stopPropagation()}>
             <div className="bg-white rounded-xl overflow-hidden relative w-full">
               {selectedMedia.type === 'image' && (
@@ -913,7 +913,7 @@ export default function Chat() {
 
       {/* Profil Modal */}
       {showProfileModal && selectedProfile && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={closeProfileModal}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1600] p-4" onClick={closeProfileModal}>
           <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl transform transition-all" onClick={(e) => e.stopPropagation()}>
             <div className="text-center">
               {/* Profil Fotoğrafı */}

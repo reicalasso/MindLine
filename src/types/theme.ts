@@ -30,6 +30,8 @@ export interface Theme {
     neonFlicker?: string;
     dataStream?: string;
     pulse?: string;
+    scan?: string;
+    hologram?: string;
   };
 }
 
@@ -64,34 +66,36 @@ export const themes: Record<ThemeMode, Theme> = {
   },
   cyberpunk: {
     id: 'cyberpunk',
-    name: 'Cyber Matrix',
-    emoji: '🤖',
-    description: 'Neural network accessed - Reality hacked',
+    name: 'Cyber Matrix Pro',
+    emoji: '⚡',
+    description: 'NEURAL_NETWORK: ACTIVATED // REALITY: HACKED',
     colors: {
-      primary: '#00ffff',
-      secondary: '#ff0040',
-      accent: '#b000ff',
-      background: 'linear-gradient(135deg, #001122 0%, #0a0a0a 25%, #1a0033 50%, #0a0a0a 75%, #001122 100%)',
-      surface: 'rgba(0, 15, 30, 0.9)',
-      text: '#00ffff',
-      textSecondary: '#ff0040',
-      border: '#00ffff',
-      gradient: 'bg-cyber-matrix',
+      primary: '#00f0ff',
+      secondary: '#ff0055',
+      accent: '#c700ff',
+      background: 'linear-gradient(135deg, #001133 0%, #0a0a15 25%, #1a0033 50%, #0a0a15 75%, #001133 100%)',
+      surface: 'rgba(5, 20, 35, 0.9)',
+      text: '#00f0ff',
+      textSecondary: '#ff0055',
+      border: '#00f0ff',
+      gradient: 'bg-cyber-matrix-extreme',
       shadow: 'shadow-cyber-intense'
     },
     styles: {
-      cardClass: 'cyber-card',
-      buttonClass: 'cyber-button',
-      inputClass: 'cyber-input',
-      backgroundClass: 'bg-cyber-matrix',
-      textClass: 'text-cyber-primary',
-      decorationClass: 'cyber-decorations'
+      cardClass: 'cyber-card-extreme',
+      buttonClass: 'cyber-button-extreme',
+      inputClass: 'cyber-input-extreme',
+      backgroundClass: 'bg-cyber-matrix-extreme',
+      textClass: 'text-cyber-primary-extreme',
+      decorationClass: 'cyber-decorations-extreme'
     },
     animations: {
-      glitch: 'animate-glitch',
-      neonFlicker: 'animate-neon-flicker',
-      dataStream: 'animate-data-stream',
-      pulse: 'animate-circuit-pulse'
+      glitch: 'animate-glitch-extreme',
+      neonFlicker: 'animate-neon-flicker-extreme',
+      dataStream: 'animate-data-stream-extreme',
+      pulse: 'animate-circuit-pulse-extreme',
+      scan: 'animate-scan-line-extreme',
+      hologram: 'animate-hologram-extreme'
     }
   }
 };
