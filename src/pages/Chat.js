@@ -106,8 +106,17 @@ export default function Chat() {
   const onTouchStartLongPress = (e, message) => {
     e.preventDefault();
     const timer = setTimeout(() => {
+      const isMyMsg = isMyMessage(message);
       setLongPressMessage(message);
-      setShowQuickReactions(message.id);
+
+      if (isMyMsg) {
+        // Show edit/delete actions for own messages
+        setShowMessageActions(message.id);
+      } else {
+        // Show reactions for others' messages
+        setShowQuickReactions(message.id);
+      }
+
       // Haptic feedback if available
       if (navigator.vibrate) {
         navigator.vibrate(50);
