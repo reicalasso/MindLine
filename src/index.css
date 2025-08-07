@@ -321,6 +321,22 @@ button {
   100% { transform: scale(1); }
 }
 
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Touch manipulation */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
 /* Text Colors for Better Readability */
 .text-readable { @apply text-gray-800; }
 .text-readable-secondary { @apply text-gray-700; }
