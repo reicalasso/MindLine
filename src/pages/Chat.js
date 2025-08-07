@@ -662,7 +662,7 @@ export default function Chat() {
   const reactionEmojis = ['❤️', '😍', '😂', '😮', '😢', '😡', '👍', '👎', '😺', '💕', '🔥', '💯'];
   
   // Hızlı reaksiyonlar için Instagram-style emojiler
-  const quickReactionEmojis = ['❤️', '😂', '😮', '😢', '😡', '👍'];
+  const quickReactionEmojis = ['❤️', '😂', '😮', '😢', '😡', '���'];
 
   // Yanıtlanan mesajı bulma
   const findReplyMessage = (replyTo) => {
@@ -944,7 +944,8 @@ export default function Chat() {
             </p>
             <div className="mt-4 text-xs space-y-1" style={{ color: colors.textSecondary }}>
               <p>💡 İpucu: Mesajları sağa kaydırarak yanıtlayın</p>
-              <p>💡 İpucu: Mesajları basılı tutarak reaksiyon verin</p>
+              <p>💡 İpucu: Başkalarının mesajlarını basılı tutarak reaksiyon verin</p>
+              <p>💡 İpucu: Kendi mesajlarınızı basılı tutarak düzenleyin/silin</p>
             </div>
           </div>
         ) : (
