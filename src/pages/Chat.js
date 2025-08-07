@@ -296,30 +296,6 @@ export default function Chat() {
   };
 
 
-  // Yazıyor durumu güncelleme - İyileştirildi
-  const updateTypingStatus = async (typing) => {
-    if (!currentUser) return;
-    
-    try {
-      const typingDocId = currentUser.email.replace(/[@.]/g, '_');
-      const typingRef = doc(db, 'typing', typingDocId);
-      
-      await updateDoc(typingRef, {
-        userEmail: currentUser.email,
-        isTyping: typing,
-        timestamp: serverTimestamp()
-      }).catch(async () => {
-        // Doküman yoksa oluştur
-        await addDoc(collection(db, 'typing'), {
-          userEmail: currentUser.email,
-          isTyping: typing,
-          timestamp: serverTimestamp()
-        });
-      });
-    } catch (error) {
-      console.error('Yazıyor durumu güncellenemedi:', error);
-    }
-  };
 
   // Mesaj input değişikliği - Tamamen düzeltildi
   const handleMessageChange = (e) => {
@@ -1336,7 +1312,7 @@ export default function Chat() {
                   <div>
                     <p className="font-bold text-gray-800 text-lg">{selectedMedia.fileName}</p>
                     <p className="text-sm text-gray-600 mt-1">
-                      {getDisplayName(selectedMedia.author)} ��� {formatTime(selectedMedia.createdAt)}
+                      {getDisplayName(selectedMedia.author)} • {formatTime(selectedMedia.createdAt)}
                     </p>
                   </div>
                   <button
