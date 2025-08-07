@@ -1303,7 +1303,6 @@ export default function Chat() {
           className="fixed inset-0 z-40"
           onClick={() => {
             setShowQuickReactions(null);
-            setLongPressMessage(null);
           }}
         />
       )}
@@ -1314,7 +1313,6 @@ export default function Chat() {
           className="fixed inset-0 z-40"
           onClick={() => {
             setShowMessageActions(null);
-            setLongPressMessage(null);
           }}
         />
       )}
