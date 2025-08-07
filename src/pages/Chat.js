@@ -1464,10 +1464,21 @@ export default function Chat() {
 
       {/* Quick Reactions Backdrop */}
       {showQuickReactions && (
-        <div 
+        <div
           className="fixed inset-0 z-40"
           onClick={() => {
             setShowQuickReactions(null);
+            setLongPressMessage(null);
+          }}
+        />
+      )}
+
+      {/* Message Actions Backdrop */}
+      {showMessageActions && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => {
+            setShowMessageActions(null);
             setLongPressMessage(null);
           }}
         />
