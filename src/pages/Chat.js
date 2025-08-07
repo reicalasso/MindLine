@@ -346,10 +346,6 @@ export default function Chat() {
     return profile.displayName;
   };
 
-  const addEmoji = (emoji) => {
-    setNewMessage(prev => prev + emoji);
-    messageInputRef.current?.focus();
-  };
 
   const removeSelectedFile = () => {
     setSelectedFile(null);
