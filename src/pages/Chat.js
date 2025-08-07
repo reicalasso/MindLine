@@ -17,7 +17,7 @@ import {
   where
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X, Edit, Check, User, Reply } from 'lucide-react';
+import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X, Edit, Check, User, Reply, Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Linkify from 'linkify-react';
 import axios from 'axios';
@@ -43,6 +43,13 @@ export default function Chat() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(null);
   const [typingUsers, setTypingUsers] = useState(new Set());
   const [isTyping, setIsTyping] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const [swipeDirection, setSwipeDirection] = useState(null);
+  const [swipedMessage, setSwipedMessage] = useState(null);
+  const [longPressTimer, setLongPressTimer] = useState(null);
+  const [longPressMessage, setLongPressMessage] = useState(null);
+  const [showQuickReactions, setShowQuickReactions] = useState(null);
   
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -58,6 +65,61 @@ export default function Chat() {
     rel: 'noopener noreferrer',
     className: 'underline transition-colors',
     style: { color: currentTheme.colors.primary },
+  };
+
+  // Instagram-style swipe detection
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e, message) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    setSwipedMessage(message);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isRightSwipe && swipedMessage) {
+      // Swipe right to reply
+      handleReplyToMessage(swipedMessage);
+      setSwipeDirection('right');
+      setTimeout(() => {
+        setSwipeDirection(null);
+        setSwipedMessage(null);
+      }, 300);
+    }
+    
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
+  // Long press for reactions
+  const onTouchStartLongPress = (e, message) => {
+    e.preventDefault();
+    const timer = setTimeout(() => {
+      setLongPressMessage(message);
+      setShowQuickReactions(message.id);
+      // Haptic feedback if available
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+    }, 500);
+    setLongPressTimer(timer);
+  };
+
+  const onTouchEndLongPress = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
   };
 
   // Instagram-vari Link Preview Kartı
@@ -245,7 +307,7 @@ export default function Chat() {
     return unsubscribe;
   }, [currentUser]);
 
-  // Yazıyor durumu güncelleme
+  // Yazıyor durumu güncelleme - İyileştirildi
   const updateTypingStatus = async (typing) => {
     if (!currentUser) return;
     
@@ -270,22 +332,42 @@ export default function Chat() {
     }
   };
 
-  // Mesaj input değişikliği
+  // Mesaj input değişikliği - İyileştirildi
   const handleMessageChange = (e) => {
-    setNewMessage(e.target.value);
+    const value = e.target.value;
+    setNewMessage(value);
     
-    // Yazıyor göstergesi
-    if (!isTyping && e.target.value.length > 0) {
+    // Yazıyor göstergesi - daha responsive
+    if (value.length > 0 && !isTyping) {
       setIsTyping(true);
       updateTypingStatus(true);
-    }
-    
-    // Timeout ile yazıyor durumunu kapat
-    clearTimeout(typingTimeoutRef.current);
-    typingTimeoutRef.current = setTimeout(() => {
+    } else if (value.length === 0 && isTyping) {
       setIsTyping(false);
       updateTypingStatus(false);
-    }, 3000);
+      clearTimeout(typingTimeoutRef.current);
+      return;
+    }
+    
+    // Timeout ile yazıyor durumunu kapat - daha kısa süre
+    clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+      if (isTyping && newMessage.length === 0) {
+        setIsTyping(false);
+        updateTypingStatus(false);
+      }
+    }, 1000); // 3000'den 1000'e düşürüldü
+  };
+
+  // Input blur'da yazıyor durumunu kapat
+  const handleInputBlur = () => {
+    // Kısa bir gecikme ile yazıyor durumunu kapat
+    setTimeout(() => {
+      if (isTyping) {
+        setIsTyping(false);
+        updateTypingStatus(false);
+        clearTimeout(typingTimeoutRef.current);
+      }
+    }, 500);
   };
 
   // Component unmount'ta yazıyor durumunu temizle
@@ -294,6 +376,7 @@ export default function Chat() {
       if (isTyping) {
         updateTypingStatus(false);
       }
+      clearTimeout(typingTimeoutRef.current);
     };
   }, [isTyping]);
 
@@ -448,10 +531,11 @@ export default function Chat() {
       return;
     }
 
-    // Yazıyor durumunu kapat
+    // Yazıyor durumunu hemen kapat
     if (isTyping) {
       setIsTyping(false);
       updateTypingStatus(false);
+      clearTimeout(typingTimeoutRef.current);
     }
 
     setSending(true);
@@ -508,11 +592,20 @@ export default function Chat() {
   const handleReplyToMessage = (message) => {
     setReplyingTo(message);
     messageInputRef.current?.focus();
+    toast.success('💬 Kaydırarak yanıtla aktif!', { duration: 1000 });
   };
 
   // Yanıtı iptal etme
   const cancelReply = () => {
     setReplyingTo(null);
+  };
+
+  // Emoji ekleme - hızlı reaksiyon için
+  const addQuickEmojiReaction = async (messageId, emoji) => {
+    await addEmojiReaction(messageId, emoji);
+    setShowQuickReactions(null);
+    setLongPressMessage(null);
+    toast.success(`${emoji} reaksiyonu eklendi!`, { duration: 1000 });
   };
 
   // Emoji ekleme
@@ -557,6 +650,9 @@ export default function Chat() {
 
   // Emoji picker için emojiler
   const reactionEmojis = ['❤️', '😍', '😂', '😮', '😢', '😡', '👍', '👎', '😺', '💕', '🔥', '💯'];
+  
+  // Hızlı reaksiyonlar için Instagram-style emojiler
+  const quickReactionEmojis = ['❤️', '😂', '😮', '😢', '😡', '👍'];
 
   // Yanıtlanan mesajı bulma
   const findReplyMessage = (replyTo) => {
@@ -677,7 +773,6 @@ export default function Chat() {
 
         {/* Ana mesaj içeriği */}
         <div>
-          {/* ...existing message rendering code... */}
           {(() => {
             switch (message.type) {
               case 'image':
@@ -755,14 +850,14 @@ export default function Chat() {
               <button
                 key={emoji}
                 onClick={() => addEmojiReaction(message.id, emoji)}
-                className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs transition-colors ${
+                className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs transition-all transform hover:scale-110 ${
                   reactions.some(r => r.userId === currentUser?.uid)
-                    ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                    ? 'bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 border border-pink-300 shadow-sm'
                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                 }`}
                 title={reactions.map(r => getUserProfile(r.userEmail).displayName).join(', ')}
               >
-                <span>{emoji}</span>
+                <span className="animate-pulse">{emoji}</span>
                 <span>{reactions.length}</span>
               </button>
             ))}
@@ -780,35 +875,35 @@ export default function Chat() {
         backgroundImage: colors.backgroundGradient 
       }}
     >
-      {/* Başlık */}
+      {/* Başlık - Instagram Style */}
       <div 
-        className="shadow-sm backdrop-blur-sm border-b p-3 flex-shrink-0"
+        className="shadow-lg backdrop-blur-sm border-b p-4 flex-shrink-0"
         style={{
-          backgroundColor: colors.surface + 'F5', // 95% opacity
+          backgroundColor: colors.surface + 'F5',
           borderColor: colors.border
         }}
       >
         <div className="text-center">
           <h1 
-            className="text-xl font-romantic flex items-center justify-center"
+            className="text-xl font-bold flex items-center justify-center"
             style={{ color: colors.text }}
           >
             <MessageCircle 
-              className="w-5 h-5 mr-2" 
+              className="w-6 h-6 mr-2" 
               style={{ color: colors.primary }}
             />
-            Kedili Sohbet
+            Mindline Chat
           </h1>
           <p 
-            className="text-xs font-elegant"
+            className="text-xs font-medium opacity-80"
             style={{ color: colors.textSecondary }}
           >
-            Birlikte sohbet ettiğiniz özel alan...
+            Kaydırarak yanıtla • Basılı tutarak reaksiyon ver
           </p>
         </div>
       </div>
 
-      {/* Mesajlar Listesi */}
+      {/* Mesajlar Listesi - Instagram Style */}
       <div
         className="flex-1 overflow-y-auto p-3 space-y-3"
         style={{
@@ -818,40 +913,48 @@ export default function Chat() {
         }}
       >
         {messages.length === 0 ? (
-          <div className="text-center py-8">
-            <MessageCircle 
-              className="w-12 h-12 mx-auto mb-3"
-              style={{ color: colors.border }}
-            />
+          <div className="text-center py-12">
+            <div className="animate-bounce-cat mb-6">
+              <MessageCircle 
+                className="w-16 h-16 mx-auto"
+                style={{ color: colors.border }}
+              />
+            </div>
             <h3 
-              className="text-lg font-romantic mb-2"
+              className="text-xl font-bold mb-3"
               style={{ color: colors.text }}
             >
               Henüz mesaj yok
             </h3>
             <p 
-              className="text-sm"
+              className="text-sm opacity-80"
               style={{ color: colors.textSecondary }}
             >
               İlk mesajınızı göndererek sohbeti başlatın! 💕
             </p>
+            <div className="mt-4 text-xs space-y-1" style={{ color: colors.textSecondary }}>
+              <p>💡 İpucu: Mesajları sağa kaydırarak yanıtlayın</p>
+              <p>💡 İpucu: Mesajları basılı tutarak reaksiyon verin</p>
+            </div>
           </div>
         ) : (
           <div className="flex flex-col gap-3 w-full">
             {messages.map((message) => {
               const userProfile = getUserProfile(message.author);
+              const isMyMsg = isMyMessage(message);
+              
               return (
                 <div
                   key={message.id}
-                  className={`flex items-start space-x-3 ${isMyMessage(message) ? 'flex-row-reverse space-x-reverse' : ''} w-full`}
+                  className={`flex items-start space-x-3 ${isMyMsg ? 'flex-row-reverse space-x-reverse' : ''} w-full`}
                 >
-                  {/* Profil Fotoğrafı */}
+                  {/* Profil Fotoğrafı - Instagram Style */}
                   <div 
                     className="flex-shrink-0 cursor-pointer group"
                     onClick={() => handleProfileClick(message.author)}
                   >
                     <div 
-                      className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border-2 shadow-sm group-hover:scale-110 transition-transform"
+                      className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border-2 shadow-md group-hover:scale-110 transition-all duration-300"
                       style={{
                         backgroundImage: colors.primaryGradient,
                         borderColor: colors.surface
@@ -864,31 +967,32 @@ export default function Chat() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span className="text-sm animate-wiggle">
+                        <span className="text-lg animate-wiggle">
                           {userProfile.favoriteEmoji}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Mesaj Baloncuğu */}
+                  {/* Mesaj Baloncuğu - Instagram Style with Swipe */}
                   <div
-                    className={`relative ${
-                      isMyMessage(message)
-                        ? 'mr-2'
-                        : 'ml-2'
-                    }`}
+                    className={`relative touch-manipulation ${
+                      isMyMsg ? 'mr-2' : 'ml-2'
+                    } ${swipeDirection === 'right' && swipedMessage?.id === message.id ? 'transform translate-x-4 transition-transform duration-300' : ''}`}
                     style={{
-                      maxWidth: '70%',
+                      maxWidth: '80%',
                       width: 'fit-content',
                       minWidth: '0'
                     }}
+                    onTouchStart={(e) => onTouchStart(e, message)}
+                    onTouchMove={onTouchMove}
+                    onTouchEnd={onTouchEnd}
                   >
-                    {/* Gönderen ismi - sadece diğer kullanıcılar için */}
-                    {!isMyMessage(message) && (
-                      <div className="text-xs mb-1 ml-1">
+                    {/* Gönderen ismi - Instagram style */}
+                    {!isMyMsg && (
+                      <div className="text-xs mb-2 ml-3">
                         <span 
-                          className="hover:opacity-70 cursor-pointer font-medium"
+                          className="hover:opacity-70 cursor-pointer font-bold"
                           onClick={() => handleProfileClick(message.author)}
                           style={{ color: colors.textSecondary }}
                         >
@@ -898,90 +1002,95 @@ export default function Chat() {
                     )}
                     
                     <div
-                      className={`px-3 py-2 rounded-2xl group relative break-words ${
-                        isMyMessage(message)
-                          ? 'text-white'
-                          : 'border'
+                      className={`px-4 py-3 rounded-3xl group relative break-words transition-all duration-300 ${
+                        isMyMsg
+                          ? 'text-white shadow-lg'
+                          : 'border shadow-md'
                       }`}
                       style={{
-                        background: isMyMessage(message) 
-                          ? colors.primaryGradient 
+                        background: isMyMsg 
+                          ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
                           : colors.surface,
-                        borderColor: isMyMessage(message) ? 'transparent' : colors.border,
-                        color: isMyMessage(message) ? 'white' : colors.text,
-                        boxShadow: `0 2px 8px ${colors.shadow}20`,
+                        borderColor: isMyMsg ? 'transparent' : colors.border,
+                        color: isMyMsg ? 'white' : colors.text,
+                        boxShadow: isMyMsg 
+                          ? `0 4px 20px rgba(102, 126, 234, 0.4)` 
+                          : `0 2px 12px ${colors.shadow}15`,
                         wordBreak: 'break-word',
                         overflowWrap: 'break-word',
                         maxWidth: '100%',
                         width: '100%'
                       }}
+                      onTouchStart={(e) => onTouchStartLongPress(e, message)}
+                      onTouchEnd={onTouchEndLongPress}
                     >
                       {renderMessage(message)}
                       
-                      {/* Mesaj altında işlemler */}
-                      <div className={`flex items-center justify-between text-xs mt-1 ${
-                        isMyMessage(message) ? 'text-white/80' : ''
+                      {/* Mesaj altında işlemler - Instagram Style */}
+                      <div className={`flex items-center justify-between text-xs mt-2 ${
+                        isMyMsg ? 'text-white/80' : ''
                       }`}>
                         <span style={{ 
-                          color: isMyMessage(message) ? 'rgba(255, 255, 255, 0.8)' : colors.textSecondary 
+                          color: isMyMsg ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary,
+                          fontSize: '11px'
                         }}>
                           {formatTime(message.createdAt)}
                         </span>
-                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           {/* Emoji reaksiyon butonu */}
                           <button
                             onClick={() => setShowEmojiPicker(showEmojiPicker === message.id ? null : message.id)}
-                            className="ml-1 hover:opacity-70 relative"
+                            className="hover:scale-110 transition-transform"
                             title="Reaksiyon ekle"
                             style={{ 
-                              color: isMyMessage(message) ? 'rgba(255, 255, 255, 0.8)' : colors.textSecondary 
+                              color: isMyMsg ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary 
                             }}
                           >
-                            <Smile className="w-3 h-3" />
+                            <Heart className="w-4 h-4" />
                           </button>
                           
                           {/* Yanıt verme butonu */}
                           <button
                             onClick={() => handleReplyToMessage(message)}
-                            className="ml-1 hover:opacity-70"
+                            className="hover:scale-110 transition-transform"
                             title="Yanıtla"
                             style={{ 
-                              color: isMyMessage(message) ? 'rgba(255, 255, 255, 0.8)' : colors.textSecondary 
+                              color: isMyMsg ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary 
                             }}
                           >
-                            <Reply className="w-3 h-3" />
+                            <Reply className="w-4 h-4" />
                           </button>
                           
                           {/* Sadece kendi mesajları için düzenleme/silme */}
-                          {isMyMessage(message) && editingMessage !== message.id && (
+                          {isMyMsg && editingMessage !== message.id && (
                             <>
                               {message.type === 'text' && (
                                 <button
                                   onClick={() => handleEditMessage(message)}
-                                  className="ml-1 hover:opacity-70"
+                                  className="hover:scale-110 transition-transform"
                                   title="Düzenle"
                                 >
-                                  <Edit className="w-3 h-3" />
+                                  <Edit className="w-4 h-4" />
                                 </button>
                               )}
                               <button
                                 onClick={() => handleDeleteMessage(message.id)}
-                                className="ml-1 hover:opacity-70"
+                                className="hover:scale-110 transition-transform"
                                 title="Sil"
                               >
-                                <Trash2 className="w-3 h-3" />
+                                <Trash2 className="w-4 h-4" />
                               </button>
                             </>
                           )}
                         </div>
                       </div>
 
-                      {/* Emoji Picker */}
+                      {/* Emoji Picker - Instagram Style */}
                       {showEmojiPicker === message.id && (
                         <div 
-                          className="absolute bottom-full mb-2 left-0 border rounded-lg shadow-lg p-2 z-50 flex flex-wrap gap-1 max-w-xs"
+                          className="absolute bottom-full mb-3 left-0 border rounded-2xl shadow-2xl p-3 z-50 flex flex-wrap gap-2 max-w-xs backdrop-blur-sm"
                           style={{
-                            backgroundColor: colors.surface,
+                            backgroundColor: colors.surface + 'F0',
                             borderColor: colors.border
                           }}
                         >
@@ -989,15 +1098,32 @@ export default function Chat() {
                             <button
                               key={emoji}
                               onClick={() => addEmojiReaction(message.id, emoji)}
-                              className="p-1 rounded text-lg transition-colors"
+                              className="p-2 rounded-full text-xl transition-all transform hover:scale-125 hover:bg-gradient-to-r hover:from-pink-100 hover:to-purple-100"
                               style={{
                                 backgroundColor: 'transparent'
                               }}
-                              onMouseEnter={(e) => {
-                                e.target.style.backgroundColor = colors.surfaceVariant;
-                              }}
-                              onMouseLeave={(e) => {
-                                e.target.style.backgroundColor = 'transparent';
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Hızlı Reaksiyonlar - Long Press */}
+                      {showQuickReactions === message.id && (
+                        <div 
+                          className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-black/90 backdrop-blur-sm rounded-full px-4 py-3 flex space-x-3 z-50 shadow-2xl"
+                          style={{
+                            animation: 'slideUp 0.3s ease-out'
+                          }}
+                        >
+                          {quickReactionEmojis.map((emoji) => (
+                            <button
+                              key={emoji}
+                              onClick={() => addQuickEmojiReaction(message.id, emoji)}
+                              className="text-2xl transition-all transform hover:scale-150 active:scale-125"
+                              style={{
+                                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
                               }}
                             >
                               {emoji}
@@ -1006,6 +1132,13 @@ export default function Chat() {
                         </div>
                       )}
                     </div>
+
+                    {/* Swipe indicator */}
+                    {swipeDirection === 'right' && swipedMessage?.id === message.id && (
+                      <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2 text-blue-500">
+                        <Reply className="w-5 h-5 animate-pulse" />
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -1018,30 +1151,29 @@ export default function Chat() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Yanıt Önizlemesi */}
+      {/* Yanıt Önizlemesi - Instagram Style */}
       {replyingTo && (
         <div 
-          className="border-t p-3 flex-shrink-0"
+          className="border-t p-4 flex-shrink-0 backdrop-blur-sm"
           style={{
-            backgroundColor: colors.surfaceVariant,
+            backgroundColor: colors.surfaceVariant + 'CC',
             borderColor: colors.border
           }}
         >
-          <div className="flex items-start justify-between">
-            <div className="flex items-start space-x-2 flex-1">
+          <div className="flex items-start justify-between bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-3">
+            <div className="flex items-start space-x-3 flex-1">
               <Reply 
-                className="w-4 h-4 mt-0.5 flex-shrink-0"
-                style={{ color: colors.primary }}
+                className="w-5 h-5 mt-0.5 flex-shrink-0 text-blue-500"
               />
               <div className="flex-1 min-w-0">
                 <p 
-                  className="text-sm font-medium"
+                  className="text-sm font-bold"
                   style={{ color: colors.text }}
                 >
                   {getUserProfile(replyingTo.author).displayName} kullanıcısına yanıt veriyorsunuz
                 </p>
                 <p 
-                  className="text-xs truncate"
+                  className="text-xs truncate mt-1 opacity-80"
                   style={{ color: colors.textSecondary }}
                 >
                   {replyingTo.type === 'image' ? '📷 Fotoğraf' :
@@ -1052,57 +1184,51 @@ export default function Chat() {
             </div>
             <button
               onClick={cancelReply}
-              className="p-1 rounded transition-colors ml-2"
-              style={{ color: colors.primary }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = colors.surface;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-              }}
+              className="p-2 rounded-full transition-all hover:bg-red-100 ml-3"
+              style={{ color: colors.error }}
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
       )}
 
-      {/* Dosya Önizleme */}
+      {/* Dosya Önizleme - Instagram Style */}
       {selectedFile && (
         <div 
-          className="border-t p-3 flex-shrink-0"
+          className="border-t p-4 flex-shrink-0 backdrop-blur-sm"
           style={{
             backgroundColor: colors.surfaceVariant + '80',
             borderColor: colors.border
           }}
         >
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-3">
             {previewImage ? (
               <img 
                 src={previewImage} 
                 alt="Önizleme" 
-                className="w-12 h-12 object-cover rounded-lg"
+                className="w-16 h-16 object-cover rounded-xl shadow-lg"
               />
             ) : (
               <div 
-                className="w-12 h-12 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: colors.border }}
+                className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg"
+                style={{ backgroundColor: colors.primary + '20' }}
               >
                 <Paperclip 
-                  className="w-5 h-5"
-                  style={{ color: colors.textSecondary }}
+                  className="w-6 h-6"
+                  style={{ color: colors.primary }}
                 />
               </div>
             )}
             <div className="flex-1 min-w-0">
               <p 
-                className="font-medium truncate text-sm"
+                className="font-bold truncate"
                 style={{ color: colors.text }}
               >
                 {selectedFile.name}
               </p>
               <p 
-                className="text-xs"
+                className="text-sm opacity-80"
                 style={{ color: colors.textSecondary }}
               >
                 {formatFileSize(selectedFile.size)}
@@ -1110,40 +1236,31 @@ export default function Chat() {
             </div>
             <button
               onClick={removeSelectedFile}
-              className="p-1 rounded transition-colors"
+              className="p-2 rounded-full transition-all hover:bg-red-100"
               style={{ color: colors.error }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = colors.surface;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-              }}
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
       )}
 
-      {/* Emoji Picker */}
+      {/* Emoji Picker - Instagram Style */}
       <div 
-        className="border-t p-2 flex-shrink-0"
+        className="border-t p-3 flex-shrink-0 backdrop-blur-sm"
         style={{
           backgroundColor: colors.surfaceVariant + '80',
           borderColor: colors.border
         }}
       >
-        <div className="flex flex-wrap gap-1 max-h-16 overflow-y-auto">
+        <div className="flex flex-wrap gap-2 max-h-20 overflow-y-auto bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-3">
           {emojis.slice(0, 15).map((emoji, index) => (
             <button
               key={index}
               onClick={() => addEmoji(emoji)}
-              className="text-sm rounded p-1 transition-colors emoji-interactive"
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = colors.surface;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
+              className="text-lg rounded-full p-2 transition-all transform hover:scale-125 hover:bg-white hover:shadow-lg"
+              style={{
+                background: 'transparent'
               }}
             >
               {emoji}
@@ -1152,46 +1269,40 @@ export default function Chat() {
         </div>
       </div>
 
-      {/* Mesaj Gönderme Formu */}
+      {/* Mesaj Gönderme Formu - Instagram Style */}
       <div 
-        className="border-t p-3 flex-shrink-0 w-full"
+        className="border-t p-4 flex-shrink-0 w-full backdrop-blur-sm"
         style={{
           borderColor: colors.border,
-          backgroundColor: colors.surface + '80'
+          backgroundColor: colors.surface + '90'
         }}
       >
-        <form onSubmit={handleSendMessage} className="space-y-2 w-full">
-          {/* Dosya Seçme Butonları */}
-          <div className="flex space-x-2">
+        <form onSubmit={handleSendMessage} className="space-y-3 w-full">
+          {/* Dosya Seçme Butonları - Instagram Style */}
+          <div className="flex space-x-3">
             <button
               type="button"
               onClick={() => cameraInputRef.current?.click()}
-              className="p-2 rounded-lg transition-colors"
+              className="p-3 rounded-full transition-all transform hover:scale-110 shadow-lg"
               title="Kamera ile fotoğraf çek"
-              style={{ color: colors.primary }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = colors.surface;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
+              style={{ 
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white'
               }}
             >
-              <Camera className="w-4 h-4" />
+              <Camera className="w-5 h-5" />
             </button>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-2 rounded-lg transition-colors"
+              className="p-3 rounded-full transition-all transform hover:scale-110 shadow-lg"
               title="Dosya seç"
-              style={{ color: colors.primary }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = colors.surface;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
+              style={{ 
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white'
               }}
             >
-              <Paperclip className="w-4 h-4" />
+              <Paperclip className="w-5 h-5" />
             </button>
             <input
               ref={cameraInputRef}
@@ -1210,26 +1321,27 @@ export default function Chat() {
             />
           </div>
           
-          {/* Mesaj Input ve Gönder */}
-          <div className="flex space-x-2 w-full">
+          {/* Mesaj Input ve Gönder - Instagram Style */}
+          <div className="flex space-x-3 w-full">
             <div className="flex-1 relative w-full">
               <textarea
                 ref={messageInputRef}
                 value={newMessage}
                 onChange={handleMessageChange}
+                onBlur={handleInputBlur}
                 placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : 
                            replyingTo ? "Yanıtınızı yazın..." : "Mesajınızı yazın... 💕"}
-                className="w-full px-3 py-2 pr-10 border rounded-xl focus:ring-2 focus:border-transparent font-medium resize-none text-sm font-elegant"
+                className="w-full px-5 py-4 pr-12 border-2 rounded-3xl focus:ring-2 focus:border-transparent font-medium resize-none text-base shadow-lg transition-all"
                 rows="1"
                 style={{ 
-                  minHeight: '40px', 
-                  maxHeight: '80px',
+                  minHeight: '56px', 
+                  maxHeight: '120px',
                   borderColor: colors.border,
-                  backgroundColor: colors.surface + 'B3', // 70% opacity
+                  backgroundColor: colors.surface,
                   color: colors.text
                 }}
                 onInput={(e) => {
-                  e.target.style.height = '40px';
+                  e.target.style.height = '56px';
                   e.target.style.height = e.target.scrollHeight + 'px';
                 }}
                 onKeyDown={(e) => {
@@ -1244,52 +1356,44 @@ export default function Chat() {
                 disabled={sending}
                 onFocus={(e) => {
                   e.target.style.borderColor = colors.primary;
-                  e.target.style.boxShadow = `0 0 0 2px ${colors.primary}40`;
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = colors.border;
-                  e.target.style.boxShadow = 'none';
+                  e.target.style.boxShadow = `0 0 0 3px ${colors.primary}20`;
                 }}
               />
               <button
                 type="button"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 transition-colors"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 transition-all hover:scale-110"
                 style={{ color: colors.textSecondary }}
-                onMouseEnter={(e) => {
-                  e.target.style.color = colors.primary;
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.color = colors.textSecondary;
-                }}
               >
-                <Smile className="w-4 h-4" />
+                <Smile className="w-5 h-5" />
               </button>
             </div>
             <button
               type="submit"
               disabled={(!newMessage.trim() && !selectedFile) || sending}
-              className="px-4 py-2 text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1 self-end"
+              className="px-6 py-4 text-white rounded-full hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 self-end transform hover:scale-105 active:scale-95"
               style={{
-                background: colors.primaryGradient
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                minWidth: '56px',
+                height: '56px'
               }}
             >
               {sending ? (
                 <div 
-                  className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"
+                  className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"
                 ></div>
               ) : (
-                <Send className="w-4 h-4" />
+                <Send className="w-5 h-5" />
               )}
             </button>
           </div>
         </form>
       </div>
 
-      {/* Media Modal */}
+      {/* Media Modal - Instagram Style */}
       {showMediaModal && selectedMedia && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[1600]" onClick={closeMediaModal}>
-          <div className="w-full max-w-4xl max-h-full p-4" onClick={(e) => e.stopPropagation()}>
-            <div className="bg-white rounded-xl overflow-hidden relative w-full">
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[1600] backdrop-blur-sm" onClick={closeMediaModal}>
+          <div className="w-full max-w-4xl max-h-full p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-3xl overflow-hidden relative w-full shadow-2xl">
               {selectedMedia.type === 'image' && (
                 <img
                   src={selectedMedia.fileData}
@@ -1298,41 +1402,41 @@ export default function Chat() {
                   style={{ maxWidth: '100%' }}
                 />
               )}
-              <div className="p-4">
+              <div className="p-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="font-medium text-gray-800">{selectedMedia.fileName}</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-bold text-gray-800 text-lg">{selectedMedia.fileName}</p>
+                    <p className="text-sm text-gray-600 mt-1">
                       {getDisplayName(selectedMedia.author)} • {formatTime(selectedMedia.createdAt)}
                     </p>
                   </div>
                   <button
                     onClick={() => downloadFile(selectedMedia)}
-                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-3 text-gray-600 hover:bg-gray-100 rounded-full transition-all transform hover:scale-110"
                   >
-                    <Download className="w-5 h-5" />
+                    <Download className="w-6 h-6" />
                   </button>
                 </div>
               </div>
               <button
                 onClick={closeMediaModal}
-                className="absolute top-4 right-4 p-2 bg-white/80 hover:bg-white rounded-full shadow-lg"
+                className="absolute top-4 right-4 p-3 bg-white/90 hover:bg-white rounded-full shadow-xl transition-all transform hover:scale-110"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Profil Modal */}
+      {/* Profil Modal - Instagram Style */}
       {showProfileModal && selectedProfile && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1600] p-4" onClick={closeProfileModal}>
-          <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl transform transition-all" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[1600] p-4 backdrop-blur-sm" onClick={closeProfileModal}>
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all" onClick={(e) => e.stopPropagation()}>
             <div className="text-center">
               {/* Profil Fotoğrafı */}
-              <div className="flex justify-center mb-4">
-                <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center shadow-lg">
+              <div className="flex justify-center mb-6">
+                <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center shadow-xl">
                   {selectedProfile.profileImage ? (
                     <img
                       src={selectedProfile.profileImage}
@@ -1340,7 +1444,7 @@ export default function Chat() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className="text-3xl animate-bounce-cat">
+                    <span className="text-4xl animate-bounce-cat">
                       {selectedProfile.favoriteEmoji}
                     </span>
                   )}
@@ -1348,37 +1452,37 @@ export default function Chat() {
               </div>
 
               {/* Profil Bilgileri */}
-              <h3 className="text-xl font-cat text-gray-800 mb-2">
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">
                 {selectedProfile.displayName}
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-gray-600 mb-6">
                 {selectedProfile.email}
               </p>
 
               {selectedProfile.bio && (
-                <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                  <p className="text-sm text-gray-700 font-handwriting italic">
+                <div className="bg-gray-50 rounded-2xl p-4 mb-6">
+                  <p className="text-sm text-gray-700 font-medium italic">
                     "{selectedProfile.bio}"
                   </p>
                 </div>
               )}
 
               {selectedProfile.favoriteQuote && (
-                <div className="bg-pink-50 rounded-lg p-3 mb-4 border-l-4 border-pink-400">
-                  <p className="text-sm text-gray-700 font-elegant">
+                <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-4 mb-6 border-l-4 border-pink-400">
+                  <p className="text-sm text-gray-700 font-medium">
                     "{selectedProfile.favoriteQuote}"
                   </p>
                 </div>
               )}
 
               {/* Kullanıcı Rozeti */}
-              <div className="flex justify-center items-center space-x-2 text-sm text-gray-600 mb-4">
-                <span className="bg-romantic-100 text-romantic-700 px-3 py-1 rounded-full flex items-center space-x-1">
+              <div className="flex justify-center items-center space-x-3 text-sm text-gray-600 mb-6">
+                <span className="bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 px-4 py-2 rounded-full flex items-center space-x-2 shadow-sm">
                   <span className="animate-wiggle">🐱</span>
-                  <span>Kedici</span>
+                  <span className="font-bold">Kedici</span>
                 </span>
                 {selectedProfile.email === currentUser.email && (
-                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+                  <span className="bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 px-4 py-2 rounded-full font-bold shadow-sm">
                     Sen
                   </span>
                 )}
@@ -1387,15 +1491,43 @@ export default function Chat() {
               {/* Kapatma Butonu */}
               <button
                 onClick={closeProfileModal}
-                className="w-full bg-romantic-100 hover:bg-romantic-200 text-romantic-700 px-4 py-2 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                className="w-full bg-gradient-to-r from-pink-100 to-purple-100 hover:from-pink-200 hover:to-purple-200 text-pink-700 px-6 py-4 rounded-2xl transition-all flex items-center justify-center space-x-2 font-bold shadow-lg transform hover:scale-105"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
                 <span>Kapat</span>
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Quick Reactions Backdrop */}
+      {showQuickReactions && (
+        <div 
+          className="fixed inset-0 z-40"
+          onClick={() => {
+            setShowQuickReactions(null);
+            setLongPressMessage(null);
+          }}
+        />
+      )}
+
+      <style jsx>{`
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translate(-50%, 20px);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+          }
+        }
+        
+        .touch-manipulation {
+          touch-action: manipulation;
+        }
+      `}</style>
     </div>
   );
 }
