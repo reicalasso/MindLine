@@ -50,6 +50,7 @@ export default function Chat() {
   const [longPressTimer, setLongPressTimer] = useState(null);
   const [longPressMessage, setLongPressMessage] = useState(null);
   const [showQuickReactions, setShowQuickReactions] = useState(null);
+  const [showMessageActions, setShowMessageActions] = useState(null);
   
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -58,7 +59,7 @@ export default function Chat() {
   const typingTimeoutRef = useRef(null);
   const messageInputRef = useRef(null);
 
-  const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
+  const emojis = ['😺', '😻', '😸', '😹', '😽', '����', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
 
   const linkifyOptions = {
     target: '_blank',
