@@ -54,7 +54,6 @@ export default function Chat() {
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
   const editInputRef = useRef(null);
-  const typingTimeoutRef = useRef(null);
   const messageInputRef = useRef(null);
 
   const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
