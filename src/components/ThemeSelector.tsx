@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { Theme, ThemeMode } from '../types/theme';
-import { Palette, Check, Heart, Zap, Leaf, Waves, Monitor } from 'lucide-react';
+import { Palette, Check } from 'lucide-react';
 
 interface ThemeSelectorProps {
   showLabel?: boolean;
