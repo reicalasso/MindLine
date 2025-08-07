@@ -1512,22 +1512,6 @@ export default function Chat() {
         />
       )}
 
-      <style jsx>{`
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translate(-50%, 20px);
-          }
-          to {
-            opacity: 1;
-            transform: translate(-50%, 0);
-          }
-        }
-        
-        .touch-manipulation {
-          touch-action: manipulation;
-        }
-      `}</style>
     </div>
   );
 }
