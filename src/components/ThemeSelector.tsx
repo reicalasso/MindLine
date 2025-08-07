@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { Theme, ThemeMode } from '../types/theme';
 import { Palette, Check, Heart, Zap, Leaf, Waves, Monitor } from 'lucide-react';
@@ -16,21 +16,90 @@ export function ThemeSelector({
 }: ThemeSelectorProps) {
   const { currentTheme, setThemeMode, availableThemes, isThemeLoading } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Dropdown positioning için viewport kontrolü
+  useEffect(() => {
+    if (isOpen && dropdownRef.current && buttonRef.current) {
+      const dropdown = dropdownRef.current;
+      const button = buttonRef.current;
+      
+      // Pozisyonu sıfırla
+      dropdown.style.top = '';
+      dropdown.style.bottom = '';
+      dropdown.style.marginTop = '';
+      dropdown.style.marginBottom = '';
+      dropdown.style.transform = '';
+      
+      const buttonRect = button.getBoundingClientRect();
+      const dropdownRect = dropdown.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      // Dikey pozisyon kontrolü
+      const spaceBelow = viewportHeight - buttonRect.bottom;
+      const spaceAbove = buttonRect.top;
+      const dropdownHeight = Math.min(dropdownRect.height, 320); // max-height
+      
+      if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+        // Yukarı aç
+        dropdown.style.bottom = '100%';
+        dropdown.style.marginBottom = '0.5rem';
+      } else {
+        // Aşağı aç
+        dropdown.style.top = '100%';
+        dropdown.style.marginTop = '0.5rem';
+      }
+      
+      // Yatay pozisyon kontrolü (mobilde)
+      if (viewportWidth < 640) { // sm breakpoint
+        const buttonLeft = buttonRect.left;
+        const buttonWidth = buttonRect.width;
+        const dropdownWidth = Math.min(viewportWidth - 32, 400); // 16px padding her iki yandan
+        
+        // Dropdown'u butonun ortasından başlat ve ekran içinde tut
+        let leftOffset = buttonLeft + (buttonWidth / 2) - (dropdownWidth / 2);
+        
+        // Sol kenarda kalırsa sağa kaydır
+        if (leftOffset < 16) {
+          leftOffset = 16;
+        }
+        // Sağ kenarda kalırsa sola kaydır
+        if (leftOffset + dropdownWidth > viewportWidth - 16) {
+          leftOffset = viewportWidth - dropdownWidth - 16;
+        }
+        
+        dropdown.style.left = `${leftOffset - buttonRect.left}px`;
+        dropdown.style.right = 'auto';
+        dropdown.style.width = `${dropdownWidth}px`;
+      }
+    }
+  }, [isOpen]);
+
+  // Dışarı tıklandığında kapat
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && 
+          buttonRef.current && 
+          !dropdownRef.current.contains(event.target as Node) &&
+          !buttonRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {}; // Cleanup function
+  }, [isOpen]);
 
   const getThemeIcon = (theme: Theme) => {
     switch (theme.id) {
       case 'cat':
         return '😺';
-      case 'romantic':
-        return <Heart className="w-4 h-4" />;
-      case 'cyberpunk':
-        return <Zap className="w-4 h-4" />;
-      case 'minimal':
-        return <Monitor className="w-4 h-4" />;
-      case 'nature':
-        return <Leaf className="w-4 h-4" />;
-      case 'ocean':
-        return <Waves className="w-4 h-4" />;
       default:
         return <Palette className="w-4 h-4" />;
     }
@@ -183,6 +252,7 @@ export function ThemeSelector({
       )}
       
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="
           w-full flex items-center justify-between px-4 py-3 
@@ -221,11 +291,17 @@ export function ThemeSelector({
       </button>
 
       {isOpen && (
-        <div className="
-          absolute top-full left-0 right-0 mt-2 
-          bg-white border border-gray-200 rounded-lg shadow-xl z-50
-          max-h-80 overflow-y-auto
-        ">
+        <div 
+          ref={dropdownRef}
+          className="
+            absolute z-50
+            bg-white border border-gray-200 rounded-lg shadow-xl 
+            max-h-80 overflow-y-auto
+            w-full sm:min-w-96
+            transform-gpu will-change-transform
+          "
+          style={{ borderColor: currentTheme.colors.border }}
+        >
           {availableThemes.map((theme) => (
             <button
               key={theme.id}
@@ -234,41 +310,42 @@ export function ThemeSelector({
                 setIsOpen(false);
               }}
               className="
-                w-full px-4 py-3 text-left hover:bg-gray-50 
+                w-full px-3 py-2 text-left hover:bg-gray-50 
                 flex items-center justify-between
                 transition-colors duration-150
                 first:rounded-t-lg last:rounded-b-lg
+                sm:px-4 sm:py-3
               "
             >
-              <div className="flex items-center space-x-3">
-                <span className="text-lg">{theme.emoji}</span>
-                <div>
-                  <div className="font-medium text-gray-900">{theme.name}</div>
-                  <div className="text-sm text-gray-500">{theme.description}</div>
-                  <span className={`inline-block px-2 py-1 text-xs rounded-full mt-1 ${getCategoryColor(theme.category)}`}>
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <span className="text-base sm:text-lg">{theme.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 text-sm sm:text-base truncate">{theme.name}</div>
+                  <div className="text-xs sm:text-sm text-gray-500 hidden sm:block">{theme.description}</div>
+                  <span className={`inline-block px-1.5 py-0.5 text-xs rounded-full mt-1 ${getCategoryColor(theme.category)}`}>
                     {theme.category}
                   </span>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2">
-                <div className="flex space-x-1">
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <div className="flex space-x-0.5 sm:space-x-1">
                   <div 
-                    className="w-3 h-3 rounded-full border border-gray-200"
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border border-gray-200"
                     style={{ backgroundColor: theme.colors.primary }}
                   />
                   <div 
-                    className="w-3 h-3 rounded-full border border-gray-200"
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border border-gray-200"
                     style={{ backgroundColor: theme.colors.secondary }}
                   />
                   <div 
-                    className="w-3 h-3 rounded-full border border-gray-200"
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border border-gray-200"
                     style={{ backgroundColor: theme.colors.accent }}
                   />
                 </div>
                 
                 {currentTheme.id === theme.id && (
-                  <Check className="w-5 h-5 text-blue-500" />
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
                 )}
               </div>
             </button>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { useThemeColors } from '../hooks/useThemeStyles';
 import {
   collection,
   addDoc,
@@ -12,10 +13,11 @@ import {
   onSnapshot,
   serverTimestamp,
   limit,
-  getDocs
+  getDocs,
+  where
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X, Edit, Check, User } from 'lucide-react';
+import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X, Edit, Check, User, Reply, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Linkify from 'linkify-react';
 import axios from 'axios';
@@ -23,6 +25,7 @@ import axios from 'axios';
 export default function Chat() {
   const { currentUser } = useAuth();
   const { currentTheme } = useTheme();
+  const colors = useThemeColors();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -36,11 +39,17 @@ export default function Chat() {
   const [userProfiles, setUserProfiles] = useState({});
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(null);
+  const [typingUsers, setTypingUsers] = useState(new Set());
+  const [isTyping, setIsTyping] = useState(false);
   
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
   const editInputRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
+  const messageInputRef = useRef(null);
 
   const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
 
@@ -217,11 +226,232 @@ export default function Chat() {
     }
   };
 
+  // Yazıyor göstergesi için useEffect
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const typingQuery = query(collection(db, 'typing'));
+    const unsubscribe = onSnapshot(typingQuery, (snapshot) => {
+      const typing = new Set();
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        if (data.userEmail !== currentUser.email && data.isTyping) {
+          typing.add(data.userEmail);
+        }
+      });
+      setTypingUsers(typing);
+    });
+
+    return unsubscribe;
+  }, [currentUser]);
+
+  // Yazıyor durumu güncelleme
+  const updateTypingStatus = async (typing) => {
+    if (!currentUser) return;
+    
+    try {
+      const typingDocId = currentUser.email.replace(/[@.]/g, '_');
+      const typingRef = doc(db, 'typing', typingDocId);
+      
+      await updateDoc(typingRef, {
+        userEmail: currentUser.email,
+        isTyping: typing,
+        timestamp: serverTimestamp()
+      }).catch(async () => {
+        // Doküman yoksa oluştur
+        await addDoc(collection(db, 'typing'), {
+          userEmail: currentUser.email,
+          isTyping: typing,
+          timestamp: serverTimestamp()
+        });
+      });
+    } catch (error) {
+      console.error('Yazıyor durumu güncellenemedi:', error);
+    }
+  };
+
+  // Mesaj input değişikliği
+  const handleMessageChange = (e) => {
+    setNewMessage(e.target.value);
+    
+    // Yazıyor göstergesi
+    if (!isTyping && e.target.value.length > 0) {
+      setIsTyping(true);
+      updateTypingStatus(true);
+    }
+    
+    // Timeout ile yazıyor durumunu kapat
+    clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      updateTypingStatus(false);
+    }, 3000);
+  };
+
+  // Component unmount'ta yazıyor durumunu temizle
+  useEffect(() => {
+    return () => {
+      if (isTyping) {
+        updateTypingStatus(false);
+      }
+    };
+  }, [isTyping]);
+
+  // Utility fonksiyonlar
+  const getUserProfile = (userEmail) => {
+    return userProfiles[userEmail] || {
+      displayName: userEmail?.split('@')[0] || 'Bilinmeyen',
+      favoriteEmoji: '😺',
+      email: userEmail,
+      profileImage: null
+    };
+  };
+
+  const isMyMessage = (message) => {
+    return message.author === currentUser?.email;
+  };
+
+  const formatTime = (timestamp) => {
+    if (!timestamp) return '';
+    
+    const date = timestamp.seconds ? new Date(timestamp.seconds * 1000) : new Date(timestamp);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return 'Şimdi';
+    if (diffInMinutes < 60) return `${diffInMinutes}dk`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}sa`;
+    
+    return date.toLocaleDateString('tr-TR', { 
+      day: '2-digit', 
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatFileSize = (bytes) => {
+    if (!bytes) return '0 B';
+    
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  };
+
+  const getDisplayName = (userEmail) => {
+    const profile = getUserProfile(userEmail);
+    return profile.displayName;
+  };
+
+  const addEmoji = (emoji) => {
+    setNewMessage(prev => prev + emoji);
+    messageInputRef.current?.focus();
+  };
+
+  const removeSelectedFile = () => {
+    setSelectedFile(null);
+    setPreviewImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (cameraInputRef.current) cameraInputRef.current.value = '';
+  };
+
+  const openMediaModal = (message) => {
+    setSelectedMedia(message);
+    setShowMediaModal(true);
+  };
+
+  const closeMediaModal = () => {
+    setSelectedMedia(null);
+    setShowMediaModal(false);
+  };
+
+  const handleProfileClick = (userEmail) => {
+    const profile = getUserProfile(userEmail);
+    setSelectedProfile(profile);
+    setShowProfileModal(true);
+  };
+
+  const closeProfileModal = () => {
+    setSelectedProfile(null);
+    setShowProfileModal(false);
+  };
+
+  const downloadFile = (message) => {
+    if (!message.fileData) return;
+    
+    try {
+      const link = document.createElement('a');
+      link.href = message.fileData;
+      link.download = message.fileName || 'dosya';
+      link.click();
+    } catch (error) {
+      console.error('Dosya indirilemedi:', error);
+      toast.error('Dosya indirilemedi');
+    }
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    if (!window.confirm('Bu mesajı silmek istediğinizden emin misiniz?')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'messages', messageId));
+      toast.success('Mesaj silindi');
+    } catch (error) {
+      console.error('Mesaj silinirken hata:', error);
+      toast.error('Mesaj silinemedi');
+    }
+  };
+
+  const handleEditMessage = (message) => {
+    setEditingMessage(message.id);
+    setEditText(message.content);
+    setTimeout(() => {
+      editInputRef.current?.focus();
+    }, 100);
+  };
+
+  const handleSaveEdit = async (messageId) => {
+    if (!editText.trim()) {
+      toast.error('Mesaj boş olamaz');
+      return;
+    }
+
+    try {
+      await updateDoc(doc(db, 'messages', messageId), {
+        content: editText.trim(),
+        edited: true,
+        editedAt: serverTimestamp()
+      });
+      
+      setEditingMessage(null);
+      setEditText('');
+      toast.success('Mesaj güncellendi');
+    } catch (error) {
+      console.error('Mesaj güncellenirken hata:', error);
+      toast.error('Mesaj güncellenemedi');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMessage(null);
+    setEditText('');
+  };
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
     
     if (!newMessage.trim() && !selectedFile) {
       return;
+    }
+
+    // Yazıyor durumunu kapat
+    if (isTyping) {
+      setIsTyping(false);
+      updateTypingStatus(false);
     }
 
     setSending(true);
@@ -231,6 +461,16 @@ export default function Chat() {
         createdAt: serverTimestamp(),
         type: 'text'
       };
+
+      // Yanıt veriyorsa referans ekle
+      if (replyingTo) {
+        messageData.replyTo = {
+          messageId: replyingTo.id,
+          author: replyingTo.author,
+          content: replyingTo.content?.substring(0, 100) || 'Dosya',
+          type: replyingTo.type
+        };
+      }
 
       if (selectedFile) {
         const fileBase64 = await convertFileToBase64(selectedFile);
@@ -252,6 +492,7 @@ export default function Chat() {
       setNewMessage('');
       setSelectedFile(null);
       setPreviewImage(null);
+      setReplyingTo(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
       if (cameraInputRef.current) cameraInputRef.current.value = '';
       
@@ -263,230 +504,111 @@ export default function Chat() {
     }
   };
 
-  const handleDeleteMessage = async (messageId) => {
-    if (window.confirm('Bu mesaj�� silmek istediğinizden emin misiniz?')) {
-      try {
-        await deleteDoc(doc(db, 'messages', messageId));
-        toast.success('Mesaj silindi');
-      } catch (error) {
-        console.error('Mesaj silinirken hata:', error);
-        toast.error('Mesaj silinemedi');
+  // Mesaja yanıt verme
+  const handleReplyToMessage = (message) => {
+    setReplyingTo(message);
+    messageInputRef.current?.focus();
+  };
+
+  // Yanıtı iptal etme
+  const cancelReply = () => {
+    setReplyingTo(null);
+  };
+
+  // Emoji ekleme
+  const addEmojiReaction = async (messageId, emoji) => {
+    if (!currentUser) return;
+
+    try {
+      const messageRef = doc(db, 'messages', messageId);
+      const message = messages.find(m => m.id === messageId);
+      
+      if (!message) return;
+
+      const reactions = message.reactions || [];
+      const existingReaction = reactions.find(r => r.userId === currentUser.uid && r.emoji === emoji);
+      
+      let newReactions;
+      if (existingReaction) {
+        // Mevcut reaksiyonu kaldır
+        newReactions = reactions.filter(r => !(r.userId === currentUser.uid && r.emoji === emoji));
+      } else {
+        // Yeni reaksiyon ekle, önce aynı kullanıcının diğer reaksiyonlarını kaldır
+        newReactions = reactions.filter(r => r.userId !== currentUser.uid);
+        newReactions.push({
+          emoji,
+          userId: currentUser.uid,
+          userEmail: currentUser.email,
+          timestamp: new Date()
+        });
       }
-    }
-  };
 
-  const handleEditMessage = (message) => {
-    if (message.type !== 'text') {
-      toast.error('Sadece metin mesajları düzenlenebilir');
-      return;
-    }
-    setEditingMessage(message.id);
-    setEditText(message.content);
-    setTimeout(() => {
-      editInputRef.current?.focus();
-    }, 100);
-  };
-
-  const handleSaveEdit = async (messageId) => {
-    if (!editText.trim()) {
-      toast.error('Mesaj boş olamaz');
-      return;
-    }
-
-    try {
-      await updateDoc(doc(db, 'messages', messageId), {
-        content: editText.trim(),
-        updatedAt: serverTimestamp(),
-        edited: true
+      await updateDoc(messageRef, {
+        reactions: newReactions,
+        updatedAt: serverTimestamp()
       });
-      toast.success('Mesaj düzenlendi');
-      setEditingMessage(null);
-      setEditText('');
+
+      setShowEmojiPicker(null);
     } catch (error) {
-      console.error('Mesaj düzenlenirken hata:', error);
-      toast.error('Mesaj düzenlenemedi');
+      console.error('Emoji reaksiyonu eklenirken hata:', error);
+      toast.error('Reaksiyon eklenemedi');
     }
   };
 
-  const handleCancelEdit = () => {
-    setEditingMessage(null);
-    setEditText('');
-  };
+  // Emoji picker için emojiler
+  const reactionEmojis = ['❤️', '😍', '😂', '😮', '😢', '😡', '👍', '👎', '😺', '💕', '🔥', '💯'];
 
-  const addEmoji = (emoji) => {
-    setNewMessage(prev => prev + emoji);
-  };
-
-  const formatTime = (timestamp) => {
-    if (!timestamp) return '';
-    
-    const date = timestamp.toDate();
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    
-    if (messageDate.getTime() === today.getTime()) {
-      return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-    } else {
-      return date.toLocaleDateString('tr-TR', { 
-        day: 'numeric', 
-        month: 'short',
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
-    }
-  };
-
-  const isMyMessage = (message) => {
-    return message.author === currentUser?.email;
-  };
-
-  const getDisplayName = (email) => {
-    if (!email) return 'Anonim';
-    const name = email.split('@')[0];
-    return name.charAt(0).toUpperCase() + name.slice(1);
-  };
-
-  const removeSelectedFile = () => {
-    setSelectedFile(null);
-    setPreviewImage(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-    if (cameraInputRef.current) cameraInputRef.current.value = '';
-  };
-
-  const downloadFile = (message) => {
-    try {
-      const link = document.createElement('a');
-      link.href = message.fileData;
-      link.download = message.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error('Dosya indirme hatası:', error);
-      toast.error('Dosya indirilemedi');
-    }
-  };
-
-  const openMediaModal = (message) => {
-    setSelectedMedia(message);
-    setShowMediaModal(true);
-  };
-
-  const closeMediaModal = () => {
-    setSelectedMedia(null);
-    setShowMediaModal(false);
-  };
-
-  const handleProfileClick = async (userEmail) => {
-    const profile = await fetchUserProfile(userEmail);
-    setSelectedProfile(profile);
-    setShowProfileModal(true);
-  };
-
-  const closeProfileModal = () => {
-    setShowProfileModal(false);
-    setSelectedProfile(null);
-  };
-
-  const getUserProfile = (userEmail) => {
-    return userProfiles[userEmail] || {
-      displayName: userEmail.split('@')[0],
-      favoriteEmoji: '😺',
-      email: userEmail,
-      profileImage: null
+  // Yanıtlanan mesajı bulma
+  const findReplyMessage = (replyTo) => {
+    if (!replyTo) return null;
+    return messages.find(m => m.id === replyTo.messageId) || {
+      author: replyTo.author,
+      content: replyTo.content,
+      type: replyTo.type
     };
   };
 
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+  // Yazıyor göstergesi bileşeni
+  const TypingIndicator = () => {
+    if (typingUsers.size === 0) return null;
 
-  // Link preview için yard��mcı fonksiyon
-  const fetchLinkPreview = async (url) => {
-    try {
-      // jsonlink.io API ile önizleme al
-      const res = await fetch(`https://jsonlink.io/api/extract?url=${encodeURIComponent(url)}`);
-      if (!res.ok) return null;
-      const data = await res.json();
-      return {
-        title: data.title,
-        description: data.description,
-        image: data.images?.[0],
-        url: data.url
-      };
-    } catch {
-      return null;
-    }
-  };
-
-  // Link preview bileşeni
-  function LinkPreview({ url }) {
-    const [preview, setPreview] = useState(null);
-    const [error, setError] = useState(false);
-
-    useEffect(() => {
-      let mounted = true;
-      fetchLinkPreview(url).then(data => {
-        if (mounted) {
-          if (data && (data.title || data.description || data.image)) {
-            setPreview(data);
-          } else {
-            setError(true);
-          }
-        }
-      }).catch(() => {
-        if (mounted) setError(true);
-      });
-      return () => { mounted = false; };
-    }, [url]);
-
-    if (error) {
-      return (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mt-2 text-xs text-gray-500">
-          <span>Bağlantı önizlenemiyor.</span>
-        </div>
-      );
-    }
-
-    if (!preview) {
-      return (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mt-2 text-xs text-gray-500">
-          <span>Bağlantı önizleniyor...</span>
-        </div>
-      );
-    }
+    const typingUsersList = Array.from(typingUsers);
+    const userNames = typingUsersList.map(email => {
+      const profile = getUserProfile(email);
+      return profile.displayName;
+    });
 
     return (
-      <a href={preview.url || url} target="_blank" rel="noopener noreferrer"
-        className="block bg-gray-50 border border-gray-200 rounded-lg p-3 mt-2 hover:bg-gray-100 transition-colors"
-        style={{ textDecoration: 'none' }}>
-        <div className="flex items-center space-x-3">
-          {preview.image && (
-            <img src={preview.image} alt="preview" className="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
-          )}
-          <div className="flex-1 min-w-0">
-            <div className="font-medium text-gray-800 truncate">{preview.title || url}</div>
-            {preview.description && (
-              <div className="text-xs text-gray-600 truncate">{preview.description}</div>
-            )}
-            <div className="text-xs text-blue-500 truncate">{preview.url || url}</div>
-          </div>
+      <div className="flex items-center space-x-2 px-4 py-2" style={{ color: colors.textSecondary }}>
+        <div className="flex space-x-1">
+          <div 
+            className="w-2 h-2 rounded-full animate-bounce"
+            style={{ backgroundColor: colors.primary }}
+          ></div>
+          <div 
+            className="w-2 h-2 rounded-full animate-bounce"
+            style={{ 
+              backgroundColor: colors.primary,
+              animationDelay: '0.1s' 
+            }}
+          ></div>
+          <div 
+            className="w-2 h-2 rounded-full animate-bounce"
+            style={{ 
+              backgroundColor: colors.primary,
+              animationDelay: '0.2s' 
+            }}
+          ></div>
         </div>
-      </a>
+        <span className="text-sm">
+          {userNames.length === 1 
+            ? `${userNames[0]} yazıyor...`
+            : `${userNames.join(', ')} yazıyor...`
+          }
+        </span>
+      </div>
     );
-  }
-
-  // Mesaj içeriğinde link varsa bul
-  function extractFirstUrl(text) {
-    const urlRegex = /(https?:\/\/[^\s]+)/;
-    const match = text.match(urlRegex);
-    return match ? match[0] : null;
-  }
+  };
 
   const renderMessage = (message) => {
     if (editingMessage === message.id) {
@@ -532,76 +654,155 @@ export default function Chat() {
       );
     }
 
-    switch (message.type) {
-      case 'image':
-        return (
-          <div className="space-y-2">
-            <img
-              src={message.fileData}
-              alt={message.fileName}
-              className="max-w-64 max-h-64 rounded-lg cursor-pointer object-cover"
-              onClick={() => openMediaModal(message)}
-            />
-            {message.content !== `📎 ${message.fileName}` && (
-              <p className="font-elegant text-base font-medium break-words">{message.content}</p>
-            )}
+    const replyMessage = findReplyMessage(message.replyTo);
+
+    return (
+      <div className="space-y-2">
+        {/* Yanıtlanan mesaj önizlemesi */}
+        {replyMessage && (
+          <div className="bg-black/10 rounded-lg p-2 border-l-4 border-blue-400 ml-2">
+            <div className="flex items-center space-x-2 mb-1">
+              <Reply className="w-3 h-3 text-blue-500" />
+              <span className="text-xs font-medium text-blue-600">
+                {getUserProfile(replyMessage.author).displayName}
+              </span>
+            </div>
+            <p className="text-xs text-gray-600 truncate">
+              {replyMessage.type === 'image' ? '📷 Fotoğraf' :
+               replyMessage.type === 'file' ? '📎 Dosya' :
+               replyMessage.content}
+            </p>
           </div>
-        );
-      
-      case 'file':
-        return (
-          <div className="space-y-2">
-            <div className="flex items-center space-x-3 p-3 bg-white/20 rounded-lg min-w-0">
-              <Paperclip className="w-5 h-5 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="font-medium truncate">{message.fileName}</p>
-                <p className="text-xs opacity-75">{formatFileSize(message.fileSize)}</p>
-              </div>
+        )}
+
+        {/* Ana mesaj içeriği */}
+        <div>
+          {/* ...existing message rendering code... */}
+          {(() => {
+            switch (message.type) {
+              case 'image':
+                return (
+                  <div className="space-y-2">
+                    <img
+                      src={message.fileData}
+                      alt={message.fileName}
+                      className="max-w-64 max-h-64 rounded-lg cursor-pointer object-cover"
+                      onClick={() => openMediaModal(message)}
+                    />
+                    {message.content !== `📎 ${message.fileName}` && (
+                      <p className="font-elegant text-base font-medium break-words">{message.content}</p>
+                    )}
+                  </div>
+                );
+              
+              case 'file':
+                return (
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3 p-3 bg-white/20 rounded-lg min-w-0">
+                      <Paperclip className="w-5 h-5 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate">{message.fileName}</p>
+                        <p className="text-xs opacity-75">{formatFileSize(message.fileSize)}</p>
+                      </div>
+                      <button
+                        onClick={() => downloadFile(message)}
+                        className="p-1 hover:bg-white/20 rounded transition-colors flex-shrink-0"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+                    </div>
+                    {message.content !== `📎 ${message.fileName}` && (
+                      <p className="font-elegant text-base font-medium break-words">{message.content}</p>
+                    )}
+                  </div>
+                );
+              
+              default:
+                const urls = extractUrls(message.content);
+                return (
+                  <div className="space-y-1">
+                    <div className="font-elegant text-base font-medium break-words">
+                      <Linkify options={linkifyOptions}>
+                        {message.content}
+                      </Linkify>
+                    </div>
+                    {urls.map(url => (
+                      <LinkPreviewCard key={url} url={url} />
+                    ))}
+                    {message.edited && (
+                      <p className="text-xs opacity-60 italic font-elegant">
+                        (düzenlendi)
+                      </p>
+                    )}
+                  </div>
+                );
+            }
+          })()}
+        </div>
+
+        {/* Emoji reaksiyonları */}
+        {message.reactions && message.reactions.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {Object.entries(
+              message.reactions.reduce((acc, reaction) => {
+                if (!acc[reaction.emoji]) {
+                  acc[reaction.emoji] = [];
+                }
+                acc[reaction.emoji].push(reaction);
+                return acc;
+              }, {})
+            ).map(([emoji, reactions]) => (
               <button
-                onClick={() => downloadFile(message)}
-                className="p-1 hover:bg-white/20 rounded transition-colors flex-shrink-0"
+                key={emoji}
+                onClick={() => addEmojiReaction(message.id, emoji)}
+                className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs transition-colors ${
+                  reactions.some(r => r.userId === currentUser?.uid)
+                    ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
+                title={reactions.map(r => getUserProfile(r.userEmail).displayName).join(', ')}
               >
-                <Download className="w-4 h-4" />
+                <span>{emoji}</span>
+                <span>{reactions.length}</span>
               </button>
-            </div>
-            {message.content !== `📎 ${message.fileName}` && (
-              <p className="font-elegant text-base font-medium break-words">{message.content}</p>
-            )}
-          </div>
-        );
-      
-      default:
-        const urls = extractUrls(message.content);
-        return (
-          <div className="space-y-1">
-            <div className="font-elegant text-base font-medium break-words">
-              <Linkify options={linkifyOptions}>
-                {message.content}
-              </Linkify>
-            </div>
-            {urls.map(url => (
-              <LinkPreviewCard key={url} url={url} />
             ))}
-            {message.edited && (
-              <p className="text-xs opacity-60 italic font-elegant">
-                (düzenlendi)
-              </p>
-            )}
           </div>
-        );
-    }
+        )}
+      </div>
+    );
   };
 
   return (
-    <div className={`fixed inset-0 top-0 left-0 right-0 bottom-0 flex flex-col bg-white/90 backdrop-blur-sm z-[100]`}>
+    <div 
+      className="fixed inset-0 top-0 left-0 right-0 bottom-0 flex flex-col z-[100]"
+      style={{ 
+        backgroundColor: colors.background,
+        backgroundImage: colors.backgroundGradient 
+      }}
+    >
       {/* Başlık */}
-      <div className={`bg-white/95 border-romantic-200 shadow-sm backdrop-blur-sm border-b p-3 flex-shrink-0`}>
+      <div 
+        className="shadow-sm backdrop-blur-sm border-b p-3 flex-shrink-0"
+        style={{
+          backgroundColor: colors.surface + 'F5', // 95% opacity
+          borderColor: colors.border
+        }}
+      >
         <div className="text-center">
-          <h1 className={`text-xl font-romantic text-gray-800 flex items-center justify-center`}>
-            <MessageCircle className="w-5 h-5 mr-2" />
+          <h1 
+            className="text-xl font-romantic flex items-center justify-center"
+            style={{ color: colors.text }}
+          >
+            <MessageCircle 
+              className="w-5 h-5 mr-2" 
+              style={{ color: colors.primary }}
+            />
             Kedili Sohbet
           </h1>
-          <p className={`text-xs text-gray-700 font-elegant`}>
+          <p 
+            className="text-xs font-elegant"
+            style={{ color: colors.textSecondary }}
+          >
             Birlikte sohbet ettiğiniz özel alan...
           </p>
         </div>
@@ -618,11 +819,20 @@ export default function Chat() {
       >
         {messages.length === 0 ? (
           <div className="text-center py-8">
-            <MessageCircle className="w-12 h-12 text-romantic-300 mx-auto mb-3" />
-            <h3 className="text-lg font-romantic text-gray-800 mb-2">
+            <MessageCircle 
+              className="w-12 h-12 mx-auto mb-3"
+              style={{ color: colors.border }}
+            />
+            <h3 
+              className="text-lg font-romantic mb-2"
+              style={{ color: colors.text }}
+            >
               Henüz mesaj yok
             </h3>
-            <p className="text-gray-700 text-sm">
+            <p 
+              className="text-sm"
+              style={{ color: colors.textSecondary }}
+            >
               İlk mesajınızı göndererek sohbeti başlatın! 💕
             </p>
           </div>
@@ -640,7 +850,13 @@ export default function Chat() {
                     className="flex-shrink-0 cursor-pointer group"
                     onClick={() => handleProfileClick(message.author)}
                   >
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center border-2 border-white shadow-sm group-hover:scale-110 transition-transform">
+                    <div 
+                      className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border-2 shadow-sm group-hover:scale-110 transition-transform"
+                      style={{
+                        backgroundImage: colors.primaryGradient,
+                        borderColor: colors.surface
+                      }}
+                    >
                       {userProfile.profileImage ? (
                         <img
                           src={userProfile.profileImage}
@@ -663,17 +879,18 @@ export default function Chat() {
                         : 'ml-2'
                     }`}
                     style={{
-                      maxWidth: '70%', // ekranın %70'i kadar genişlik
-                      width: 'fit-content', // içerik kadar genişlik
+                      maxWidth: '70%',
+                      width: 'fit-content',
                       minWidth: '0'
                     }}
                   >
                     {/* Gönderen ismi - sadece diğer kullanıcılar için */}
                     {!isMyMessage(message) && (
-                      <div className="text-xs text-gray-500 mb-1 ml-1">
+                      <div className="text-xs mb-1 ml-1">
                         <span 
-                          className="hover:text-gray-700 cursor-pointer font-medium"
+                          className="hover:opacity-70 cursor-pointer font-medium"
                           onClick={() => handleProfileClick(message.author)}
+                          style={{ color: colors.textSecondary }}
                         >
                           {userProfile.displayName}
                         </span>
@@ -681,12 +898,18 @@ export default function Chat() {
                     )}
                     
                     <div
-                      className={`px-3 py-2 rounded-2xl shadow-soft group relative break-words ${
+                      className={`px-3 py-2 rounded-2xl group relative break-words ${
                         isMyMessage(message)
-                          ? 'bg-paw-gradient text-white'
-                          : 'bg-white border border-romantic-200 text-gray-800'
+                          ? 'text-white'
+                          : 'border'
                       }`}
                       style={{
+                        background: isMyMessage(message) 
+                          ? colors.primaryGradient 
+                          : colors.surface,
+                        borderColor: isMyMessage(message) ? 'transparent' : colors.border,
+                        color: isMyMessage(message) ? 'white' : colors.text,
+                        boxShadow: `0 2px 8px ${colors.shadow}20`,
                         wordBreak: 'break-word',
                         overflowWrap: 'break-word',
                         maxWidth: '100%',
@@ -694,44 +917,165 @@ export default function Chat() {
                       }}
                     >
                       {renderMessage(message)}
+                      
+                      {/* Mesaj altında işlemler */}
                       <div className={`flex items-center justify-between text-xs mt-1 ${
-                        isMyMessage(message) ? 'text-white/80' : 'text-gray-500'
+                        isMyMessage(message) ? 'text-white/80' : ''
                       }`}>
-                        <span>{formatTime(message.createdAt)}</span>
-                        {isMyMessage(message) && editingMessage !== message.id && (
-                          <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            {message.type === 'text' && (
+                        <span style={{ 
+                          color: isMyMessage(message) ? 'rgba(255, 255, 255, 0.8)' : colors.textSecondary 
+                        }}>
+                          {formatTime(message.createdAt)}
+                        </span>
+                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {/* Emoji reaksiyon butonu */}
+                          <button
+                            onClick={() => setShowEmojiPicker(showEmojiPicker === message.id ? null : message.id)}
+                            className="ml-1 hover:opacity-70 relative"
+                            title="Reaksiyon ekle"
+                            style={{ 
+                              color: isMyMessage(message) ? 'rgba(255, 255, 255, 0.8)' : colors.textSecondary 
+                            }}
+                          >
+                            <Smile className="w-3 h-3" />
+                          </button>
+                          
+                          {/* Yanıt verme butonu */}
+                          <button
+                            onClick={() => handleReplyToMessage(message)}
+                            className="ml-1 hover:opacity-70"
+                            title="Yanıtla"
+                            style={{ 
+                              color: isMyMessage(message) ? 'rgba(255, 255, 255, 0.8)' : colors.textSecondary 
+                            }}
+                          >
+                            <Reply className="w-3 h-3" />
+                          </button>
+                          
+                          {/* Sadece kendi mesajları için düzenleme/silme */}
+                          {isMyMessage(message) && editingMessage !== message.id && (
+                            <>
+                              {message.type === 'text' && (
+                                <button
+                                  onClick={() => handleEditMessage(message)}
+                                  className="ml-1 hover:opacity-70"
+                                  title="Düzenle"
+                                >
+                                  <Edit className="w-3 h-3" />
+                                </button>
+                              )}
                               <button
-                                onClick={() => handleEditMessage(message)}
-                                className="ml-1 hover:text-blue-200"
-                                title="Düzenle"
+                                onClick={() => handleDeleteMessage(message.id)}
+                                className="ml-1 hover:opacity-70"
+                                title="Sil"
                               >
-                                <Edit className="w-3 h-3" />
+                                <Trash2 className="w-3 h-3" />
                               </button>
-                            )}
-                            <button
-                              onClick={() => handleDeleteMessage(message.id)}
-                              className="ml-1 hover:text-red-200"
-                              title="Sil"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </div>
-                        )}
+                            </>
+                          )}
+                        </div>
                       </div>
+
+                      {/* Emoji Picker */}
+                      {showEmojiPicker === message.id && (
+                        <div 
+                          className="absolute bottom-full mb-2 left-0 border rounded-lg shadow-lg p-2 z-50 flex flex-wrap gap-1 max-w-xs"
+                          style={{
+                            backgroundColor: colors.surface,
+                            borderColor: colors.border
+                          }}
+                        >
+                          {reactionEmojis.map((emoji) => (
+                            <button
+                              key={emoji}
+                              onClick={() => addEmojiReaction(message.id, emoji)}
+                              className="p-1 rounded text-lg transition-colors"
+                              style={{
+                                backgroundColor: 'transparent'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = colors.surfaceVariant;
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = 'transparent';
+                              }}
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               );
             })}
+            
+            {/* Yazıyor göstergesi */}
+            <TypingIndicator />
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Yanıt Önizlemesi */}
+      {replyingTo && (
+        <div 
+          className="border-t p-3 flex-shrink-0"
+          style={{
+            backgroundColor: colors.surfaceVariant,
+            borderColor: colors.border
+          }}
+        >
+          <div className="flex items-start justify-between">
+            <div className="flex items-start space-x-2 flex-1">
+              <Reply 
+                className="w-4 h-4 mt-0.5 flex-shrink-0"
+                style={{ color: colors.primary }}
+              />
+              <div className="flex-1 min-w-0">
+                <p 
+                  className="text-sm font-medium"
+                  style={{ color: colors.text }}
+                >
+                  {getUserProfile(replyingTo.author).displayName} kullanıcısına yanıt veriyorsunuz
+                </p>
+                <p 
+                  className="text-xs truncate"
+                  style={{ color: colors.textSecondary }}
+                >
+                  {replyingTo.type === 'image' ? '📷 Fotoğraf' :
+                   replyingTo.type === 'file' ? '📎 Dosya' :
+                   replyingTo.content}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={cancelReply}
+              className="p-1 rounded transition-colors ml-2"
+              style={{ color: colors.primary }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = colors.surface;
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+              }}
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Dosya Önizleme */}
       {selectedFile && (
-        <div className="border-t border-romantic-200 p-3 bg-romantic-50/50 flex-shrink-0">
+        <div 
+          className="border-t p-3 flex-shrink-0"
+          style={{
+            backgroundColor: colors.surfaceVariant + '80',
+            borderColor: colors.border
+          }}
+        >
           <div className="flex items-center space-x-3">
             {previewImage ? (
               <img 
@@ -740,17 +1084,40 @@ export default function Chat() {
                 className="w-12 h-12 object-cover rounded-lg"
               />
             ) : (
-              <div className="w-12 h-12 bg-romantic-200 rounded-lg flex items-center justify-center">
-                <Paperclip className="w-5 h-5 text-romantic-600" />
+              <div 
+                className="w-12 h-12 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: colors.border }}
+              >
+                <Paperclip 
+                  className="w-5 h-5"
+                  style={{ color: colors.textSecondary }}
+                />
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-gray-800 truncate text-sm">{selectedFile.name}</p>
-              <p className="text-xs text-gray-600">{formatFileSize(selectedFile.size)}</p>
+              <p 
+                className="font-medium truncate text-sm"
+                style={{ color: colors.text }}
+              >
+                {selectedFile.name}
+              </p>
+              <p 
+                className="text-xs"
+                style={{ color: colors.textSecondary }}
+              >
+                {formatFileSize(selectedFile.size)}
+              </p>
             </div>
             <button
               onClick={removeSelectedFile}
-              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+              className="p-1 rounded transition-colors"
+              style={{ color: colors.error }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = colors.surface;
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+              }}
             >
               <X className="w-4 h-4" />
             </button>
@@ -759,13 +1126,25 @@ export default function Chat() {
       )}
 
       {/* Emoji Picker */}
-      <div className="border-t border-romantic-200 p-2 bg-romantic-50/50 flex-shrink-0">
+      <div 
+        className="border-t p-2 flex-shrink-0"
+        style={{
+          backgroundColor: colors.surfaceVariant + '80',
+          borderColor: colors.border
+        }}
+      >
         <div className="flex flex-wrap gap-1 max-h-16 overflow-y-auto">
           {emojis.slice(0, 15).map((emoji, index) => (
             <button
               key={index}
               onClick={() => addEmoji(emoji)}
-              className="text-sm hover:bg-romantic-100 rounded p-1 transition-colors emoji-interactive"
+              className="text-sm rounded p-1 transition-colors emoji-interactive"
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = colors.surface;
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+              }}
             >
               {emoji}
             </button>
@@ -774,23 +1153,43 @@ export default function Chat() {
       </div>
 
       {/* Mesaj Gönderme Formu */}
-      <div className={`border-t p-3 flex-shrink-0 w-full border-romantic-200 bg-white/50`}>
+      <div 
+        className="border-t p-3 flex-shrink-0 w-full"
+        style={{
+          borderColor: colors.border,
+          backgroundColor: colors.surface + '80'
+        }}
+      >
         <form onSubmit={handleSendMessage} className="space-y-2 w-full">
           {/* Dosya Seçme Butonları */}
           <div className="flex space-x-2">
             <button
               type="button"
               onClick={() => cameraInputRef.current?.click()}
-              className={`p-2 rounded-lg transition-colors text-romantic-600 hover:bg-romantic-100`}
+              className="p-2 rounded-lg transition-colors"
               title="Kamera ile fotoğraf çek"
+              style={{ color: colors.primary }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = colors.surface;
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+              }}
             >
               <Camera className="w-4 h-4" />
             </button>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className={`p-2 rounded-lg transition-colors text-romantic-600 hover:bg-romantic-100`}
+              className="p-2 rounded-lg transition-colors"
               title="Dosya seç"
+              style={{ color: colors.primary }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = colors.surface;
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+              }}
             >
               <Paperclip className="w-4 h-4" />
             </button>
@@ -815,12 +1214,20 @@ export default function Chat() {
           <div className="flex space-x-2 w-full">
             <div className="flex-1 relative w-full">
               <textarea
+                ref={messageInputRef}
                 value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : "Mesajınızı yazın... 💕"}
-                className={`w-full px-3 py-2 pr-10 border rounded-xl focus:ring-2 focus:border-transparent font-medium resize-none text-sm border-romantic-200 focus:ring-romantic-500 bg-white/70 text-gray-800 font-elegant`}
+                onChange={handleMessageChange}
+                placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : 
+                           replyingTo ? "Yanıtınızı yazın..." : "Mesajınızı yazın... 💕"}
+                className="w-full px-3 py-2 pr-10 border rounded-xl focus:ring-2 focus:border-transparent font-medium resize-none text-sm font-elegant"
                 rows="1"
-                style={{ minHeight: '40px', maxHeight: '80px' }}
+                style={{ 
+                  minHeight: '40px', 
+                  maxHeight: '80px',
+                  borderColor: colors.border,
+                  backgroundColor: colors.surface + 'B3', // 70% opacity
+                  color: colors.text
+                }}
                 onInput={(e) => {
                   e.target.style.height = '40px';
                   e.target.style.height = e.target.scrollHeight + 'px';
@@ -829,14 +1236,31 @@ export default function Chat() {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     handleSendMessage(e);
+                  } else if (e.key === 'Escape' && replyingTo) {
+                    cancelReply();
                   }
                 }}
                 maxLength={1000}
                 disabled={sending}
+                onFocus={(e) => {
+                  e.target.style.borderColor = colors.primary;
+                  e.target.style.boxShadow = `0 0 0 2px ${colors.primary}40`;
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = colors.border;
+                  e.target.style.boxShadow = 'none';
+                }}
               />
               <button
                 type="button"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-romantic-400 hover:text-romantic-600 transition-colors"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 transition-colors"
+                style={{ color: colors.textSecondary }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = colors.primary;
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = colors.textSecondary;
+                }}
               >
                 <Smile className="w-4 h-4" />
               </button>
@@ -844,10 +1268,15 @@ export default function Chat() {
             <button
               type="submit"
               disabled={(!newMessage.trim() && !selectedFile) || sending}
-              className="px-4 py-2 bg-love-gradient text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1 self-end"
+              className="px-4 py-2 text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1 self-end"
+              style={{
+                background: colors.primaryGradient
+              }}
             >
               {sending ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                <div 
+                  className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"
+                ></div>
               ) : (
                 <Send className="w-4 h-4" />
               )}

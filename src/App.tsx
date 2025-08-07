@@ -20,6 +20,7 @@ const Music = lazy(() => import('./pages/Music'));
 const Calendar = lazy(() => import('./pages/Calendar'));
 const Gallery = lazy(() => import('./pages/Gallery'));
 const Profile = lazy(() => import('./pages/Profile'));
+const Settings = lazy(() => import('./pages/Settings'));
 
 // Loading component
 const PageLoadingSpinner: React.FC = () => {
@@ -42,9 +43,9 @@ const PageLoadingSpinner: React.FC = () => {
           />
         ))}
       </div>
-      <p className={`font-cat text-xl ${currentTheme.styles.text}`}>
-        Kedili sayfa yükleniyor...
-      </p>
+        <p className={`font-cat text-xl ${currentTheme.styles.text}`}>
+          Kedili sayfa yükleniyor...
+        </p>
     </div>
   );
 };
@@ -114,12 +115,17 @@ const AppContent: React.FC = () => {
           <Suspense fallback={<PageLoadingSpinner />}>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/theme-showcase" element={
+                <Suspense fallback={<PageLoadingSpinner />}>
+                  {React.createElement(lazy(() => import('./pages/ThemeShowcase')))}
+                </Suspense>
+              } />
               <Route 
                 path="*" 
                 element={
                   <ProtectedRoute>
                     <Navbar />
-                    <main className="w-full overflow-x-hidden py-6 relative z-[100] px-2 md:container md:mx-auto">
+                    <main className="w-full overflow-x-hidden py-6 relative z-10 px-2 md:container md:mx-auto">
                       <ErrorBoundary>
                         <Suspense fallback={<PageLoadingSpinner />}>
                           <Routes>
@@ -132,7 +138,7 @@ const AppContent: React.FC = () => {
                             <Route path="/calendar" element={<Calendar />} />
                             <Route path="/gallery" element={<Gallery />} />
                             <Route path="/profile" element={<Profile />} />
-                            
+                            <Route path="/settings" element={<Settings />} />
                             {/* 404 route */}
                             <Route 
                               path="*" 

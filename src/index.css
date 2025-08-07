@@ -14,13 +14,24 @@
 
 /* z-index sistemi */
 :root {
+  /* Z-index values - Güncellenmiş değerler */
   --z-background: 0;
   --z-decorations: 1;
   --z-content: 10;
-  --z-navbar: 999;
-  --z-navbar-items: 1000;
-  --z-modal: 2000;
-  --z-tooltip: 3000;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-offcanvas: 1045;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-navbar: 1080;
+  --z-navbar-items: 1081;
+  --z-mobile-menu-backdrop: 1085;
+  --z-mobile-menu: 1090;
+  --z-mobile-menu-button: 1095;
+  --z-toast: 1100;
 }
 
 /* Base Body Styles */
@@ -366,4 +377,22 @@ a { @apply text-gray-800 hover:text-gray-700; }
     box-shadow: none !important;
     background: white !important;
   }
+}
+
+/* Mobile menu specific styles */
+.mobile-menu-backdrop {
+  z-index: var(--z-mobile-menu-backdrop);
+}
+
+.mobile-menu-panel {
+  z-index: var(--z-mobile-menu);
+}
+
+.mobile-menu-button {
+  z-index: var(--z-mobile-menu-button);
+}
+
+/* Navbar z-index */
+.navbar-container {
+  z-index: var(--z-navbar);
 }
