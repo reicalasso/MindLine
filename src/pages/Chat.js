@@ -347,7 +347,7 @@ export default function Chat() {
     const value = e.target.value;
     setNewMessage(value);
     
-    // Yazıyor göstergesi - daha responsive
+    // Yaz��yor göstergesi - daha responsive
     if (value.length > 0 && !isTyping) {
       setIsTyping(true);
       updateTypingStatus(true);
@@ -662,7 +662,7 @@ export default function Chat() {
   const reactionEmojis = ['❤️', '😍', '😂', '😮', '😢', '😡', '👍', '👎', '😺', '💕', '🔥', '💯'];
   
   // Hızlı reaksiyonlar için Instagram-style emojiler
-  const quickReactionEmojis = ['❤️', '😂', '😮', '😢', '😡', '���'];
+  const quickReactionEmojis = ['❤️', '😂', '😮', '😢', '😡', '👍'];
 
   // Yanıtlanan mesajı bulma
   const findReplyMessage = (replyTo) => {
@@ -1096,13 +1096,14 @@ export default function Chat() {
                         </div>
                       )}
 
-                      {/* Mesaj İşlemleri - Long Press (Own Messages) */}
+                      {/* Mesaj İşlemleri - Instagram Style (Own Messages) */}
                       {showMessageActions === message.id && isMyMsg && (
                         <div
-                          className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-white backdrop-blur-sm rounded-2xl px-4 py-3 flex space-x-3 z-50 shadow-2xl border"
+                          className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-xl rounded-3xl py-2 z-50 shadow-2xl border min-w-max"
                           style={{
                             animation: 'slideUp 0.3s ease-out',
-                            borderColor: colors.border
+                            borderColor: colors.border + '40',
+                            background: 'rgba(255, 255, 255, 0.95)'
                           }}
                         >
                           {message.type === 'text' && (
@@ -1111,11 +1112,11 @@ export default function Chat() {
                                 handleEditMessage(message);
                                 setShowMessageActions(null);
                               }}
-                              className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-all transform hover:scale-105 hover:bg-blue-50"
+                              className="w-full flex items-center space-x-3 px-6 py-4 text-left transition-all hover:bg-cat-50/50 border-b border-gray-100/50 font-cat"
                               style={{ color: colors.primary }}
                             >
-                              <Edit className="w-4 h-4" />
-                              <span className="text-sm font-medium">Düzenle</span>
+                              <Edit className="w-5 h-5" />
+                              <span className="text-base font-medium">Düzenle</span>
                             </button>
                           )}
                           <button
@@ -1123,11 +1124,11 @@ export default function Chat() {
                               handleDeleteMessage(message.id);
                               setShowMessageActions(null);
                             }}
-                            className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-all transform hover:scale-105 hover:bg-red-50"
-                            style={{ color: colors.error || '#ef4444' }}
+                            className="w-full flex items-center space-x-3 px-6 py-4 text-left transition-all hover:bg-red-50/50 font-cat"
+                            style={{ color: '#dc2626' }}
                           >
-                            <Trash2 className="w-4 h-4" />
-                            <span className="text-sm font-medium">Sil</span>
+                            <Trash2 className="w-5 h-5" />
+                            <span className="text-base font-medium">Sil</span>
                           </button>
                         </div>
                       )}
