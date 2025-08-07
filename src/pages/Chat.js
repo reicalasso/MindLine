@@ -295,24 +295,6 @@ export default function Chat() {
     }
   };
 
-  // Yazıyor göstergesi için useEffect
-  useEffect(() => {
-    if (!currentUser) return;
-
-    const typingQuery = query(collection(db, 'typing'));
-    const unsubscribe = onSnapshot(typingQuery, (snapshot) => {
-      const typing = new Set();
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        if (data.userEmail !== currentUser.email && data.isTyping) {
-          typing.add(data.userEmail);
-        }
-      });
-      setTypingUsers(typing);
-    });
-
-    return unsubscribe;
-  }, [currentUser]);
 
   // Yazıyor durumu güncelleme - İyileştirildi
   const updateTypingStatus = async (typing) => {
@@ -1354,7 +1336,7 @@ export default function Chat() {
                   <div>
                     <p className="font-bold text-gray-800 text-lg">{selectedMedia.fileName}</p>
                     <p className="text-sm text-gray-600 mt-1">
-                      {getDisplayName(selectedMedia.author)} • {formatTime(selectedMedia.createdAt)}
+                      {getDisplayName(selectedMedia.author)} ��� {formatTime(selectedMedia.createdAt)}
                     </p>
                   </div>
                   <button
