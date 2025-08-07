@@ -891,33 +891,6 @@ export default function Chat() {
         backgroundImage: colors.backgroundGradient 
       }}
     >
-      {/* Başlık - Instagram Style */}
-      <div 
-        className="shadow-lg backdrop-blur-sm border-b p-4 flex-shrink-0"
-        style={{
-          backgroundColor: colors.surface + 'F5',
-          borderColor: colors.border
-        }}
-      >
-        <div className="text-center">
-          <h1 
-            className="text-xl font-bold flex items-center justify-center"
-            style={{ color: colors.text }}
-          >
-            <MessageCircle 
-              className="w-6 h-6 mr-2" 
-              style={{ color: colors.primary }}
-            />
-            Mindline Chat
-          </h1>
-          <p
-            className="text-xs font-cat opacity-80"
-            style={{ color: colors.textSecondary }}
-          >
-            Kaydırarak yanıtla • Basılı tutarak ifade et
-          </p>
-        </div>
-      </div>
 
       {/* Mesajlar Listesi - Instagram Style */}
       <div
@@ -1279,7 +1252,7 @@ export default function Chat() {
                 onChange={handleMessageChange}
                 onBlur={handleInputBlur}
                 placeholder={selectedFile ? "Dosya ile birlikte mesaj..." :
-                           replyingTo ? "Yanıtınızı yazın..." : "Mesaj��nızı yazın... 💕"}
+                           replyingTo ? "Yanıtınızı yazın..." : "Mesajınızı yazın... 💕"}
                 className="w-full px-5 py-4 pr-24 border-2 rounded-3xl focus:ring-2 focus:border-transparent font-medium resize-none text-base shadow-lg transition-all"
                 rows="1"
                 style={{
