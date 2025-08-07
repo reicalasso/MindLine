@@ -347,7 +347,7 @@ export default function Chat() {
     const value = e.target.value;
     setNewMessage(value);
     
-    // Yaz��yor göstergesi - daha responsive
+    // Yazıyor göstergesi - daha responsive
     if (value.length > 0 && !isTyping) {
       setIsTyping(true);
       updateTypingStatus(true);
@@ -1073,21 +1073,23 @@ export default function Chat() {
                         </div>
                       )}
 
-                      {/* Hızlı Reaksiyonlar - Long Press */}
+                      {/* Hızlı Reaksiyonlar - Cat Theme Style */}
                       {showQuickReactions === message.id && (
                         <div
-                          className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-black/90 backdrop-blur-sm rounded-full px-4 py-3 flex space-x-3 z-50 shadow-2xl"
+                          className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-xl rounded-full px-5 py-4 flex space-x-2 z-50 shadow-cat border"
                           style={{
-                            animation: 'slideUp 0.3s ease-out'
+                            animation: 'slideUp 0.3s ease-out',
+                            borderColor: colors.border + '40',
+                            background: 'rgba(255, 255, 255, 0.95)'
                           }}
                         >
                           {quickReactionEmojis.map((emoji) => (
                             <button
                               key={emoji}
                               onClick={() => addQuickEmojiReaction(message.id, emoji)}
-                              className="text-2xl transition-all transform hover:scale-150 active:scale-125"
+                              className="text-2xl transition-all transform hover:scale-125 active:scale-110 p-2 rounded-full hover:bg-cat-50/50"
                               style={{
-                                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+                                filter: 'drop-shadow(0 2px 4px rgba(242, 113, 28, 0.2))'
                               }}
                             >
                               {emoji}
