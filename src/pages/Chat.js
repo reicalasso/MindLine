@@ -381,9 +381,20 @@ export default function Chat() {
       if (isTyping) {
         updateTypingStatus(false);
       }
-      clearTimeout(typingTimeoutRef.current);
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
     };
-  }, [isTyping]);
+  }, []);
+
+  // Mesaj gönderildiğinde yazıyor durumunu temizle
+  useEffect(() => {
+    if (sending) {
+      setIsTyping(false);
+      updateTypingStatus(false);
+      clearTimeout(typingTimeoutRef.current);
+    }
+  }, [sending]);
 
   // Utility fonksiyonlar
   const getUserProfile = (userEmail) => {
@@ -1268,7 +1279,7 @@ export default function Chat() {
                 onChange={handleMessageChange}
                 onBlur={handleInputBlur}
                 placeholder={selectedFile ? "Dosya ile birlikte mesaj..." :
-                           replyingTo ? "Yanıtınızı yazın..." : "Mesajınızı yazın... 💕"}
+                           replyingTo ? "Yanıtınızı yazın..." : "Mesaj��nızı yazın... 💕"}
                 className="w-full px-5 py-4 pr-24 border-2 rounded-3xl focus:ring-2 focus:border-transparent font-medium resize-none text-base shadow-lg transition-all"
                 rows="1"
                 style={{
