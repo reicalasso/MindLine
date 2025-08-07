@@ -343,6 +343,7 @@ export default function Navbar({ onSearchClick }: NavbarProps = {}) {
             {onSearchClick && (
               <button
                 onClick={onSearchClick}
+                data-tour="search-button"
                 className={
                   currentTheme.id === 'cyberpunk'
                     ? "flex items-center space-x-2 px-3 py-2 text-cyber-secondary border border-cyber-secondary/50 hover:border-cyber-primary hover:text-cyber-primary rounded-none transition-all duration-300 text-sm group relative overflow-hidden bg-gradient-to-r from-cyber-dark/80 to-cyber-matrix/80 hover:from-cyber-primary/10 hover:to-cyber-accent/10"

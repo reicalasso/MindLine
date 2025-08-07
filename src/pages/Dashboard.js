@@ -471,7 +471,7 @@ export default function Dashboard() {
       </div>
 
       {/* Mood Tracker */}
-      <div>
+      <div data-tour="mood-tracker">
         <MoodTracker onMoodSave={handleMoodSave} />
       </div>
 
