@@ -587,47 +587,6 @@ export default function Chat() {
     };
   };
 
-  // Yazıyor göstergesi bileşeni
-  const TypingIndicator = () => {
-    if (typingUsers.size === 0) return null;
-
-    const typingUsersList = Array.from(typingUsers);
-    const userNames = typingUsersList.map(email => {
-      const profile = getUserProfile(email);
-      return profile.displayName;
-    });
-
-    return (
-      <div className="flex items-center space-x-2 px-4 py-2" style={{ color: colors.textSecondary }}>
-        <div className="flex space-x-1">
-          <div 
-            className="w-2 h-2 rounded-full animate-bounce"
-            style={{ backgroundColor: colors.primary }}
-          ></div>
-          <div 
-            className="w-2 h-2 rounded-full animate-bounce"
-            style={{ 
-              backgroundColor: colors.primary,
-              animationDelay: '0.1s' 
-            }}
-          ></div>
-          <div 
-            className="w-2 h-2 rounded-full animate-bounce"
-            style={{ 
-              backgroundColor: colors.primary,
-              animationDelay: '0.2s' 
-            }}
-          ></div>
-        </div>
-        <span className="text-sm">
-          {userNames.length === 1 
-            ? `${userNames[0]} yazıyor...`
-            : `${userNames.join(', ')} yazıyor...`
-          }
-        </span>
-      </div>
-    );
-  };
 
   const renderMessage = (message) => {
     if (editingMessage === message.id) {
