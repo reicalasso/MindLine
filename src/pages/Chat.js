@@ -342,42 +342,37 @@ export default function Chat() {
     }
   };
 
-  // Mesaj input değişikliği - İyileştirildi
+  // Mesaj input değişikliği - Tamamen düzeltildi
   const handleMessageChange = (e) => {
     const value = e.target.value;
     setNewMessage(value);
-    
-    // Yazıyor göstergesi - daha responsive
-    if (value.length > 0 && !isTyping) {
-      setIsTyping(true);
-      updateTypingStatus(true);
-    } else if (value.length === 0 && isTyping) {
+
+    // Yazıyor durumunu başlat
+    if (value.length > 0) {
+      if (!isTyping) {
+        setIsTyping(true);
+        updateTypingStatus(true);
+      }
+
+      // Her tuş vuruşunda timeout'u sıfırla
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false);
+        updateTypingStatus(false);
+      }, 1500);
+    } else {
+      // Input boş ise hemen durdur
       setIsTyping(false);
       updateTypingStatus(false);
       clearTimeout(typingTimeoutRef.current);
-      return;
     }
-    
-    // Timeout ile yazıyor durumunu kapat - daha kısa süre
-    clearTimeout(typingTimeoutRef.current);
-    typingTimeoutRef.current = setTimeout(() => {
-      if (isTyping && newMessage.length === 0) {
-        setIsTyping(false);
-        updateTypingStatus(false);
-      }
-    }, 1000); // 3000'den 1000'e düşürüldü
   };
 
   // Input blur'da yazıyor durumunu kapat
   const handleInputBlur = () => {
-    // Kısa bir gecikme ile yazıyor durumunu kapat
-    setTimeout(() => {
-      if (isTyping) {
-        setIsTyping(false);
-        updateTypingStatus(false);
-        clearTimeout(typingTimeoutRef.current);
-      }
-    }, 500);
+    setIsTyping(false);
+    updateTypingStatus(false);
+    clearTimeout(typingTimeoutRef.current);
   };
 
   // Component unmount'ta yazıyor durumunu temizle
