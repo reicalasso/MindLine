@@ -53,7 +53,6 @@ export default function Chat() {
   const editInputRef = useRef(null);
   const messageInputRef = useRef(null);
 
-  const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
 
   const linkifyOptions = {
     target: '_blank',
