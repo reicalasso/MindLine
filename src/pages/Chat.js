@@ -1074,7 +1074,7 @@ export default function Chat() {
 
                       {/* Hızlı Reaksiyonlar - Long Press */}
                       {showQuickReactions === message.id && (
-                        <div 
+                        <div
                           className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-black/90 backdrop-blur-sm rounded-full px-4 py-3 flex space-x-3 z-50 shadow-2xl"
                           style={{
                             animation: 'slideUp 0.3s ease-out'
@@ -1092,6 +1092,42 @@ export default function Chat() {
                               {emoji}
                             </button>
                           ))}
+                        </div>
+                      )}
+
+                      {/* Mesaj İşlemleri - Long Press (Own Messages) */}
+                      {showMessageActions === message.id && isMyMsg && (
+                        <div
+                          className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-white backdrop-blur-sm rounded-2xl px-4 py-3 flex space-x-3 z-50 shadow-2xl border"
+                          style={{
+                            animation: 'slideUp 0.3s ease-out',
+                            borderColor: colors.border
+                          }}
+                        >
+                          {message.type === 'text' && (
+                            <button
+                              onClick={() => {
+                                handleEditMessage(message);
+                                setShowMessageActions(null);
+                              }}
+                              className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-all transform hover:scale-105 hover:bg-blue-50"
+                              style={{ color: colors.primary }}
+                            >
+                              <Edit className="w-4 h-4" />
+                              <span className="text-sm font-medium">Düzenle</span>
+                            </button>
+                          )}
+                          <button
+                            onClick={() => {
+                              handleDeleteMessage(message.id);
+                              setShowMessageActions(null);
+                            }}
+                            className="flex items-center space-x-2 px-3 py-2 rounded-xl transition-all transform hover:scale-105 hover:bg-red-50"
+                            style={{ color: colors.error || '#ef4444' }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            <span className="text-sm font-medium">Sil</span>
+                          </button>
                         </div>
                       )}
                     </div>
