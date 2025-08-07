@@ -99,7 +99,6 @@ export default function Chat() {
     e.preventDefault();
     const timer = setTimeout(() => {
       const isMyMsg = isMyMessage(message);
-      setLongPressMessage(message);
 
       if (isMyMsg) {
         // Show edit/delete actions for own messages
