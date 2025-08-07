@@ -59,7 +59,7 @@ export default function Chat() {
   const typingTimeoutRef = useRef(null);
   const messageInputRef = useRef(null);
 
-  const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '���', '❣️', '💟', '💌', '💋', '💍', '👑'];
+  const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
 
   const linkifyOptions = {
     target: '_blank',
@@ -942,10 +942,10 @@ export default function Chat() {
             >
               İlk mesajınızı göndererek sohbeti başlatın! 💕
             </p>
-            <div className="mt-4 text-xs space-y-1" style={{ color: colors.textSecondary }}>
-              <p>💡 İpucu: Mesajları sağa kaydırarak yanıtlayın</p>
-              <p>💡 İpucu: Başkalarının mesajlarını basılı tutarak reaksiyon verin</p>
-              <p>💡 İpucu: Kendi mesajlarınızı basılı tutarak düzenleyin/silin</p>
+            <div className="mt-4 text-xs space-y-1 font-cat" style={{ color: colors.textSecondary }}>
+              <p>😺 İpucu: Mesajları sağa kaydırarak yanıtlayın</p>
+              <p>💕 İpucu: Başkalarının mesajlarını basılı tutarak ifade edin</p>
+              <p>✨ İpucu: Kendi mesajlarınızı basılı tutarak düzenleyin/silin</p>
             </div>
           </div>
         ) : (
