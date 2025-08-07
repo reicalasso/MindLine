@@ -3,7 +3,7 @@ import { useThemeStyles, useThemeColors, useThemeAnimations } from '../hooks/use
 import ThemeSelector from '../components/ThemeSelector';
 import { Card } from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
+import Input from '../components/ui/Input';
 import { Palette, Heart, Star, Moon, Sun, Zap } from 'lucide-react';
 
 export default function ThemeShowcase() {
