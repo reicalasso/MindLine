@@ -218,13 +218,13 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const fetchUserProfile = async (userEmail) => {
+  const fetchUserProfile = useCallback(async (userEmail) => {
     if (userProfiles[userEmail]) return userProfiles[userEmail];
-    
+
     try {
       const profilesQuery = query(collection(db, 'profiles'));
       const profilesSnapshot = await getDocs(profilesQuery);
-      
+
       for (const profileDoc of profilesSnapshot.docs) {
         const profileData = profileDoc.data();
         if (profileData.email === userEmail) {
@@ -236,7 +236,7 @@ export default function Chat() {
           return profile;
         }
       }
-      
+
       const defaultProfile = {
         displayName: userEmail.split('@')[0],
         favoriteEmoji: '😺',
@@ -254,7 +254,7 @@ export default function Chat() {
         profileImage: null
       };
     }
-  };
+  }, [userProfiles]);
 
   const convertFileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
