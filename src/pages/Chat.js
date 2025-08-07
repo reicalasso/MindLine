@@ -302,26 +302,6 @@ export default function Chat() {
     setNewMessage(e.target.value);
   };
 
-  // Component unmount'ta yazıyor durumunu temizle
-  useEffect(() => {
-    return () => {
-      if (isTyping) {
-        updateTypingStatus(false);
-      }
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Mesaj gönderildiğinde yazıyor durumunu temizle
-  useEffect(() => {
-    if (sending) {
-      setIsTyping(false);
-      updateTypingStatus(false);
-      clearTimeout(typingTimeoutRef.current);
-    }
-  }, [sending]);
 
   // Utility fonksiyonlar
   const getUserProfile = (userEmail) => {
