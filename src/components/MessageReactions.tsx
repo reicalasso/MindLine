@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageReaction, EnhancedChatMessage } from '../types';
+import { EnhancedChatMessage } from '../types';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface MessageReactionsProps {
@@ -21,12 +21,6 @@ const MessageReactions: React.FC<MessageReactionsProps> = ({
   const handleReaction = (emoji: string) => {
     onReact(message.id, emoji);
     setShowEmojiPicker(false);
-  };
-
-  const getReactionCount = (emoji: string): number => {
-    if (!message.reactions) return 0;
-    const reaction = message.reactions.find(r => r.emoji === emoji);
-    return reaction?.count || 0;
   };
 
   const hasUserReacted = (emoji: string): boolean => {

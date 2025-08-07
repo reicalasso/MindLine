@@ -19,6 +19,7 @@ export const useOnboarding = () => {
       
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, []);
 
   const completeOnboarding = () => {

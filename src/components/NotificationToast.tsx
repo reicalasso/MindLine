@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, CheckCircle, Info, X, Zap } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Info, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface NotificationProps {
@@ -31,6 +31,7 @@ const NotificationToast: React.FC<NotificationProps> = ({
       
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isVisible, autoClose, duration, onClose]);
 
   const getTypeStyles = () => {

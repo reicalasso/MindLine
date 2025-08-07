@@ -125,7 +125,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ items, children, className = 
               top: position.y,
             }}
           >
-            {items.map((item, index) => (
+            {items.map((item) => (
               <React.Fragment key={item.id}>
                 {item.separator && (
                   <div className={`
