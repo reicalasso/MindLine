@@ -17,7 +17,7 @@ import {
   where
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { MessageCircle, Send, Trash2, Smile, Camera, Paperclip, Download, X, Edit, Check, User, Reply, Heart } from 'lucide-react';
+import { MessageCircle, Send, Trash2, Camera, Paperclip, Download, X, Edit, Check, Reply } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Linkify from 'linkify-react';
 import axios from 'axios';
