@@ -1207,50 +1207,7 @@ export default function Chat() {
           backgroundColor: colors.surface + '90'
         }}
       >
-        <form onSubmit={handleSendMessage} className="space-y-3 w-full">
-          {/* Dosya Seçme Butonları - Instagram Style */}
-          <div className="flex space-x-3">
-            <button
-              type="button"
-              onClick={() => cameraInputRef.current?.click()}
-              className="p-3 rounded-full transition-all transform hover:scale-110 shadow-lg"
-              title="Kamera ile fotoğraf çek"
-              style={{ 
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white'
-              }}
-            >
-              <Camera className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="p-3 rounded-full transition-all transform hover:scale-110 shadow-lg"
-              title="Dosya seç"
-              style={{ 
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white'
-              }}
-            >
-              <Paperclip className="w-5 h-5" />
-            </button>
-            <input
-              ref={cameraInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip,.rar"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-          </div>
-          
+        <form onSubmit={handleSendMessage} className="w-full">
           {/* Mesaj Input ve Gönder - Instagram Style */}
           <div className="flex space-x-3 w-full">
             <div className="flex-1 relative w-full">
