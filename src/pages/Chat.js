@@ -1105,11 +1105,13 @@ export default function Chat() {
                       {/* Mesaj İşlemleri - Instagram Style (Own Messages) */}
                       {showMessageActions === message.id && isMyMsg && (
                         <div
-                          className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-xl rounded-3xl py-2 z-50 shadow-2xl border min-w-max"
+                          className="absolute bottom-full mb-3 right-0 bg-white/95 backdrop-blur-xl rounded-3xl py-2 z-50 shadow-2xl border min-w-max"
                           style={{
                             animation: 'slideUp 0.3s ease-out',
                             borderColor: colors.border + '40',
-                            background: 'rgba(255, 255, 255, 0.95)'
+                            background: 'rgba(255, 255, 255, 0.95)',
+                            transform: 'translateX(-20px)',
+                            maxWidth: '200px'
                           }}
                         >
                           {message.type === 'text' && (
