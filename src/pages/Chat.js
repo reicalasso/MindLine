@@ -41,8 +41,6 @@ export default function Chat() {
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [replyingTo, setReplyingTo] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(null);
-  const [typingUsers, setTypingUsers] = useState(new Set());
-  const [isTyping, setIsTyping] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [swipeDirection, setSwipeDirection] = useState(null);
