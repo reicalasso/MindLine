@@ -998,8 +998,6 @@ export default function Chat() {
               );
             })}
             
-            {/* Yazıyor göstergesi */}
-            <TypingIndicator />
           </div>
         )}
         <div ref={messagesEndRef} />
