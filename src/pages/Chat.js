@@ -270,7 +270,7 @@ export default function Chat() {
     if (!file) return;
 
     if (file.size > 25 * 1024 * 1024) {
-      toast.error('Dosya boyutu 25MB\'dan küçük olmalıdır');
+      toast.error('Dosya boyutu 25MB\'dan küçük olmalıd��r');
       return;
     }
 
@@ -1216,12 +1216,12 @@ export default function Chat() {
                 value={newMessage}
                 onChange={handleMessageChange}
                 onBlur={handleInputBlur}
-                placeholder={selectedFile ? "Dosya ile birlikte mesaj..." : 
+                placeholder={selectedFile ? "Dosya ile birlikte mesaj..." :
                            replyingTo ? "Yanıtınızı yazın..." : "Mesajınızı yazın... 💕"}
-                className="w-full px-5 py-4 pr-12 border-2 rounded-3xl focus:ring-2 focus:border-transparent font-medium resize-none text-base shadow-lg transition-all"
+                className="w-full px-5 py-4 pr-24 border-2 rounded-3xl focus:ring-2 focus:border-transparent font-medium resize-none text-base shadow-lg transition-all"
                 rows="1"
-                style={{ 
-                  minHeight: '56px', 
+                style={{
+                  minHeight: '56px',
                   maxHeight: '120px',
                   borderColor: colors.border,
                   backgroundColor: colors.surface,
@@ -1246,13 +1246,41 @@ export default function Chat() {
                   e.target.style.boxShadow = `0 0 0 3px ${colors.primary}20`;
                 }}
               />
-              <button
-                type="button"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 transition-all hover:scale-110"
-                style={{ color: colors.textSecondary }}
-              >
-                <Smile className="w-5 h-5" />
-              </button>
+              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex space-x-2">
+                <button
+                  type="button"
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="transition-all hover:scale-110"
+                  title="Kamera ile fotoğraf çek"
+                  style={{ color: colors.textSecondary }}
+                >
+                  <Camera className="w-5 h-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="transition-all hover:scale-110"
+                  title="Dosya seç"
+                  style={{ color: colors.textSecondary }}
+                >
+                  <Paperclip className="w-5 h-5" />
+                </button>
+              </div>
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,video/*,.pdf,.doc,.docx,.txt,.zip,.rar"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
             </div>
             <button
               type="submit"
