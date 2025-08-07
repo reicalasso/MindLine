@@ -1108,7 +1108,6 @@ export default function Chat() {
                 ref={messageInputRef}
                 value={newMessage}
                 onChange={handleMessageChange}
-                onBlur={handleInputBlur}
                 placeholder={selectedFile ? "Dosya ile birlikte mesaj..." :
                            replyingTo ? "Yanıtınızı yazın..." : "Mesajınızı yazın... 💕"}
                 className="w-full px-5 py-4 pr-24 border-2 rounded-3xl focus:ring-2 focus:border-transparent font-medium resize-none text-base shadow-lg transition-all"
