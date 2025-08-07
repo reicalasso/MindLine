@@ -7,6 +7,9 @@ interface ThemeContextType {
   setThemeMode: (mode: ThemeMode) => void;
   toggleTheme: () => void;
   availableThemes: Theme[];
+  isThemeLoading: boolean;
+  applyThemeVariables: (theme: Theme) => void;
+  resetTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -21,38 +24,118 @@ export function useTheme(): ThemeContextType {
 
 interface ThemeProviderProps {
   children: ReactNode;
+  defaultTheme?: ThemeMode;
 }
 
 const THEME_STORAGE_KEY = 'mindline-theme';
 const DEFAULT_THEME: ThemeMode = 'cat';
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [themeMode, setThemeModeState] = useState<ThemeMode>(DEFAULT_THEME);
+export function ThemeProvider({ children, defaultTheme = DEFAULT_THEME }: ThemeProviderProps) {
+  const [themeMode, setThemeModeState] = useState<ThemeMode>(defaultTheme);
+  const [isThemeLoading, setIsThemeLoading] = useState(true);
+
+  // CSS değişkenlerini uygula
+  const applyThemeVariables = (theme: Theme) => {
+    const root = document.documentElement;
+    
+    // Renk değişkenleri
+    Object.entries(theme.colors).forEach(([key, value]) => {
+      const cssVar = `--theme-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+      root.style.setProperty(cssVar, value);
+    });
+    
+    // Tipografi değişkenleri
+    Object.entries(theme.typography.fontSize).forEach(([key, value]) => {
+      root.style.setProperty(`--font-size-${key}`, value);
+    });
+    
+    Object.entries(theme.typography.fontWeight).forEach(([key, value]) => {
+      root.style.setProperty(`--font-weight-${key}`, value);
+    });
+    
+    root.style.setProperty('--font-family-base', theme.typography.fontFamily);
+    root.style.setProperty('--font-family-heading', theme.typography.fontFamilyHeading);
+    root.style.setProperty('--font-family-mono', theme.typography.fontFamilyMono);
+    
+    // Spacing değişkenleri
+    Object.entries(theme.spacing).forEach(([key, value]) => {
+      root.style.setProperty(`--spacing-${key}`, value);
+    });
+    
+    // Animasyon değişkenleri
+    Object.entries(theme.animations.duration).forEach(([key, value]) => {
+      root.style.setProperty(`--duration-${key}`, value);
+    });
+    
+    Object.entries(theme.animations.easing).forEach(([key, value]) => {
+      root.style.setProperty(`--easing-${key}`, value);
+    });
+    
+    // Breakpoint değişkenleri
+    Object.entries(theme.breakpoints).forEach(([key, value]) => {
+      root.style.setProperty(`--breakpoint-${key}`, value);
+    });
+    
+    // Özel CSS değişkenleri
+    if (theme.cssVariables) {
+      Object.entries(theme.cssVariables).forEach(([key, value]) => {
+        root.style.setProperty(key, value);
+      });
+    }
+    
+    // Body'ye tema class'larını ekle
+    const bodyClasses = document.body.className.split(' ').filter(cls => !cls.startsWith('theme-'));
+    bodyClasses.push(`theme-${theme.id}`);
+    document.body.className = bodyClasses.join(' ');
+    
+    // Meta theme-color tag'ını güncelle
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', theme.colors.primary);
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'theme-color';
+      meta.content = theme.colors.primary;
+      document.head.appendChild(meta);
+    }
+  };
 
   // LocalStorage'den tema yükle
   useEffect(() => {
-    try {
-      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode;
-      if (savedTheme && themes[savedTheme]) {
-        setThemeModeState(savedTheme);
-      }
-    } catch (error) {
-      if (process.env.NODE_ENV !== 'production') {
+    const loadTheme = async () => {
+      try {
+        const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode;
+        if (savedTheme && themes[savedTheme]) {
+          setThemeModeState(savedTheme);
+        }
+      } catch (error) {
         console.error('Tema yüklenirken hata:', error);
+      } finally {
+        setIsThemeLoading(false);
       }
-    }
+    };
+    
+    loadTheme();
   }, []);
 
-  // Tema değiştiğinde localStorage'a kaydet
-  const setThemeMode = (mode: ThemeMode) => {
-    try {
-      setThemeModeState(mode);
-      localStorage.setItem(THEME_STORAGE_KEY, mode);
-    } catch (error) {
-      // Üretim ortamında hata yönetimi için burada bir izleme servisi kullanılabilir
-      if (process.env.NODE_ENV !== 'production') {
+  // Tema değiştiğinde localStorage'a kaydet ve CSS değişkenlerini güncelle
+  useEffect(() => {
+    if (!isThemeLoading) {
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, themeMode);
+        const currentTheme = themes[themeMode];
+        applyThemeVariables(currentTheme);
+      } catch (error) {
         console.error('Tema kaydedilirken hata:', error);
       }
+    }
+  }, [themeMode, isThemeLoading]);
+
+  const setThemeMode = (mode: ThemeMode) => {
+    if (themes[mode]) {
+      setThemeModeState(mode);
+    } else {
+      console.warn(`Tema bulunamadı: ${mode}`);
     }
   };
 
@@ -64,32 +147,23 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     setThemeMode(themeKeys[nextIndex]);
   };
 
+  // Temayı sıfırla
+  const resetTheme = () => {
+    setThemeMode(DEFAULT_THEME);
+  };
+
   const currentTheme = themes[themeMode];
   const availableThemes = Object.values(themes);
-
-  // CSS custom properties'i güncelle
-  useEffect(() => {
-    const root = document.documentElement;
-    const colors = currentTheme.colors;
-    
-    root.style.setProperty('--theme-primary', colors.primary);
-    root.style.setProperty('--theme-secondary', colors.secondary);
-    root.style.setProperty('--theme-accent', colors.accent);
-    root.style.setProperty('--theme-text', colors.text);
-    root.style.setProperty('--theme-text-secondary', colors.textSecondary);
-    root.style.setProperty('--theme-border', colors.border);
-    
-    // Body'ye tema class'ı ekle
-    document.body.className = document.body.className
-      .replace(/theme-\w+/g, '') + ` theme-${themeMode}`;
-  }, [currentTheme, themeMode]);
 
   const value: ThemeContextType = {
     currentTheme,
     themeMode,
     setThemeMode,
     toggleTheme,
-    availableThemes
+    availableThemes,
+    isThemeLoading,
+    applyThemeVariables,
+    resetTheme,
   };
 
   return (

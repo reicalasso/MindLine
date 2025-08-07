@@ -424,6 +424,13 @@ export const themeUtils = {
   },
 
   /**
+   * CSS variable değerini alır
+   */
+  getThemeColor: (property: string): string => {
+    return getComputedStyle(document.documentElement).getPropertyValue(property).trim();
+  },
+
+  /**
    * Koyu tema aktif mi kontrol eder
    */
   isDarkMode: (): boolean => {
@@ -437,9 +444,146 @@ export const themeUtils = {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handler = (e: MediaQueryListEvent) => callback(e.matches);
     
-    mediaQuery.addListener(handler);
+    mediaQuery.addEventListener('change', handler);
     
-    return () => mediaQuery.removeListener(handler);
+    // Cleanup function
+    return () => mediaQuery.removeEventListener('change', handler);
+  },
+
+  /**
+   * Renk parlaklığını hesaplar (0-255 arası)
+   */
+  getColorBrightness: (hexColor: string): number => {
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Relative luminance formula
+    return (r * 299 + g * 587 + b * 114) / 1000;
+  },
+
+  /**
+   * Rengin koyu mu açık mı olduğunu belirler
+   */
+  isLightColor: (hexColor: string): boolean => {
+    return themeUtils.getColorBrightness(hexColor) > 127.5;
+  },
+
+  /**
+   * Tema rengine göre kontrast renk önerir
+   */
+  getContrastColor: (hexColor: string): string => {
+    return themeUtils.isLightColor(hexColor) ? '#000000' : '#ffffff';
+  },
+
+  /**
+   * Hex rengi RGB'ye çevirir
+   */
+  hexToRgb: (hex: string): { r: number; g: number; b: number } | null => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  },
+
+  /**
+   * RGB'yi hex'e çevirir
+   */
+  rgbToHex: (r: number, g: number, b: number): string => {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  },
+
+  /**
+   * Rengi verilen alpha değeri ile transparan yapar
+   */
+  addAlphaToColor: (hexColor: string, alpha: number): string => {
+    const rgb = themeUtils.hexToRgb(hexColor);
+    if (!rgb) return hexColor;
+    
+    return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+  },
+
+  /**
+   * İki renk arasında interpolasyon yapar
+   */
+  interpolateColors: (color1: string, color2: string, factor: number): string => {
+    const rgb1 = themeUtils.hexToRgb(color1);
+    const rgb2 = themeUtils.hexToRgb(color2);
+    
+    if (!rgb1 || !rgb2) return color1;
+    
+    const r = Math.round(rgb1.r + factor * (rgb2.r - rgb1.r));
+    const g = Math.round(rgb1.g + factor * (rgb2.g - rgb1.g));
+    const b = Math.round(rgb1.b + factor * (rgb2.b - rgb1.b));
+    
+    return themeUtils.rgbToHex(r, g, b);
+  },
+
+  /**
+   * Tüm tema değişkenlerini temizler
+   */
+  clearThemeVariables: (): void => {
+    const root = document.documentElement;
+    const styles = root.style;
+    
+    // Tema ile ilgili CSS değişkenlerini temizle
+    for (let i = styles.length - 1; i >= 0; i--) {
+      const property = styles[i];
+      if (property.startsWith('--theme-') || 
+          property.startsWith('--font-') || 
+          property.startsWith('--spacing-') ||
+          property.startsWith('--duration-') ||
+          property.startsWith('--easing-') ||
+          property.startsWith('--breakpoint-')) {
+        root.style.removeProperty(property);
+      }
+    }
+  },
+
+  /**
+   * Tema geçiş animasyonu ekler
+   */
+  addThemeTransition: (duration: number = 300): void => {
+    const style = document.createElement('style');
+    style.textContent = `
+      *, *::before, *::after {
+        transition: background-color ${duration}ms ease,
+                    border-color ${duration}ms ease,
+                    color ${duration}ms ease,
+                    fill ${duration}ms ease,
+                    stroke ${duration}ms ease,
+                    box-shadow ${duration}ms ease !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Geçiş tamamlandıktan sonra style'ı kaldır
+    setTimeout(() => {
+      document.head.removeChild(style);
+    }, duration);
+  },
+
+  /**
+   * Tema CSS değişkenlerini object olarak döndürür
+   */
+  getThemeVariables: (): Record<string, string> => {
+    const root = document.documentElement;
+    const styles = getComputedStyle(root);
+    const variables: Record<string, string> = {};
+    
+    for (let i = 0; i < styles.length; i++) {
+      const property = styles[i];
+      if (property.startsWith('--theme-') || 
+          property.startsWith('--font-') || 
+          property.startsWith('--spacing-')) {
+        variables[property] = styles.getPropertyValue(property).trim();
+      }
+    }
+    
+    return variables;
   }
 };
 

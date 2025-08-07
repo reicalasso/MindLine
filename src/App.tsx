@@ -42,7 +42,7 @@ const PageLoadingSpinner: React.FC = () => {
           />
         ))}
       </div>
-      <p className={`font-cat text-xl ${currentTheme.styles.textClass}`}>
+      <p className={`font-cat text-xl ${currentTheme.styles.text}`}>
         Kedili sayfa yükleniyor...
       </p>
     </div>
@@ -140,10 +140,10 @@ const AppContent: React.FC = () => {
                                 <div className="text-center py-20">
                                   <>
                                     <div className="text-8xl mb-6">😿</div>
-                                    <h2 className={`text-3xl font-cat mb-4 ${currentTheme.styles.textClass}`}>
+                                    <h2 className={`text-3xl font-cat mb-4 ${currentTheme.styles.text}`}>
                                       Sayfa Bulunamadı
                                     </h2>
-                                    <p className={`font-elegant ${currentTheme.styles.textClass}`}>
+                                    <p className={`font-elegant ${currentTheme.styles.text}`}>
                                       Aradığınız kedili sayfa mevcut değil.
                                     </p>
                                   </>

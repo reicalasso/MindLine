@@ -47,7 +47,8 @@ export default function Chat() {
   const linkifyOptions = {
     target: '_blank',
     rel: 'noopener noreferrer',
-    className: 'text-blue-500 underline hover:text-blue-700 transition-colors',
+    className: 'underline transition-colors',
+    style: { color: currentTheme.colors.primary },
   };
 
   // Instagram-vari Link Preview Kartı
