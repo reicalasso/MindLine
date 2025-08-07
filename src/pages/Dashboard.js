@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import MoodTracker from '../components/MoodTracker';
 import { 
   collection, 
   query, 
   where, 
   orderBy, 
   limit, 
-  getDocs 
+  getDocs,
+  addDoc,
+  Timestamp
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import {
@@ -377,6 +380,23 @@ export default function Dashboard() {
     return Math.round((completed / total) * 100);
   };
 
+  const handleMoodSave = async (moodData) => {
+    try {
+      await addDoc(collection(db, 'moods'), {
+        ...moodData,
+        author: currentUser?.email || 'anonymous',
+        date: Timestamp.fromDate(moodData.date),
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      });
+      
+      // Show success message or update UI as needed
+      console.log('Mood saved successfully');
+    } catch (error) {
+      console.error('Error saving mood:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-6">
@@ -448,6 +468,11 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Mood Tracker */}
+      <div data-tour="mood-tracker">
+        <MoodTracker onMoodSave={handleMoodSave} />
       </div>
 
       {/* Enhanced Statistics Cards */}

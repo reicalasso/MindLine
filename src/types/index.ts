@@ -327,6 +327,64 @@ export interface AppError {
   timestamp: Date;
 }
 
+// Mood Tracking System - as suggested in the problem statement
+export interface MoodEntry extends FirestoreDocument {
+  date: Timestamp;
+  mood: 'happy' | 'romantic' | 'excited' | 'calm' | 'thoughtful';
+  note?: string;
+  sharedWith?: string;
+  activities?: string[];
+  location?: string;
+  weather?: string;
+  energy?: number; // 1-10 scale
+  tags?: string[];
+}
+
+// Message reactions for chat enhancement
+export interface MessageReaction extends Reaction {
+  messageId: string;
+  count: number;
+}
+
+// Search functionality types
+export interface SearchResult {
+  id: string;
+  type: 'letter' | 'message' | 'photo' | 'movie' | 'music' | 'todo' | 'mood';
+  title: string;
+  content?: string;
+  snippet: string;
+  score: number;
+  dateCreated: Timestamp;
+  author: string;
+}
+
+export interface SearchFilters {
+  types?: Array<'letter' | 'message' | 'photo' | 'movie' | 'music' | 'todo' | 'mood'>;
+  author?: string;
+  dateFrom?: Timestamp;
+  dateTo?: Timestamp;
+  tags?: string[];
+}
+
+// Keyboard shortcuts
+export interface KeyboardShortcut {
+  key: string;
+  ctrl?: boolean;
+  shift?: boolean;
+  alt?: boolean;
+  description: string;
+  action: () => void;
+}
+
+// Enhanced chat message with reactions and threading
+export interface EnhancedChatMessage extends ChatMessage {
+  reactions?: MessageReaction[];
+  threadReplies?: ChatMessage[];
+  parentMessageId?: string;
+  isTyping?: boolean;
+  readBy?: string[];
+}
+
 // Utility tiplerini dışa aktar
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 export type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

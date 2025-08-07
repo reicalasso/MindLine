@@ -1,5 +1,5 @@
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { Suspense, lazy, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
@@ -8,6 +8,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ParticleEffect from './components/ParticleEffect';
 import CyberEffect from './components/CyberEffect';
 import Navbar from './components/Navbar';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
+import SearchModal from './components/SearchModal';
+import { SearchResult } from './types';
 import './index.css';
 
 // Lazy load pages for better performance
@@ -115,81 +119,156 @@ const ToastConfig: React.FC = () => {
   return <Toaster toastOptions={toastConfig} />;
 };
 
-// App content component
-const AppContent: React.FC = () => {
+// App content component with keyboard shortcuts and search (inside Router)
+const AppContentWithRouter: React.FC = () => {
   const { currentTheme } = useTheme();
+  const navigate = useNavigate();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   
+  const { 
+    shortcuts, 
+    isShortcutModalOpen, 
+    closeShortcutModal 
+  } = useKeyboardShortcuts();
+
+  // Update the search shortcut to open the search modal
+  const enhancedShortcuts = shortcuts.map(shortcut => {
+    if (shortcut.key === 'k' && shortcut.ctrl) {
+      return {
+        ...shortcut,
+        action: () => setIsSearchOpen(true)
+      };
+    }
+    return shortcut;
+  });
+
+  const handleSearchResultNavigation = (result: SearchResult) => {
+    // Navigate based on the result type
+    switch (result.type) {
+      case 'letter':
+        navigate('/letters');
+        break;
+      case 'message':
+        navigate('/chat');
+        break;
+      case 'photo':
+        navigate('/gallery');
+        break;
+      case 'movie':
+        navigate('/movies');
+        break;
+      case 'music':
+        navigate('/music');
+        break;
+      case 'todo':
+        navigate('/todos');
+        break;
+      default:
+        navigate('/');
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col overflow-x-hidden max-w-[100vw]">
+      <ToastConfig />
+      
+      {/* Keyboard Shortcuts Modal */}
+      <KeyboardShortcutsModal
+        isOpen={isShortcutModalOpen}
+        onClose={closeShortcutModal}
+        shortcuts={enhancedShortcuts}
+      />
+
+      {/* Search Modal */}
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onNavigateToResult={handleSearchResultNavigation}
+      />
+
+      <Suspense fallback={<PageLoadingSpinner />}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route 
+            path="*" 
+            element={
+              <ProtectedRoute>
+                {/* Background effects */}
+                <ParticleEffect />
+                <CyberEffect />
+                
+                <Navbar onSearchClick={() => setIsSearchOpen(true)} />
+                <main className="w-full overflow-x-hidden py-6 relative z-[100] px-2 md:container md:mx-auto">
+                  <ErrorBoundary>
+                    <Suspense fallback={<PageLoadingSpinner />}>
+                      <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/letters" element={<Letters />} />
+                        <Route path="/chat" element={<Chat />} />
+                        <Route path="/movies" element={<Movies />} />
+                        <Route path="/todos" element={<Todos />} />
+                        <Route path="/music" element={<Music />} />
+                        <Route path="/calendar" element={<Calendar />} />
+                        <Route path="/gallery" element={<Gallery />} />
+                        <Route path="/profile" element={<Profile />} />
+                        
+                        {/* 404 route */}
+                        <Route 
+                          path="*" 
+                          element={
+                            <div className="text-center py-20">
+                              {currentTheme.id === 'cyberpunk' ? (
+                                <>
+                                  <div className="text-8xl mb-6 animate-glitch-extreme text-cyber-secondary-extreme">⚠️</div>
+                                  <h2 className="text-3xl font-mono mb-4 text-cyber-primary-extreme animate-neon-flicker-extreme">
+                                    ERROR_404: PATH_NOT_FOUND
+                                  </h2>
+                                  <p className="font-mono text-cyber-secondary-extreme">
+                                    SYSTEM_MESSAGE: REQUESTED_ROUTE_DOES_NOT_EXIST
+                                  </p>
+                                  <div className="mt-6 w-32 h-1 bg-cyber-primary mx-auto animate-circuit-pulse-extreme rounded-full"></div>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="text-8xl mb-6">😿</div>
+                                  <h2 className={`text-3xl font-cat mb-4 ${currentTheme.styles.textClass}`}>
+                                    Sayfa Bulunamadı
+                                  </h2>
+                                  <p className={`font-elegant ${currentTheme.styles.textClass}`}>
+                                    Aradığınız kedili sayfa mevcut değil.
+                                  </p>
+                                  <div className="mt-4">
+                                    <button
+                                      onClick={() => setIsSearchOpen(true)}
+                                      className={`px-4 py-2 rounded-lg font-medium transition-all ${currentTheme.styles.buttonClass}`}
+                                    >
+                                      🔍 Arama Yap
+                                    </button>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          } 
+                        />
+                      </Routes>
+                    </Suspense>
+                  </ErrorBoundary>
+                </main>
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </Suspense>
+    </div>
+  );
+};
+
+// App content component
+const AppContent: React.FC = () => {  
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen flex flex-col overflow-x-hidden max-w-[100vw]">
-          <ToastConfig />
-          <Suspense fallback={<PageLoadingSpinner />}>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route 
-                path="*" 
-                element={
-                  <ProtectedRoute>
-                    {/* Background effects */}
-                    <ParticleEffect />
-                    <CyberEffect />
-                    
-                    <Navbar />
-                    <main className="w-full overflow-x-hidden py-6 relative z-[100] px-2 md:container md:mx-auto">
-                      <ErrorBoundary>
-                        <Suspense fallback={<PageLoadingSpinner />}>
-                          <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="/letters" element={<Letters />} />
-                            <Route path="/chat" element={<Chat />} />
-                            <Route path="/movies" element={<Movies />} />
-                            <Route path="/todos" element={<Todos />} />
-                            <Route path="/music" element={<Music />} />
-                            <Route path="/calendar" element={<Calendar />} />
-                            <Route path="/gallery" element={<Gallery />} />
-                            <Route path="/profile" element={<Profile />} />
-                            
-                            {/* 404 route */}
-                            <Route 
-                              path="*" 
-                              element={
-                                <div className="text-center py-20">
-                                  {currentTheme.id === 'cyberpunk' ? (
-                                    <>
-                                      <div className="text-8xl mb-6 animate-glitch-extreme text-cyber-secondary-extreme">⚠️</div>
-                                      <h2 className="text-3xl font-mono mb-4 text-cyber-primary-extreme animate-neon-flicker-extreme">
-                                        ERROR_404: PATH_NOT_FOUND
-                                      </h2>
-                                      <p className="font-mono text-cyber-secondary-extreme">
-                                        SYSTEM_MESSAGE: REQUESTED_ROUTE_DOES_NOT_EXIST
-                                      </p>
-                                      <div className="mt-6 w-32 h-1 bg-cyber-primary mx-auto animate-circuit-pulse-extreme rounded-full"></div>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <div className="text-8xl mb-6">😿</div>
-                                      <h2 className={`text-3xl font-cat mb-4 ${currentTheme.styles.textClass}`}>
-                                        Sayfa Bulunamadı
-                                      </h2>
-                                      <p className={`font-elegant ${currentTheme.styles.textClass}`}>
-                                        Aradığınız kedili sayfa mevcut değil.
-                                      </p>
-                                    </>
-                                  )}
-                                </div>
-                              } 
-                            />
-                          </Routes>
-                        </Suspense>
-                      </ErrorBoundary>
-                    </main>
-                  </ProtectedRoute>
-                } 
-              />
-            </Routes>
-          </Suspense>
-        </div>
+        <AppContentWithRouter />
       </Router>
     </AuthProvider>
   );

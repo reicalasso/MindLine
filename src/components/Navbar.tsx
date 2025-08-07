@@ -7,7 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { 
   Heart, Mail, Film, CheckSquare, Music, Calendar, Camera, LogOut, 
-  ChevronDown, Menu, X, MessageSquare, Home, Bookmark, User
+  ChevronDown, Menu, X, MessageSquare, Home, Bookmark, User, Search
 } from 'lucide-react';
 
 interface ProfileData {
@@ -31,7 +31,11 @@ interface NavCategory {
   items: NavItem[];
 }
 
-export default function Navbar() {
+interface NavbarProps {
+  onSearchClick?: () => void;
+}
+
+export default function Navbar({ onSearchClick }: NavbarProps = {}) {
   const { logout, currentUser } = useAuth();
   const { currentTheme } = useTheme();
   const navigate = useNavigate();
@@ -335,6 +339,36 @@ export default function Navbar() {
 
           {/* User Controls */}
           <div className="flex items-center space-x-3">
+            {/* Search Button */}
+            {onSearchClick && (
+              <button
+                onClick={onSearchClick}
+                data-tour="search-button"
+                className={
+                  currentTheme.id === 'cyberpunk'
+                    ? "flex items-center space-x-2 px-3 py-2 text-cyber-secondary border border-cyber-secondary/50 hover:border-cyber-primary hover:text-cyber-primary rounded-none transition-all duration-300 text-sm group relative overflow-hidden bg-gradient-to-r from-cyber-dark/80 to-cyber-matrix/80 hover:from-cyber-primary/10 hover:to-cyber-accent/10"
+                    : "flex items-center space-x-2 px-3 py-2 text-cat-500 border border-cat-200 hover:border-cat-400 hover:text-cat-700 rounded-full transition-all duration-200 text-sm group"
+                }
+                style={currentTheme.id === 'cyberpunk' ? {
+                  clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))'
+                } : {}}
+                title="Arama (Ctrl+K)"
+              >
+                {currentTheme.id === 'cyberpunk' && (
+                  <div className="absolute inset-0 bg-cyber-grid opacity-10 pointer-events-none"></div>
+                )}
+                
+                <Search className="w-4 h-4 relative" />
+                <span className="hidden lg:block font-mono tracking-wide relative">
+                  {currentTheme.id === 'cyberpunk' ? "SEARCH" : "Arama"}
+                </span>
+                
+                {currentTheme.id === 'cyberpunk' && (
+                  <div className="absolute top-0 right-0 w-1 h-1 bg-cyber-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                )}
+              </button>
+            )}
+
             <ThemeToggle
               variant="button"
               showLabel={false}
