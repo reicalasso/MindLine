@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import { useState, forwardRef } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { ChevronDown } from 'lucide-react';
 import { ThemeMode, themes } from '../types/theme';
