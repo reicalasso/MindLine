@@ -192,7 +192,6 @@ export default function Chat() {
       })).reverse();
       
       setMessages(messagesData);
-      setLoading(false);
       scrollToBottom();
     });
 
