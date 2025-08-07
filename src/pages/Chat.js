@@ -297,37 +297,9 @@ export default function Chat() {
 
 
 
-  // Mesaj input değişikliği - Tamamen düzeltildi
+  // Mesaj input değişikliği
   const handleMessageChange = (e) => {
-    const value = e.target.value;
-    setNewMessage(value);
-
-    // Yazıyor durumunu başlat
-    if (value.length > 0) {
-      if (!isTyping) {
-        setIsTyping(true);
-        updateTypingStatus(true);
-      }
-
-      // Her tuş vuruşunda timeout'u sıfırla
-      clearTimeout(typingTimeoutRef.current);
-      typingTimeoutRef.current = setTimeout(() => {
-        setIsTyping(false);
-        updateTypingStatus(false);
-      }, 1500);
-    } else {
-      // Input boş ise hemen durdur
-      setIsTyping(false);
-      updateTypingStatus(false);
-      clearTimeout(typingTimeoutRef.current);
-    }
-  };
-
-  // Input blur'da yazıyor durumunu kapat
-  const handleInputBlur = () => {
-    setIsTyping(false);
-    updateTypingStatus(false);
-    clearTimeout(typingTimeoutRef.current);
+    setNewMessage(e.target.value);
   };
 
   // Component unmount'ta yazıyor durumunu temizle
