@@ -212,7 +212,7 @@ export default function Chat() {
         }
       });
     }
-  }, [messages, userProfiles]);
+  }, [messages, userProfiles, fetchUserProfile]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
