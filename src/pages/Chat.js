@@ -59,7 +59,7 @@ export default function Chat() {
   const typingTimeoutRef = useRef(null);
   const messageInputRef = useRef(null);
 
-  const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
+  const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '���', '❣️', '💟', '💌', '💋', '💍', '👑'];
 
   const linkifyOptions = {
     target: '_blank',
@@ -904,11 +904,11 @@ export default function Chat() {
             />
             Mindline Chat
           </h1>
-          <p 
-            className="text-xs font-medium opacity-80"
+          <p
+            className="text-xs font-cat opacity-80"
             style={{ color: colors.textSecondary }}
           >
-            Kaydırarak yanıtla • Basılı tutarak reaksiyon ver
+            Kaydırarak yanıtla • Basılı tutarak ifade et
           </p>
         </div>
       </div>
