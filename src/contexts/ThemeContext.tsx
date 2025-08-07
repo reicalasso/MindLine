@@ -24,7 +24,7 @@ interface ThemeProviderProps {
 }
 
 const THEME_STORAGE_KEY = 'mindline-theme';
-const DEFAULT_THEME: ThemeMode = 'cyberpunk';
+const DEFAULT_THEME: ThemeMode = 'cat';
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [themeMode, setThemeModeState] = useState<ThemeMode>(DEFAULT_THEME);

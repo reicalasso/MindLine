@@ -5,8 +5,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
-import ParticleEffect from './components/ParticleEffect';
-import CyberEffect from './components/CyberEffect';
+
 import Navbar from './components/Navbar';
 import './index.css';
 
@@ -29,34 +28,22 @@ const PageLoadingSpinner: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-6">
       <div className="relative">
-        {currentTheme.id === 'cyberpunk' ? (
-          <div className="relative animate-float">
-            <div className="text-8xl animate-neon-flicker-extreme text-cyber-primary-extreme">⚡</div>
-            <div className="absolute -top-4 -right-4 text-3xl animate-glitch-extreme text-cyber-secondary-extreme">⚙️</div>
-            <div className="cyber-scan-line-extreme"></div>
-          </div>
-        ) : (
-          <div className="relative">
-            <div className="text-8xl animate-bounce-cat">😺</div>
-            <div className="absolute -top-4 -right-4 text-3xl animate-float">✨</div>
-          </div>
-        )}
+        <div className="relative">
+          <div className="text-8xl animate-bounce-cat">😺</div>
+          <div className="absolute -top-4 -right-4 text-3xl animate-float">✨</div>
+        </div>
       </div>
       <div className="flex space-x-2">
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className={`w-3 h-3 rounded-full animate-bounce ${
-              currentTheme.id === 'cyberpunk' 
-                ? 'bg-cyber-primary shadow-neon-blue' 
-                : 'bg-pink-400'
-            }`}
+            className="w-3 h-3 rounded-full animate-bounce bg-pink-400"
             style={{ animationDelay: `${i * 0.1}s` }}
           />
         ))}
       </div>
-      <p className={`${currentTheme.id === 'cyberpunk' ? 'font-mono text-cyber-primary-extreme animate-neon-flicker-lite' : 'font-cat text-xl'} ${currentTheme.styles.textClass}`}>
-        {currentTheme.id === 'cyberpunk' ? 'LOADING_SEQUENCE: ACTIVE' : 'Kedili sayfa yükleniyor...'}
+      <p className={`font-cat text-xl ${currentTheme.styles.textClass}`}>
+        Kedili sayfa yükleniyor...
       </p>
     </div>
   );
@@ -131,10 +118,6 @@ const AppContent: React.FC = () => {
                 path="*" 
                 element={
                   <ProtectedRoute>
-                    {/* Background effects */}
-                    <ParticleEffect />
-                    <CyberEffect />
-                    
                     <Navbar />
                     <main className="w-full overflow-x-hidden py-6 relative z-[100] px-2 md:container md:mx-auto">
                       <ErrorBoundary>
@@ -155,28 +138,15 @@ const AppContent: React.FC = () => {
                               path="*" 
                               element={
                                 <div className="text-center py-20">
-                                  {currentTheme.id === 'cyberpunk' ? (
-                                    <>
-                                      <div className="text-8xl mb-6 animate-glitch-extreme text-cyber-secondary-extreme">⚠️</div>
-                                      <h2 className="text-3xl font-mono mb-4 text-cyber-primary-extreme animate-neon-flicker-extreme">
-                                        ERROR_404: PATH_NOT_FOUND
-                                      </h2>
-                                      <p className="font-mono text-cyber-secondary-extreme">
-                                        SYSTEM_MESSAGE: REQUESTED_ROUTE_DOES_NOT_EXIST
-                                      </p>
-                                      <div className="mt-6 w-32 h-1 bg-cyber-primary mx-auto animate-circuit-pulse-extreme rounded-full"></div>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <div className="text-8xl mb-6">😿</div>
-                                      <h2 className={`text-3xl font-cat mb-4 ${currentTheme.styles.textClass}`}>
-                                        Sayfa Bulunamadı
-                                      </h2>
-                                      <p className={`font-elegant ${currentTheme.styles.textClass}`}>
-                                        Aradığınız kedili sayfa mevcut değil.
-                                      </p>
-                                    </>
-                                  )}
+                                  <>
+                                    <div className="text-8xl mb-6">😿</div>
+                                    <h2 className={`text-3xl font-cat mb-4 ${currentTheme.styles.textClass}`}>
+                                      Sayfa Bulunamadı
+                                    </h2>
+                                    <p className={`font-elegant ${currentTheme.styles.textClass}`}>
+                                      Aradığınız kedili sayfa mevcut değil.
+                                    </p>
+                                  </>
                                 </div>
                               } 
                             />

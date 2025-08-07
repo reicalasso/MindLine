@@ -184,11 +184,7 @@ export default function Letters() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${
-          currentTheme.id === 'cyberpunk' 
-            ? 'border-cyber-primary' 
-            : 'border-romantic-500'
-        }`}></div>
+        <div className={`animate-spin rounded-full h-12 w-12 border-b-2 border-romantic-500`}></div>
       </div>
     );
   }
@@ -197,33 +193,19 @@ export default function Letters() {
     <div className="space-y-8">
       {/* Başlık */}
       <div className="text-center">
-        <h1 className={`text-4xl mb-2 flex items-center justify-center ${
-          currentTheme.id === 'cyberpunk' 
-            ? 'font-mono text-cyber-primary animate-neon-flicker' 
-            : 'font-romantic text-gray-800'
-        }`}>
+        <h1 className={`text-4xl mb-2 flex items-center justify-center font-romantic text-gray-800`}>
           <Mail className="w-8 h-8 mr-3" />
-          {currentTheme.id === 'cyberpunk' ? 'DATA_MAILS.exe' : 'Aşk Mektupları'}
+          Aşk Mektupları
         </h1>
-        <p className={`text-lg ${
-          currentTheme.id === 'cyberpunk' 
-            ? 'text-cyber-secondary font-mono' 
-            : 'text-gray-700 font-elegant'
-        }`}>
-          {currentTheme.id === 'cyberpunk' 
-            ? 'Neural messages archived in quantum storage...' 
-            : 'Birbirinize yazdığınız güzel mektuplar burada...'}
+        <p className={`text-lg text-gray-700 font-elegant`}>
+          Birbirinize yazdığınız güzel mektuplar burada...
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Klasör Sidebar */}
         <div className="md:col-span-1">
-          <div className={`${
-            currentTheme.id === 'cyberpunk' 
-              ? 'bg-cyber-50/90 border-cyber-secondary shadow-cyber animate-circuit-pulse' 
-              : 'bg-white/90 border-romantic-200 shadow-lg'
-          } backdrop-blur-sm rounded-xl p-4 border`}>
+          <div className={`bg-white/90 border-romantic-200 shadow-lg backdrop-blur-sm rounded-xl p-4 border`}>
             <FolderManager 
               collectionName="letters" 
               onSelectFolder={setSelectedFolder} 

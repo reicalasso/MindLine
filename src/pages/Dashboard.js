@@ -556,9 +556,9 @@ export default function Dashboard() {
         <div className="space-y-6">
           {/* Recent Activities */}
           <div className={`${currentTheme.styles.cardClass} p-6`}>
-            <h3 className={`text-xl mb-4 flex items-center ${currentTheme.id === 'cyberpunk' ? 'font-mono text-cyber-primary' : 'font-cat text-gray-800'}`}>
+            <h3 className={`text-xl mb-4 flex items-center font-cat text-gray-800`}>
               <Activity className="w-5 h-5 mr-2" />
-              {currentTheme.id === 'cyberpunk' ? 'RECENT_LOGS.dat' : 'Son Aktiviteler'}
+              Son Aktiviteler
             </h3>
             
             {recentActivities.length > 0 ? (

@@ -35,7 +35,7 @@ export interface Theme {
   };
 }
 
-export type ThemeMode = 'cat' | 'cyberpunk';
+export type ThemeMode = 'cat';
 
 export const themes: Record<ThemeMode, Theme> = {
   cat: {
@@ -62,40 +62,6 @@ export const themes: Record<ThemeMode, Theme> = {
       backgroundClass: 'bg-cat-gradient',
       textClass: 'text-cat-700',
       decorationClass: 'cat-decoration-1 cat-decoration-2 cat-decoration-3'
-    }
-  },
-  cyberpunk: {
-    id: 'cyberpunk',
-    name: 'Cyber Matrix Pro',
-    emoji: '⚡',
-    description: 'NEURAL_NETWORK: ACTIVATED // REALITY: HACKED',
-    colors: {
-      primary: '#00f0ff',
-      secondary: '#ff0055',
-      accent: '#c700ff',
-      background: 'linear-gradient(135deg, #001133 0%, #0a0a15 25%, #1a0033 50%, #0a0a15 75%, #001133 100%)',
-      surface: 'rgba(5, 20, 35, 0.9)',
-      text: '#00f0ff',
-      textSecondary: '#ff0055',
-      border: '#00f0ff',
-      gradient: 'bg-cyber-matrix-extreme',
-      shadow: 'shadow-cyber-intense'
-    },
-    styles: {
-      cardClass: 'cyber-card-extreme',
-      buttonClass: 'cyber-button-extreme',
-      inputClass: 'cyber-input-extreme',
-      backgroundClass: 'bg-cyber-matrix-extreme',
-      textClass: 'text-cyber-primary-extreme',
-      decorationClass: 'cyber-decorations-extreme'
-    },
-    animations: {
-      glitch: 'animate-glitch-extreme',
-      neonFlicker: 'animate-neon-flicker-extreme',
-      dataStream: 'animate-data-stream-extreme',
-      pulse: 'animate-circuit-pulse-extreme',
-      scan: 'animate-scan-line-extreme',
-      hologram: 'animate-hologram-extreme'
     }
   }
 };
