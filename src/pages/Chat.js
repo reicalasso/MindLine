@@ -1200,8 +1200,8 @@ export default function Chat() {
 
 
       {/* Mesaj Gönderme Formu - Instagram Style */}
-      <div 
-        className="border-t p-4 flex-shrink-0 w-full backdrop-blur-sm"
+      <div
+        className="border-t p-4 flex-shrink-0 w-full backdrop-blur-sm mt-auto"
         style={{
           borderColor: colors.border,
           backgroundColor: colors.surface + '90'
