@@ -1076,18 +1076,22 @@ export default function Chat() {
                       {/* Hızlı Reaksiyonlar - Cat Theme Style */}
                       {showQuickReactions === message.id && (
                         <div
-                          className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-xl rounded-full px-5 py-4 flex space-x-2 z-50 shadow-cat border"
+                          className={`absolute bottom-full mb-3 bg-white/95 backdrop-blur-xl rounded-full px-4 py-3 flex space-x-1 z-50 shadow-cat border ${
+                            isMyMsg ? 'right-0' : 'left-0'
+                          }`}
                           style={{
                             animation: 'slideUp 0.3s ease-out',
                             borderColor: colors.border + '40',
-                            background: 'rgba(255, 255, 255, 0.95)'
+                            background: 'rgba(255, 255, 255, 0.95)',
+                            maxWidth: '280px',
+                            transform: isMyMsg ? 'translateX(-20px)' : 'translateX(20px)'
                           }}
                         >
                           {quickReactionEmojis.map((emoji) => (
                             <button
                               key={emoji}
                               onClick={() => addQuickEmojiReaction(message.id, emoji)}
-                              className="text-2xl transition-all transform hover:scale-125 active:scale-110 p-2 rounded-full hover:bg-cat-50/50"
+                              className="text-xl transition-all transform hover:scale-125 active:scale-110 p-2 rounded-full hover:bg-cat-50/50 flex-shrink-0"
                               style={{
                                 filter: 'drop-shadow(0 2px 4px rgba(242, 113, 28, 0.2))'
                               }}
