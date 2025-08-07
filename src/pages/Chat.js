@@ -13,8 +13,7 @@ import {
   onSnapshot,
   serverTimestamp,
   limit,
-  getDocs,
-  where
+  getDocs
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { MessageCircle, Send, Trash2, Camera, Paperclip, Download, X, Edit, Check, Reply } from 'lucide-react';
