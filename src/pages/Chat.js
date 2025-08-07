@@ -1245,29 +1245,6 @@ export default function Chat() {
         </div>
       )}
 
-      {/* Emoji Picker - Instagram Style */}
-      <div 
-        className="border-t p-3 flex-shrink-0 backdrop-blur-sm"
-        style={{
-          backgroundColor: colors.surfaceVariant + '80',
-          borderColor: colors.border
-        }}
-      >
-        <div className="flex flex-wrap gap-2 max-h-20 overflow-y-auto bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-3">
-          {emojis.slice(0, 15).map((emoji, index) => (
-            <button
-              key={index}
-              onClick={() => addEmoji(emoji)}
-              className="text-lg rounded-full p-2 transition-all transform hover:scale-125 hover:bg-white hover:shadow-lg"
-              style={{
-                background: 'transparent'
-              }}
-            >
-              {emoji}
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* Mesaj Gönderme Formu - Instagram Style */}
       <div 
