@@ -510,7 +510,6 @@ export default function Chat() {
   const addQuickEmojiReaction = async (messageId, emoji) => {
     await addEmojiReaction(messageId, emoji);
     setShowQuickReactions(null);
-    setLongPressMessage(null);
     toast.success(`${emoji} reaksiyonu eklendi!`, { duration: 1000 });
   };
 
