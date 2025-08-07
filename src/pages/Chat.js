@@ -454,12 +454,6 @@ export default function Chat() {
       return;
     }
 
-    // Yazıyor durumunu hemen kapat
-    if (isTyping) {
-      setIsTyping(false);
-      updateTypingStatus(false);
-      clearTimeout(typingTimeoutRef.current);
-    }
 
     setSending(true);
     try {
