@@ -198,22 +198,6 @@ export default function Chat() {
   }, [currentUser]);
 
   // Scroll to bottom effect
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  // User profiles effect
-  useEffect(() => {
-    if (messages.length > 0) {
-      const uniqueAuthors = [...new Set(messages.map(msg => msg.author))];
-      uniqueAuthors.forEach(author => {
-        if (!userProfiles[author]) {
-          fetchUserProfile(author);
-        }
-      });
-    }
-  }, [messages, userProfiles, fetchUserProfile]);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -255,6 +239,22 @@ export default function Chat() {
       };
     }
   }, [userProfiles]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // User profiles effect
+  useEffect(() => {
+    if (messages.length > 0) {
+      const uniqueAuthors = [...new Set(messages.map(msg => msg.author))];
+      uniqueAuthors.forEach(author => {
+        if (!userProfiles[author]) {
+          fetchUserProfile(author);
+        }
+      });
+    }
+  }, [messages, userProfiles, fetchUserProfile]);
 
   const convertFileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
