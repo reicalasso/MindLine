@@ -44,7 +44,6 @@ export default function Chat() {
   const [swipeDirection, setSwipeDirection] = useState(null);
   const [swipedMessage, setSwipedMessage] = useState(null);
   const [longPressTimer, setLongPressTimer] = useState(null);
-  const [longPressMessage, setLongPressMessage] = useState(null);
   const [showQuickReactions, setShowQuickReactions] = useState(null);
   const [showMessageActions, setShowMessageActions] = useState(null);
   
