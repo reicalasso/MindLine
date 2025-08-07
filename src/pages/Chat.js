@@ -1026,63 +1026,16 @@ export default function Chat() {
                     >
                       {renderMessage(message)}
                       
-                      {/* Mesaj altında işlemler - Instagram Style */}
-                      <div className={`flex items-center justify-between text-xs mt-2 ${
-                        isMyMsg ? 'text-white/80' : ''
+                      {/* Mesaj zamanı */}
+                      <div className={`text-xs mt-2 ${
+                        isMyMsg ? 'text-white/80 text-right' : 'text-left'
                       }`}>
-                        <span style={{ 
+                        <span style={{
                           color: isMyMsg ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary,
                           fontSize: '11px'
                         }}>
                           {formatTime(message.createdAt)}
                         </span>
-                        <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {/* Emoji reaksiyon butonu */}
-                          <button
-                            onClick={() => setShowEmojiPicker(showEmojiPicker === message.id ? null : message.id)}
-                            className="hover:scale-110 transition-transform"
-                            title="Reaksiyon ekle"
-                            style={{ 
-                              color: isMyMsg ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary 
-                            }}
-                          >
-                            <Heart className="w-4 h-4" />
-                          </button>
-                          
-                          {/* Yanıt verme butonu */}
-                          <button
-                            onClick={() => handleReplyToMessage(message)}
-                            className="hover:scale-110 transition-transform"
-                            title="Yanıtla"
-                            style={{ 
-                              color: isMyMsg ? 'rgba(255, 255, 255, 0.9)' : colors.textSecondary 
-                            }}
-                          >
-                            <Reply className="w-4 h-4" />
-                          </button>
-                          
-                          {/* Sadece kendi mesajları için düzenleme/silme */}
-                          {isMyMsg && editingMessage !== message.id && (
-                            <>
-                              {message.type === 'text' && (
-                                <button
-                                  onClick={() => handleEditMessage(message)}
-                                  className="hover:scale-110 transition-transform"
-                                  title="Düzenle"
-                                >
-                                  <Edit className="w-4 h-4" />
-                                </button>
-                              )}
-                              <button
-                                onClick={() => handleDeleteMessage(message.id)}
-                                className="hover:scale-110 transition-transform"
-                                title="Sil"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </>
-                          )}
-                        </div>
                       </div>
 
                       {/* Emoji Picker - Instagram Style */}
