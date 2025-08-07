@@ -59,7 +59,7 @@ export default function Chat() {
   const typingTimeoutRef = useRef(null);
   const messageInputRef = useRef(null);
 
-  const emojis = ['😺', '😻', '😸', '😹', '😽', '����', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
+  const emojis = ['😺', '😻', '😸', '😹', '😽', '🙀', '😿', '😾', '🐱', '🐾', '💕', '💖', '💗', '💘', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '❤️', '💔', '❣️', '💟', '💌', '💋', '💍', '👑'];
 
   const linkifyOptions = {
     target: '_blank',
@@ -908,7 +908,7 @@ export default function Chat() {
       <div
         className="flex-1 overflow-y-auto p-3 space-y-3"
         style={{
-          maxHeight: 'calc(100vh - 280px)',
+          maxHeight: 'calc(100vh - 200px)',
           width: '100%',
           boxSizing: 'border-box'
         }}
