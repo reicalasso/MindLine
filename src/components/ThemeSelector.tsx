@@ -100,6 +100,8 @@ export function ThemeSelector({
     switch (theme.id) {
       case 'cat':
         return '😺';
+      case 'minimal':
+        return '🤍';
       default:
         return <Palette className="w-4 h-4" />;
     }
