@@ -16,7 +16,7 @@ interface ProfileData {
 
 interface NavItem {
   path: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
   emoji: string;
 }
@@ -24,7 +24,7 @@ interface NavItem {
 interface NavCategory {
   id: string;
   label: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   emoji: string;
   items: NavItem[];
 }
@@ -138,7 +138,7 @@ export default function Navbar() {
       icon: Bookmark,
       emoji: '📷',
       items: [
-        { path: '/gallery', icon: Camera, label: 'Galeri', emoji: '📷' }
+        { path: '/gallery', icon: Camera, label: 'Galeri', emoji: '��' }
       ]
     },
     {
