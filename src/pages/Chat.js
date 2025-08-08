@@ -926,10 +926,11 @@ export default function Chat() {
 
   return (
     <div 
-      className="fixed inset-0 top-0 left-0 right-0 bottom-0 flex flex-col z-[100]"
+      className="fixed inset-0 top-0 left-0 right-0 flex flex-col z-[100] ios-safe-area"
       style={{ 
         backgroundColor: colors.background,
-        backgroundImage: colors.backgroundGradient 
+        backgroundImage: colors.backgroundGradient,
+        bottom: 'var(--safe-area-inset-bottom, 0px)'
       }}
     >
 
@@ -1306,7 +1307,8 @@ export default function Chat() {
         className="border-t p-4 flex-shrink-0 w-full backdrop-blur-sm mt-auto"
         style={{
           borderColor: colors.border,
-          backgroundColor: colors.surface + '90'
+          backgroundColor: colors.surface + '90',
+          paddingBottom: 'calc(var(--safe-area-inset-bottom, 0px) + 1rem)'
         }}
       >
         <form onSubmit={handleSendMessage} className="w-full">

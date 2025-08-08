@@ -138,12 +138,13 @@ export default function Settings() {
 
   return (
     <div 
-      className="space-y-8"
+      className="settings-container space-y-8"
       style={{ 
         backgroundColor: colors.background,
         backgroundImage: colors.backgroundGradient,
         minHeight: '100vh',
-        padding: '2rem 1rem'
+        padding: '2rem 1rem',
+        paddingBottom: 'calc(var(--safe-area-inset-bottom, 0px) + 2rem)'
       }}
     >
       {/* Başlık */}

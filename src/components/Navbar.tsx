@@ -202,10 +202,11 @@ export default function Navbar() {
   return (
     <>
       <nav 
-        className="sticky top-0 w-full backdrop-blur-md border-b z-40"
+        className="navbar-container sticky top-0 w-full backdrop-blur-md border-b z-40"
         style={{
           backgroundColor: colors.surface + '90',
-          borderColor: colors.border
+          borderColor: colors.border,
+          paddingTop: 'var(--safe-area-inset-top, 0px)'
         }}
       >
         <div className="container mx-auto px-4">
@@ -434,9 +435,11 @@ export default function Navbar() {
           {/* Mobile Menu Panel */}
           <div 
             ref={mobileMenuRef}
-            className="absolute inset-x-0 top-0 bottom-0 backdrop-blur-xl transform transition-transform duration-300 ease-out animate-in slide-in-from-top"
+            className="mobile-menu-panel absolute inset-x-0 top-0 backdrop-blur-xl transform transition-transform duration-300 ease-out animate-in slide-in-from-top"
             style={{
-              backgroundColor: colors.surface + '95'
+              backgroundColor: colors.surface + '95',
+              bottom: 'var(--safe-area-inset-bottom, 0px)',
+              paddingBottom: 'calc(var(--safe-area-inset-bottom, 0px) + 1rem)'
             }}
           >
             {/* Header */}

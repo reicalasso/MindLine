@@ -199,7 +199,7 @@ export default function Dashboard() {
 
   return (
     <div 
-      className="min-h-screen p-4"
+      className="min-h-screen p-4 page-content ios-bottom-fix"
       style={{ 
         background: colors.backgroundGradient 
       }}

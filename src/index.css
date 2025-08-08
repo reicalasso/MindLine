@@ -600,6 +600,80 @@ a { @apply text-gray-800 hover:text-gray-700; }
   }
 }
 
+/* iOS Safari safe area insets */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+}
+
+/* iOS Safari bottom bar fix */
+.ios-safe-bottom {
+  padding-bottom: calc(var(--safe-area-inset-bottom) + 1rem);
+  margin-bottom: var(--safe-area-inset-bottom);
+}
+
+/* Mobile navigation bottom fix */
+.mobile-nav-bottom {
+  bottom: var(--safe-area-inset-bottom);
+  padding-bottom: calc(var(--safe-area-inset-bottom) + 0.5rem);
+}
+
+/* Settings page bottom padding */
+.settings-container {
+  padding-bottom: calc(var(--safe-area-inset-bottom) + 2rem);
+}
+
+/* Navbar container iOS fix */
+.navbar-container {
+  z-index: var(--z-navbar);
+  padding-top: var(--safe-area-inset-top);
+}
+
+/* General bottom spacing for mobile */
+@media screen and (max-width: 768px) {
+  body {
+    padding-bottom: var(--safe-area-inset-bottom);
+  }
+  
+  /* Mobile menu bottom spacing */
+  .mobile-menu-panel {
+    bottom: var(--safe-area-inset-bottom);
+    padding-bottom: calc(var(--safe-area-inset-bottom) + 1rem);
+  }
+  
+  /* Any fixed bottom elements */
+  .fixed-bottom {
+    bottom: calc(var(--safe-area-inset-bottom) + 1rem);
+  }
+  
+  /* Page content bottom spacing */
+  .page-content {
+    padding-bottom: calc(var(--safe-area-inset-bottom) + 2rem);
+  }
+  
+  /* Specific iOS Safari fixes */
+  .ios-bottom-fix {
+    padding-bottom: calc(var(--safe-area-inset-bottom) + 1.5rem);
+  }
+  
+  /* Prevent content from being hidden behind Safari UI */
+  .mobile-content {
+    min-height: calc(100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+  }
+}
+
+/* iOS-specific fixes */
+@supports (padding: max(0px)) {
+  .ios-safe-area {
+    padding-left: max(0px, var(--safe-area-inset-left));
+    padding-right: max(0px, var(--safe-area-inset-right));
+    padding-top: max(0px, var(--safe-area-inset-top));
+    padding-bottom: max(0px, var(--safe-area-inset-bottom));
+  }
+}
+
 /* Mobile menu specific styles */
 .mobile-menu-backdrop {
   z-index: var(--z-mobile-menu-backdrop);

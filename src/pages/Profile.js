@@ -218,10 +218,12 @@ export default function Profile() {
 
   return (
     <div 
-      className="space-y-8"
+      className="space-y-8 page-content ios-bottom-fix"
       style={{ 
         backgroundColor: colors.background,
-        backgroundImage: colors.backgroundGradient 
+        backgroundImage: colors.backgroundGradient,
+        padding: '2rem 1rem',
+        minHeight: '100vh'
       }}
     >
       {/* Başlık */}
