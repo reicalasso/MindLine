@@ -547,6 +547,8 @@ export default function Chat() {
       return;
     }
 
+    // Input focus durumunu koru
+    const wasInputFocused = document.activeElement === messageInputRef.current;
 
     setSending(true);
     try {
@@ -590,11 +592,25 @@ export default function Chat() {
       if (fileInputRef.current) fileInputRef.current.value = '';
       if (cameraInputRef.current) cameraInputRef.current.value = '';
       
+      // Mesaj gönderildikten sonra input alanına tekrar focus ver
+      setTimeout(() => {
+        if (messageInputRef.current) {
+          messageInputRef.current.focus();
+        }
+      }, 100);
+      
     } catch (error) {
       console.error('Mesaj gönderilirken hata:', error);
       toast.error('Mesaj gönderilemedi');
     } finally {
       setSending(false);
+      
+      // Klavyeyi açık tutmak için input'a tekrar focus ver
+      if (wasInputFocused && messageInputRef.current) {
+        setTimeout(() => {
+          messageInputRef.current.focus();
+        }, 50);
+      }
     }
   };
 
@@ -1348,6 +1364,16 @@ export default function Chat() {
                 onFocus={(e) => {
                   e.target.style.borderColor = colors.primary;
                   e.target.style.boxShadow = `0 0 0 3px ${colors.primary}20`;
+                }}
+                onBlur={(e) => {
+                  // Mesaj gönderildikten sonra kısa süre sonra tekrar focus'a al
+                  if (sending) {
+                    setTimeout(() => {
+                      if (messageInputRef.current && !sending) {
+                        messageInputRef.current.focus();
+                      }
+                    }, 200);
+                  }
                 }}
               />
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex space-x-2">
