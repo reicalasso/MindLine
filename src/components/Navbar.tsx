@@ -38,6 +38,20 @@ export default function Navbar() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
+  const fetchProfileData = useCallback(async () => {
+    try {
+      if (!currentUser) return;
+      const profileDoc = await getDoc(doc(db, 'profiles', currentUser.uid));
+      if (profileDoc.exists()) {
+        setProfileData(profileDoc.data() as ProfileData);
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Profil verisi yüklenirken hata:', error);
+      }
+    }
+  }, [currentUser]);
+
   useEffect(() => {
     if (currentUser) {
       fetchProfileData();
@@ -68,20 +82,6 @@ export default function Navbar() {
     setIsMobileMenuOpen(false);
     setExpandedCategory(null);
   }, [location.pathname]);
-
-  const fetchProfileData = useCallback(async () => {
-    try {
-      if (!currentUser) return;
-      const profileDoc = await getDoc(doc(db, 'profiles', currentUser.uid));
-      if (profileDoc.exists()) {
-        setProfileData(profileDoc.data() as ProfileData);
-      }
-    } catch (error) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('Profil verisi yüklenirken hata:', error);
-      }
-    }
-  }, [currentUser]);
 
   const handleLogout = async () => {
     try {
