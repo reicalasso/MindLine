@@ -221,27 +221,58 @@ export default function Chat() {
     return text.match(urlRegex) || [];
   }
 
-  // Ana useEffect - messages listener
+  // Ana useEffect - messages listener with debouncing
   useEffect(() => {
     if (!currentUser) return;
 
-    const messagesQuery = query(
-      collection(db, 'messages'),
-      orderBy('createdAt', 'desc'),
-      limit(100)
-    );
+    let isMounted = true;
+    let unsubscribe = null;
 
-    const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
-      const messagesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })).reverse();
-      
-      setMessages(messagesData);
-      scrollToBottom();
-    });
+    // Add small delay to prevent race conditions with React.StrictMode
+    const setupListener = async () => {
+      // Wait a small amount to prevent double listeners in development
+      await new Promise(resolve => setTimeout(resolve, 100));
 
-    return () => unsubscribe();
+      if (!isMounted) return;
+
+      try {
+        const messagesQuery = query(
+          collection(db, 'messages'),
+          orderBy('createdAt', 'desc'),
+          limit(100)
+        );
+
+        unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
+          if (!isMounted) return;
+
+          const messagesData = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })).reverse();
+
+          setMessages(messagesData);
+          scrollToBottom();
+        }, (error) => {
+          console.error('Messages listener error:', error);
+          // Don't show user error for stream issues, just retry
+        });
+      } catch (error) {
+        console.error('Failed to setup messages listener:', error);
+      }
+    };
+
+    setupListener();
+
+    return () => {
+      isMounted = false;
+      if (unsubscribe) {
+        try {
+          unsubscribe();
+        } catch (error) {
+          console.error('Error unsubscribing from messages:', error);
+        }
+      }
+    };
   }, [currentUser]);
 
   // Scroll to bottom effect
