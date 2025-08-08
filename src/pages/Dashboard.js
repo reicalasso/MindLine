@@ -376,9 +376,12 @@ export default function Dashboard() {
                   >
                     {item.title}
                   </h3>
-                  <p 
-                    className="text-sm font-elegant"
-                    style={{ color: colors.textSecondary }}
+                  <p
+                    className={`text-sm ${currentTheme.id === 'cat' ? 'font-elegant' : 'font-minimal'}`}
+                    style={{
+                      color: colors.textSecondary,
+                      fontFamily: currentTheme.typography.fontFamily
+                    }}
                   >
                     {item.subtitle}
                   </p>
