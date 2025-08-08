@@ -44,7 +44,7 @@ export default function Navbar() {
     if (currentUser) {
       fetchProfileData();
     }
-  }, [currentUser]);
+  }, [currentUser, fetchProfileData]);
 
   // Scroll lock for mobile menu
   useEffect(() => {
