@@ -363,6 +363,24 @@ button {
   touch-action: manipulation;
 }
 
+/* Theme-specific animations */
+.theme-minimal * {
+  animation-duration: 0.15s !important;
+  transition-duration: 0.15s !important;
+}
+
+.theme-minimal .animate-bounce-cat,
+.theme-minimal .animate-wiggle,
+.theme-minimal .animate-float,
+.theme-minimal .animate-purr {
+  animation: none !important;
+}
+
+.theme-minimal .hover\:animate-bounce:hover {
+  animation: none !important;
+  transform: scale(1.05);
+}
+
 /* Text Colors for Better Readability */
 .text-readable { @apply text-gray-800; }
 .text-readable-secondary { @apply text-gray-700; }
