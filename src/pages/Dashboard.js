@@ -240,9 +240,12 @@ export default function Dashboard() {
           >
             {greeting.text}
           </h1>
-          <p 
-            className="text-lg font-elegant"
-            style={{ color: colors.textSecondary }}
+          <p
+            className={`text-lg ${currentTheme.id === 'cat' ? 'font-elegant' : 'font-minimal'}`}
+            style={{
+              color: colors.textSecondary,
+              fontFamily: currentTheme.typography.fontFamily
+            }}
           >
             Bugün ne yapmak istersiniz? 💕
           </p>
