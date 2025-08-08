@@ -367,9 +367,12 @@ export default function Dashboard() {
 
                 {/* İçerik */}
                 <div className="space-y-3">
-                  <h3 
-                    className="text-xl font-bold font-cat"
-                    style={{ color: colors.text }}
+                  <h3
+                    className={`text-xl font-bold ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`}
+                    style={{
+                      color: colors.text,
+                      fontFamily: currentTheme.typography.fontFamilyHeading
+                    }}
                   >
                     {item.title}
                   </h3>
