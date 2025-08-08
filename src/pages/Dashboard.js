@@ -102,7 +102,7 @@ export default function Dashboard() {
     
     if (hour < 12) return { text: `Günaydın ${name}!`, emoji: '🌅', color: 'from-yellow-400 to-orange-400' };
     if (hour < 18) return { text: `İyi günler ${name}!`, emoji: '☀️', color: 'from-blue-400 to-cyan-400' };
-    return { text: `İyi akşamlar ${name}!`, emoji: '🌙', color: 'from-purple-400 to-indigo-400' };
+    return { text: `��yi akşamlar ${name}!`, emoji: '🌙', color: 'from-purple-400 to-indigo-400' };
   };
 
   const greeting = getGreeting();
@@ -465,9 +465,12 @@ export default function Dashboard() {
             border: `1px solid ${colors.border}30`
           }}
         >
-          <p 
-            className="text-sm font-elegant mb-2"
-            style={{ color: colors.textSecondary }}
+          <p
+            className={`text-sm ${currentTheme.id === 'cat' ? 'font-elegant' : 'font-minimal'} mb-2`}
+            style={{
+              color: colors.textSecondary,
+              fontFamily: currentTheme.typography.fontFamily
+            }}
           >
             💕 Her anınız değerli, her paylaşımınız özel 💕
           </p>
