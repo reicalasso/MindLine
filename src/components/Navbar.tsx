@@ -33,6 +33,8 @@ interface NavCategory {
 
 export default function Navbar() {
   const { logout, currentUser } = useAuth();
+  const { currentTheme } = useTheme();
+  const colors = useThemeColors();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
