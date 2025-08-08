@@ -887,6 +887,7 @@ export default function Chat() {
                     )}
                     
                     <div
+                      data-message-balloon="true"
                       className={`px-4 py-3 rounded-3xl group relative break-words transition-all duration-300 ${
                         isMyMsg
                           ? 'text-white shadow-lg'
