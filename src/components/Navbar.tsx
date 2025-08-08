@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { useThemeColors } from '../hooks/useThemeStyles';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { 
