@@ -231,9 +231,12 @@ export default function Dashboard() {
             </span>
           </div>
           
-          <h1 
-            className="text-4xl font-bold mb-3 font-cat"
-            style={{ color: colors.text }}
+          <h1
+            className={`text-4xl font-bold mb-3 ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`}
+            style={{
+              color: colors.text,
+              fontFamily: currentTheme.typography.fontFamilyHeading
+            }}
           >
             {greeting.text}
           </h1>
