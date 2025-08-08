@@ -46,6 +46,8 @@ export default function Chat() {
   const [longPressTimer, setLongPressTimer] = useState(null);
   const [showQuickReactions, setShowQuickReactions] = useState(null);
   const [showMessageActions, setShowMessageActions] = useState(null);
+  const [doubleTapTimer, setDoubleTapTimer] = useState(null);
+  const [lastTap, setLastTap] = useState(0);
   
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
