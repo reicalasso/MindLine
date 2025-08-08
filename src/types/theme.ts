@@ -251,6 +251,87 @@ const createBaseTheme = (overrides: Partial<Theme>): Theme => {
 };
 
 export const themes: Record<ThemeMode, Theme> = {
+  minimal: createBaseTheme({
+    id: 'minimal',
+    name: 'Sade Tema',
+    emoji: '🤍',
+    description: 'Temiz ve sade tasarım - beyaz arkaplan ve mavi vurgular',
+    category: 'minimal',
+
+    colors: {
+      primary: '#3b82f6',
+      secondary: '#64748b',
+      accent: '#1e40af',
+      background: '#ffffff',
+      surface: '#ffffff',
+      surfaceVariant: '#f8fafc',
+      text: '#1e293b',
+      textSecondary: '#64748b',
+      textMuted: '#94a3b8',
+      border: '#e2e8f0',
+      borderLight: '#f1f5f9',
+      shadow: 'rgba(0, 0, 0, 0.05)',
+      success: '#10b981',
+      warning: '#f59e0b',
+      error: '#ef4444',
+      info: '#06b6d4',
+      primaryGradient: 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)',
+      backgroundGradient: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+      accentGradient: 'linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)',
+    },
+
+    typography: {
+      fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+      fontFamilyHeading: 'Inter, system-ui, -apple-system, sans-serif',
+      fontFamilyMono: 'JetBrains Mono, Consolas, Monaco, monospace',
+      fontSize: {
+        xs: '0.75rem',
+        sm: '0.875rem',
+        base: '1rem',
+        lg: '1.125rem',
+        xl: '1.25rem',
+        '2xl': '1.5rem',
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+      },
+      fontWeight: {
+        light: '300',
+        normal: '400',
+        medium: '500',
+        bold: '600',
+        black: '700',
+      },
+    },
+
+    animations: {
+      duration: {
+        fast: '150ms',
+        normal: '200ms',
+        slow: '300ms',
+      },
+      easing: {
+        linear: 'linear',
+        easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+        easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+        easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+    },
+
+    styles: {
+      card: 'bg-white rounded-lg border border-gray-200 shadow-sm',
+      button: 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors',
+      input: 'px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white',
+      modal: 'bg-white rounded-xl shadow-lg border border-gray-200',
+      container: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
+      background: 'bg-white min-h-screen',
+      heading: 'font-semibold text-gray-900',
+      text: 'text-gray-700',
+      textMuted: 'text-gray-500',
+      decoration: [],
+      effects: ['transition-colors', 'duration-200'],
+    },
+  }),
+
   cat: createBaseTheme({
     id: 'cat',
     name: 'Kedili Tema',
