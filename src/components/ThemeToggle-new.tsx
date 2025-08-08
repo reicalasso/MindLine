@@ -79,7 +79,9 @@ const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
                       onClick={() => handleThemeSelect(theme.id as ThemeMode)}
                       className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl transition-all duration-200 text-left border-2 ${
                         themeMode === theme.id
-                          ? 'bg-gradient-to-r from-purple-100 to-pink-100 border-purple-300 shadow-md'
+                          ? theme.id === 'skull-bunny'
+                            ? 'bg-gradient-to-r from-skull-bunny-iron to-skull-bunny-crimson-dark/30 border-skull-bunny-crimson-light shadow-skull-bunny-glow'
+                            : 'bg-gradient-to-r from-purple-100 to-pink-100 border-purple-300 shadow-md'
                           : 'hover:bg-gray-50 border-transparent'
                       }`}
                     >
@@ -117,14 +119,26 @@ const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
                 </div>
                 
                 {/* Theme info */}
-                <div className="mt-3 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+                <div className={`mt-3 p-3 rounded-xl border ${
+                  currentTheme.id === 'skull-bunny'
+                    ? 'bg-gradient-to-r from-skull-bunny-iron/50 to-skull-bunny-crimson-dark/20 border-skull-bunny-crimson-dark'
+                    : 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200'
+                }`}>
                   <div className="flex items-center space-x-2 mb-1">
                     <span className="text-sm">✨</span>
-                    <span className="text-xs font-medium text-purple-800">
+                    <span className={`text-xs font-medium ${
+                      currentTheme.id === 'skull-bunny' 
+                        ? 'text-skull-bunny-parchment' 
+                        : 'text-purple-800'
+                    }`}>
                       Şu anki tema
                     </span>
                   </div>
-                  <p className="text-xs text-purple-700">
+                  <p className={`text-xs ${
+                    currentTheme.id === 'skull-bunny' 
+                      ? 'text-skull-bunny-silver' 
+                      : 'text-purple-700'
+                  }`}>
                     <span className="font-medium">{currentTheme.name}</span> - {currentTheme.description}
                   </p>
                 </div>

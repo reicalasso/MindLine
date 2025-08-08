@@ -17,6 +17,10 @@ module.exports = {
         'elegant': ['Montserrat', 'sans-serif'],
         'handwriting': ['Dancing Script', 'cursive'],
         'romantic': ['Caveat', 'Dancing Script', 'cursive'],
+        'gothic-heading': ['UnifrakturCook', 'Cinzel Decorative', 'serif'],
+        'gothic-body': ['Inter', 'Roboto', 'sans-serif'],
+        'skull-bunny-heading': ['UnifrakturCook', 'Cinzel Decorative', 'serif'],
+        'skull-bunny-body': ['Inter', 'Roboto', 'sans-serif'],
       },
       colors: {
         // Kedi teması ana renkleri
@@ -83,6 +87,55 @@ module.exports = {
           700: '#7c3aed',
           800: '#6b21a8',
           900: '#581c87',
+        },
+        // YENİ: Okyanus teması
+        ocean: {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
+        },
+        // Deniz yeşili tonları
+        sea: {
+          50: '#f0fdfa',
+          100: '#ccfbf1',
+          200: '#99f6e4',
+          300: '#5eead4',
+          400: '#2dd4bf',
+          500: '#14b8a6',
+          600: '#0d9488',
+          700: '#0f766e',
+          800: '#115e59',
+          900: '#134e4a',
+        },
+        // Kum tonları
+        sand: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
+        },
+        // YENİ: Skull Bunny teması
+        'skull-bunny': {
+          'black': '#0B0B0D',
+          'iron': '#1E1E22',
+          'crimson-dark': '#5A0F14',
+          'crimson-light': '#A6282E',
+          'parchment': '#D9CBA3',
+          'glow': '#3AC1B0',
+          'silver': '#A8A8A8',
         }
       },
       backgroundImage: {
@@ -94,6 +147,17 @@ module.exports = {
         'romantic-gradient': 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 30%, #fecaca 70%, #fca5a5 100%)',
         'sunset-gradient': 'linear-gradient(135deg, #fef7ee 0%, #fde8d1 25%, #fbd2a2 50%, #f8b668 75%, #f59133 100%)',
         'pink-gradient': 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 25%, #fbcfe8 50%, #f9a8d4 75%, #f472b6 100%)',
+        // YENİ: Okyanus gradientleri
+        'ocean-gradient': 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 30%, #bae6fd 70%, #0ea5e9 100%)',
+        'sea-gradient': 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 30%, #5eead4 70%, #14b8a6 100%)',
+        'wave-gradient': 'linear-gradient(135deg, #0ea5e9 0%, #14b8a6 50%, #0284c7 100%)',
+        'deep-ocean-gradient': 'linear-gradient(135deg, #075985 0%, #0c4a6e 50%, #134e4a 100%)',
+        'beach-gradient': 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 30%, #fde68a 70%, #f59e0b 100%)',
+        // YENİ: Skull Bunny gradientleri - Performance optimized
+        'skull-bunny-bg-gradient': "linear-gradient(180deg, rgba(11, 11, 13, 0.9) 0%, rgba(30, 30, 34, 0.85) 100%)",
+        'skull-bunny-bg-image': "url('/images/skull-bunny-bg.jpg')",
+        'skull-bunny-primary-gradient': 'linear-gradient(135deg, #A6282E 0%, #5A0F14 100%)',
+        'skull-bunny-accent-gradient': 'linear-gradient(135deg, #3AC1B0 0%, #A6282E 100%)',
       },
       boxShadow: {
         'cat': '0 4px 25px rgba(242, 113, 28, 0.2), 0 2px 10px rgba(242, 113, 28, 0.1)',
@@ -103,6 +167,14 @@ module.exports = {
         'glow': '0 0 30px rgba(242, 113, 28, 0.4), 0 0 60px rgba(242, 113, 28, 0.2)',
         'magic': '0 4px 25px rgba(168, 85, 247, 0.2), 0 2px 10px rgba(168, 85, 247, 0.1)',
         'love-glow': '0 0 25px rgba(236, 72, 153, 0.4), 0 0 50px rgba(236, 72, 153, 0.2)',
+        // YENİ: Okyanus gölgeleri
+        'ocean': '0 4px 25px rgba(14, 165, 233, 0.2), 0 2px 10px rgba(14, 165, 233, 0.1)',
+        'wave': '0 8px 30px rgba(14, 165, 233, 0.3), 0 4px 15px rgba(20, 184, 166, 0.2)',
+        'sea-glow': '0 0 25px rgba(20, 184, 166, 0.4), 0 0 50px rgba(14, 165, 233, 0.3)',
+        // YENİ: Skull Bunny gölgeleri
+        'skull-bunny': '0 4px 25px rgba(166, 40, 46, 0.2), 0 2px 10px rgba(0, 0, 0, 0.4)',
+        'skull-bunny-glow': '0 0 20px rgba(166, 40, 46, 0.5), 0 0 40px rgba(166, 40, 46, 0.3)',
+        'skull-bunny-accent-glow': '0 0 20px rgba(58, 193, 176, 0.4), 0 0 40px rgba(58, 193, 176, 0.2)',
       },
       animation: {
         'bounce-cat': 'bounce-cat 2s infinite',
@@ -116,6 +188,14 @@ module.exports = {
         'particle-float': 'particleFloat 8s linear infinite',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'emoji-zoom': 'emojiZoom 0.5s ease-in-out',
+        // YENİ: Okyanus animasyonları
+        'wave': 'wave 3s ease-in-out infinite',
+        'ripple': 'ripple 2s ease-out infinite',
+        'flow': 'flow 4s ease-in-out infinite',
+        'tide': 'tide 6s ease-in-out infinite',
+        // YENİ: Skull Bunny animasyonları - Performance optimized
+        'flicker-fast': 'flicker-optimized 1.5s ease-in-out infinite',
+        'glow-red-subtle': 'glow-red-subtle 2s ease-in-out infinite alternate',
       },
       keyframes: {
         'bounce-cat': {
@@ -175,6 +255,36 @@ module.exports = {
           '0%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(1.5) rotate(10deg)' },
           '100%': { transform: 'scale(1)' },
+        },
+        // YENİ: Okyanus keyframe'leri
+        wave: {
+          '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+          '25%': { transform: 'translateY(-8px) rotate(2deg)' },
+          '50%': { transform: 'translateY(-15px) rotate(0deg)' },
+          '75%': { transform: 'translateY(-8px) rotate(-2deg)' },
+        },
+        ripple: {
+          '0%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.5)', opacity: '0.5' },
+          '100%': { transform: 'scale(2)', opacity: '0' },
+        },
+        flow: {
+          '0%, 100%': { transform: 'translateX(0) rotate(0deg)' },
+          '33%': { transform: 'translateX(10px) rotate(5deg)' },
+          '66%': { transform: 'translateX(-5px) rotate(-3deg)' },
+        },
+        tide: {
+          '0%, 100%': { transform: 'scaleX(1) scaleY(1)', opacity: '0.7' },
+          '50%': { transform: 'scaleX(1.1) scaleY(0.9)', opacity: '1' },
+        },
+        // YENİ: Skull Bunny keyframe'leri - Performance optimized
+        'flicker-optimized': {
+          '0%, 100%': { opacity: '0.9' },
+          '50%': { opacity: '0.7' },
+        },
+        'glow-red-subtle': {
+          'from': { textShadow: '0 0 3px #A6282E, 0 0 6px #A6282E' },
+          'to': { textShadow: '0 0 6px #A6282E, 0 0 12px #5A0F14' },
         },
       },
       screens: {

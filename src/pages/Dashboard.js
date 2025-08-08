@@ -180,14 +180,16 @@ export default function Dashboard() {
       <div 
         className="min-h-screen flex items-center justify-center"
         style={{ 
-          backgroundColor: colors.background,
-          backgroundImage: colors.backgroundGradient 
+          background: colors.backgroundGradient 
         }}
       >
         <div className="animate-pulse text-center">
           <div 
-            className="w-16 h-16 mx-auto mb-4 rounded-full"
-            style={{ backgroundColor: colors.primary + '40' }}
+            className="w-16 h-16 mx-auto mb-4 rounded-full animate-spin"
+            style={{ 
+              border: `3px solid ${colors.primary}20`,
+              borderTopColor: colors.primary
+            }}
           ></div>
           <p style={{ color: colors.textSecondary }}>Yükleniyor...</p>
         </div>
@@ -199,29 +201,43 @@ export default function Dashboard() {
     <div 
       className="min-h-screen p-4"
       style={{ 
-        backgroundColor: colors.background,
-        backgroundImage: colors.backgroundGradient 
+        background: colors.backgroundGradient 
       }}
     >
       <div className="max-w-6xl mx-auto">
         {/* Enhanced Header */}
         <div 
-          className="text-center mb-8 p-8 rounded-3xl backdrop-blur-sm relative overflow-hidden"
+          className={`text-center mb-8 p-8 rounded-3xl backdrop-blur-sm relative overflow-hidden ${
+            currentTheme.animations.custom?.purr ? 'hover:animate-purr' : ''
+          }`}
           style={{
-            backgroundColor: colors.surface + '90',
-            border: `1px solid ${colors.border}40`
+            backgroundColor: colors.surface + 'E6',
+            border: `1px solid ${colors.border}40`,
+            boxShadow: `0 10px 40px ${colors.shadow}`
           }}
         >
-          {/* Floating elements */}
-          <div className="absolute top-4 right-4 animate-float">
-            <Heart className="w-6 h-6" style={{ color: colors.primary + '60' }} />
+          {/* Tema Özel Dekoratif Elementler */}
+          <div className="absolute top-4 right-4" style={{ 
+            animation: currentTheme.animations.custom?.wave || currentTheme.animations.custom?.float || 'none'
+          }}>
+            <span style={{ color: colors.primary + '60', fontSize: '1.5rem' }}>
+              {currentTheme.emoji}
+            </span>
           </div>
-          <div className="absolute bottom-4 left-4 animate-pulse">
-            <Sparkles className="w-5 h-5" style={{ color: colors.accent + '60' }} />
+          <div className="absolute bottom-4 left-4" style={{
+            animation: currentTheme.animations.custom?.ripple || currentTheme.animations.custom?.wiggle || 'pulse 2s ease-in-out infinite'
+          }}>
+            <span style={{ color: colors.accent + '40', fontSize: '1.25rem' }}>
+              {currentTheme.id === 'ocean' ? '🐚' : currentTheme.id === 'cat' ? '🐾' : '✨'}
+            </span>
           </div>
 
           <div 
-            className={`inline-block px-6 py-3 rounded-full mb-4 bg-gradient-to-r ${greeting.color}`}
+            className="inline-block px-6 py-3 rounded-full mb-4"
+            style={{
+              background: colors.primaryGradient,
+              boxShadow: `0 4px 20px ${colors.primary}30`
+            }}
           >
             <span className="text-white font-medium">
               {greeting.emoji} {formatTime(currentTime)}
@@ -229,95 +245,74 @@ export default function Dashboard() {
           </div>
           
           <h1
-            className={`text-4xl font-bold mb-3 ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`}
+            className={currentTheme.styles.heading}
             style={{
-              color: colors.text,
-              fontFamily: currentTheme.typography.fontFamilyHeading
+              fontSize: '2.25rem',
+              fontWeight: 'bold',
+              marginBottom: '0.75rem',
+              textShadow: `0 2px 10px ${colors.shadow}20`
             }}
           >
             {greeting.text}
           </h1>
           <p
-            className={`text-lg ${currentTheme.id === 'cat' ? 'font-elegant' : 'font-minimal'}`}
+            className={currentTheme.styles.text}
             style={{
-              color: colors.textSecondary,
-              fontFamily: currentTheme.typography.fontFamily
+              fontSize: '1.125rem',
+              color: colors.textSecondary
             }}
           >
-            Bugün ne yapmak istersiniz? 💕
+            {currentTheme.id === 'ocean' ? 'Okyanus kadar derin sevginizle bugün ne keşfetmek istersiniz? 🌊💙' :
+             currentTheme.id === 'cat' ? 'Bugün ne yapmak istersiniz? 💕' :
+             'Bugün hangi hedefinize odaklanmak istersiniz? ✨'}
           </p>
         </div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div 
-            className="p-4 rounded-2xl backdrop-blur-sm text-center"
-            style={{
-              backgroundColor: colors.surface + 'CC',
-              border: `1px solid ${colors.border}40`
-            }}
-          >
-            <div className="text-2xl mb-2">💌</div>
-            <div className="text-2xl font-bold" style={{ color: colors.primary }}>
-              {stats.letters}
+          {[
+            { icon: '💌', count: stats.letters, label: 'Mektup', color: colors.primary },
+            { icon: '💬', count: stats.messages, label: 'Mesaj', color: colors.secondary },
+            { icon: '📸', count: stats.photos, label: 'Fotoğraf', color: colors.accent },
+            { icon: '🎬', count: stats.movies, label: 'Film', color: colors.info }
+          ].map((stat, index) => (
+            <div 
+              key={index}
+              className={`p-4 rounded-2xl backdrop-blur-sm text-center transition-all duration-300 hover:scale-105 ${
+                currentTheme.animations.custom?.wave ? 'hover:animate-wave' : ''
+              } ${
+                currentTheme.animations.custom?.wiggle ? 'hover:animate-wiggle' : ''
+              }`}
+              style={{
+                backgroundColor: colors.surface + 'CC',
+                border: `1px solid ${colors.border}40`,
+                boxShadow: `0 4px 20px ${colors.shadow}15`
+              }}
+            >
+              <div className="text-2xl mb-2" style={{
+                animation: currentTheme.animations.custom?.['bounce-cat'] ? 'bounce-cat 3s infinite' : 'none'
+              }}>
+                {stat.icon}
+              </div>
+              <div 
+                className="text-2xl font-bold" 
+                style={{ 
+                  color: stat.color,
+                  fontFamily: currentTheme.typography.fontFamilyHeading
+                }}
+              >
+                {stat.count}
+              </div>
+              <div className="text-xs" style={{ color: colors.textSecondary }}>
+                {stat.label}
+              </div>
             </div>
-            <div className="text-xs" style={{ color: colors.textSecondary }}>
-              Mektup
-            </div>
-          </div>
-          
-          <div 
-            className="p-4 rounded-2xl backdrop-blur-sm text-center"
-            style={{
-              backgroundColor: colors.surface + 'CC',
-              border: `1px solid ${colors.border}40`
-            }}
-          >
-            <div className="text-2xl mb-2">💬</div>
-            <div className="text-2xl font-bold" style={{ color: colors.primary }}>
-              {stats.messages}
-            </div>
-            <div className="text-xs" style={{ color: colors.textSecondary }}>
-              Mesaj
-            </div>
-          </div>
-          
-          <div 
-            className="p-4 rounded-2xl backdrop-blur-sm text-center"
-            style={{
-              backgroundColor: colors.surface + 'CC',
-              border: `1px solid ${colors.border}40`
-            }}
-          >
-            <div className="text-2xl mb-2">📸</div>
-            <div className="text-2xl font-bold" style={{ color: colors.primary }}>
-              {stats.photos}
-            </div>
-            <div className="text-xs" style={{ color: colors.textSecondary }}>
-              Fotoğraf
-            </div>
-          </div>
-          
-          <div 
-            className="p-4 rounded-2xl backdrop-blur-sm text-center"
-            style={{
-              backgroundColor: colors.surface + 'CC',
-              border: `1px solid ${colors.border}40`
-            }}
-          >
-            <div className="text-2xl mb-2">🎬</div>
-            <div className="text-2xl font-bold" style={{ color: colors.primary }}>
-              {stats.movies}
-            </div>
-            <div className="text-xs" style={{ color: colors.textSecondary }}>
-              Film
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* Main Menu Grid */}
+        {/* Main Menu Grid - Tema Özel Renkler */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-          {menuItems.map((item) => (
+          {menuItems.map((item, index) => (
             <Link
               key={item.path}
               to={item.path}
@@ -329,17 +324,23 @@ export default function Dashboard() {
                   transform transition-all duration-300
                   hover:scale-105 hover:shadow-xl
                   border relative overflow-hidden
+                  ${currentTheme.animations.custom?.flow ? 'hover:animate-flow' : ''}
+                  ${currentTheme.animations.custom?.purr ? 'hover:animate-purr' : ''}
                 `}
                 style={{
                   backgroundColor: colors.surface + 'CC',
-                  borderColor: colors.border + '40'
+                  borderColor: colors.border + '40',
+                  boxShadow: `0 8px 32px ${colors.shadow}20`
                 }}
               >
                 {/* Count badge */}
                 {item.count !== undefined && (
                   <div 
                     className="absolute top-4 right-4 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                    style={{ backgroundColor: colors.primary }}
+                    style={{ 
+                      backgroundColor: colors.primary,
+                      boxShadow: `0 2px 10px ${colors.primary}50`
+                    }}
                   >
                     {item.count > 99 ? '99+' : item.count}
                   </div>
@@ -350,14 +351,22 @@ export default function Dashboard() {
                   <div 
                     className={`
                       w-14 h-14 rounded-2xl flex items-center justify-center
-                      bg-gradient-to-br ${item.color}
                       transform group-hover:scale-110 transition-transform
                       shadow-lg
                     `}
+                    style={{
+                      background: colors.primaryGradient,
+                      boxShadow: `0 8px 25px ${colors.primary}40`
+                    }}
                   >
                     <item.icon className="w-7 h-7 text-white" />
                   </div>
-                  <span className="text-3xl group-hover:animate-bounce">
+                  <span 
+                    className="text-3xl transition-transform"
+                    style={{
+                      filter: `drop-shadow(0 2px 5px ${colors.shadow}30)`
+                    }}
+                  >
                     {item.emoji}
                   </span>
                 </div>
@@ -365,19 +374,18 @@ export default function Dashboard() {
                 {/* İçerik */}
                 <div className="space-y-3">
                   <h3
-                    className={`text-xl font-bold ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`}
+                    className={currentTheme.styles.heading}
                     style={{
-                      color: colors.text,
-                      fontFamily: currentTheme.typography.fontFamilyHeading
+                      fontSize: '1.25rem',
+                      fontWeight: 'bold',
                     }}
                   >
                     {item.title}
                   </h3>
                   <p
-                    className={`text-sm ${currentTheme.id === 'cat' ? 'font-elegant' : 'font-minimal'}`}
+                    className={currentTheme.styles.text}
                     style={{
-                      color: colors.textSecondary,
-                      fontFamily: currentTheme.typography.fontFamily
+                      color: colors.textSecondary
                     }}
                   >
                     {item.subtitle}
@@ -386,10 +394,15 @@ export default function Dashboard() {
 
                 {/* Hover Arrow */}
                 <div className="flex justify-end mt-4">
-                  <ArrowRight 
-                    className="w-5 h-5 transform group-hover:translate-x-1 transition-transform opacity-0 group-hover:opacity-100"
-                    style={{ color: colors.primary }}
-                  />
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1"
+                    style={{
+                      backgroundColor: colors.primary + '20',
+                      backdropFilter: 'blur(10px)'
+                    }}
+                  >
+                    <item.icon className="w-4 h-4" style={{ color: colors.primary }} />
+                  </div>
                 </div>
               </div>
             </Link>
@@ -408,10 +421,10 @@ export default function Dashboard() {
             <div className="flex items-center mb-4">
               <Activity className="w-5 h-5 mr-2" style={{ color: colors.primary }} />
               <h2
-                className={`text-xl font-bold ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`}
+                className={currentTheme.styles.heading}
                 style={{
-                  color: colors.text,
-                  fontFamily: currentTheme.typography.fontFamilyHeading
+                  fontSize: '1.25rem',
+                  fontWeight: 'bold',
                 }}
               >
                 Son Aktiviteler
@@ -436,14 +449,14 @@ export default function Dashboard() {
                   </div>
                   <div className="flex-1">
                     <p 
-                      className="font-medium"
-                      style={{ color: colors.text }}
+                      className={currentTheme.styles.text}
+                      style={{ fontWeight: '500' }}
                     >
                       {activity.title}
                     </p>
                     <p 
-                      className="text-xs"
-                      style={{ color: colors.textSecondary }}
+                      className={currentTheme.styles.textMuted}
+                      style={{ fontSize: '0.75rem' }}
                     >
                       {activity.time ? activity.time.toLocaleDateString('tr-TR') : 'Yakın zamanda'}
                     </p>
@@ -463,10 +476,10 @@ export default function Dashboard() {
           }}
         >
           <p
-            className={`text-sm ${currentTheme.id === 'cat' ? 'font-elegant' : 'font-minimal'} mb-2`}
+            className={`${currentTheme.styles.text} mb-2`}
             style={{
               color: colors.textSecondary,
-              fontFamily: currentTheme.typography.fontFamily
+              fontSize: '0.875rem'
             }}
           >
             💕 Her anınız değerli, her paylaşımınız özel 💕
@@ -479,3 +492,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

@@ -60,20 +60,48 @@ const renderApp = () => {
   } catch (error) {
     errorUtils.logError(error, 'App Render');
     
-    // Fallback UI
+    // Fallback UI - Dynamic Theme Support
     root.render(
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 text-center">
-          <div className="text-6xl mb-4">😿</div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">
+      <div 
+        className="min-h-screen flex items-center justify-center p-4"
+        style={{
+          background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', // Ocean gradient as fallback
+        }}
+      >
+        <div 
+          className="max-w-md w-full rounded-3xl shadow-2xl p-8 text-center"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(14, 165, 233, 0.2)'
+          }}
+        >
+          <div className="text-6xl mb-4 animate-bounce">😿</div>
+          <h1 
+            className="text-2xl font-bold mb-4"
+            style={{ color: '#0c4a6e' }}
+          >
             Uygulama Başlatılamadı
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p 
+            className="mb-6"
+            style={{ color: '#075985' }}
+          >
             Kedili dünyamızda teknik bir sorun oluştu. Lütfen sayfayı yenileyin.
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-3 rounded-full hover:from-pink-600 hover:to-purple-600 transition-all"
+            className="px-6 py-3 rounded-full hover:shadow-lg transition-all text-white"
+            style={{
+              background: 'linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%)',
+              transform: 'scale(1)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
           >
             Sayfayı Yenile
           </button>

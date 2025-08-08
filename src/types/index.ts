@@ -30,12 +30,20 @@ export interface Letter extends FirestoreDocument {
 export interface ChatMessage extends FirestoreDocument {
   content: string;
   type: 'text' | 'image' | 'file';
-  fileUrl?: string;
+  fileData?: string;
   fileName?: string;
   fileSize?: number;
+  fileType?: string;
   isRead?: boolean;
-  replyTo?: string;
+  replyTo?: {
+    messageId: string;
+    author: string;
+    content: string;
+    type: 'text' | 'image' | 'file';
+  };
   reactions?: Reaction[];
+  edited?: boolean;
+  editedAt?: Timestamp;
 }
 
 // Reaksiyon tipi

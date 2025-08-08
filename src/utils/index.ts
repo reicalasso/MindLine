@@ -537,7 +537,8 @@ export const themeUtils = {
           property.startsWith('--spacing-') ||
           property.startsWith('--duration-') ||
           property.startsWith('--easing-') ||
-          property.startsWith('--breakpoint-')) {
+          property.startsWith('--breakpoint-') ||
+          property.startsWith('--color-')) {
         root.style.removeProperty(property);
       }
     }
@@ -578,12 +579,72 @@ export const themeUtils = {
       const property = styles[i];
       if (property.startsWith('--theme-') || 
           property.startsWith('--font-') || 
-          property.startsWith('--spacing-')) {
+          property.startsWith('--spacing-') ||
+          property.startsWith('--ocean-') ||
+          property.startsWith('--cat-')) {
         variables[property] = styles.getPropertyValue(property).trim();
       }
     }
     
     return variables;
+  },
+
+  /**
+   * Tema geçişi sırasında performans optimizasyonu
+   */
+  optimizeThemeTransition: (callback: () => void): void => {
+    // Layout thrashing'i önlemek için requestAnimationFrame kullan
+    requestAnimationFrame(() => {
+      callback();
+      
+      // Geçiş sonrası DOM güncellemelerini batch'le
+      requestAnimationFrame(() => {
+        // Force reflow to ensure all changes are applied
+        document.body.offsetHeight;
+      });
+    });
+  },
+
+  /**
+   * Tema bazlı CSS sınıfları oluştur
+   */
+  generateThemeClasses: (themeId: string): Record<string, string> => {
+    const baseClasses = {
+      card: `${themeId}-card`,
+      button: `${themeId}-button`,
+      input: `${themeId}-input`,
+      modal: `${themeId}-modal`,
+      text: `${themeId}-text`,
+      heading: `${themeId}-heading`,
+    };
+    
+    return baseClasses;
+  },
+
+  /**
+   * Tema uyumlu animasyon süresi hesapla
+   */
+  calculateAnimationDuration: (baseMs: number, themeId: string): number => {
+    const multipliers = {
+      minimal: 0.7,  // Minimal tema daha hızlı
+      cat: 1.3,      // Cat tema daha yavaş (eğlenceli)
+      ocean: 1.0     // Ocean tema normal
+    };
+    
+    const multiplier = multipliers[themeId as keyof typeof multipliers] || 1.0;
+    return Math.round(baseMs * multiplier);
+  },
+
+  /**
+   * Accessibility için kontrast kontrolü
+   */
+  ensureAccessibility: (backgroundColor: string, textColor: string): boolean => {
+    const bgBrightness = themeUtils.getColorBrightness(backgroundColor);
+    const textBrightness = themeUtils.getColorBrightness(textColor);
+    
+    // WCAG AA standardı için minimum kontrast oranı 4.5:1
+    const contrastRatio = Math.abs(bgBrightness - textBrightness) / 255;
+    return contrastRatio >= 0.5; // Basitleştirilmiş kontrol
   }
 };
 

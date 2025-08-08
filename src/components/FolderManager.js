@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
+import { useThemeColors } from '../hooks/useThemeStyles';
 import { 
   collection, 
   addDoc, 
@@ -18,6 +20,8 @@ import toast from 'react-hot-toast';
 
 export default function FolderManager({ collectionName, onSelectFolder, selectedFolder, showAllOption = true }) {
   const { currentUser } = useAuth();
+  const { currentTheme } = useTheme();
+  const colors = useThemeColors();
   const [folders, setFolders] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
@@ -152,7 +156,13 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-3">
-        <h3 className="text-lg font-medium text-gray-700 flex items-center">
+        <h3 
+          className="text-lg font-medium flex items-center"
+          style={{
+            color: colors.text,
+            fontFamily: currentTheme.typography.fontFamilyHeading
+          }}
+        >
           <Folder className="w-5 h-5 mr-2" />
           Klasörler
         </h3>
@@ -160,7 +170,11 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
         {!isCreating && !isEditing && (
           <button
             onClick={() => setIsCreating(true)}
-            className="text-sm flex items-center text-blue-600 hover:text-blue-800"
+            className="text-sm flex items-center transition-colors hover:shadow-sm px-2 py-1 rounded"
+            style={{
+              color: colors.primary,
+              backgroundColor: colors.primary + '10'
+            }}
           >
             <FolderPlus className="w-4 h-4 mr-1" />
             <span>Yeni</span>
@@ -169,24 +183,44 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
       </div>
       
       {isCreating && (
-        <div className="flex items-center space-x-2 mb-3 bg-blue-50 p-2 rounded-lg">
+        <div 
+          className="flex items-center space-x-2 mb-3 p-2 rounded-lg"
+          style={{
+            backgroundColor: colors.primary + '10',
+            borderColor: colors.primary + '20'
+          }}
+        >
           <input
             type="text"
             value={newFolderName}
             onChange={(e) => setNewFolderName(e.target.value)}
-            className="flex-1 px-2 py-1 text-sm border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              color: colors.text,
+              fontFamily: currentTheme.typography.fontFamily
+            }}
             placeholder="Klasör adı..."
             autoFocus
           />
           <button
             onClick={handleCreateFolder}
-            className="p-1 text-green-600 hover:text-green-800"
+            className="p-1 transition-colors hover:shadow-sm rounded"
+            style={{ 
+              color: colors.success,
+              backgroundColor: colors.success + '10'
+            }}
           >
             <Check className="w-4 h-4" />
           </button>
           <button
             onClick={cancelAction}
-            className="p-1 text-red-600 hover:text-red-800"
+            className="p-1 transition-colors hover:shadow-sm rounded"
+            style={{ 
+              color: colors.error,
+              backgroundColor: colors.error + '10'
+            }}
           >
             <X className="w-4 h-4" />
           </button>
@@ -196,26 +230,39 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
       <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
         {loading ? (
           <div className="text-center py-4">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mx-auto"></div>
+            <div 
+              className="animate-spin rounded-full h-5 w-5 mx-auto border-b-2"
+              style={{ borderColor: colors.primary }}
+            ></div>
           </div>
         ) : (
           <>
             {showAllOption && (
               <div
-                className={`flex items-center justify-between p-2 rounded-lg cursor-pointer hover:bg-gray-100 ${
-                  selectedFolder === null ? 'bg-gray-100 font-medium' : ''
+                className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all ${
+                  selectedFolder === null ? 'font-medium' : ''
                 }`}
+                style={{
+                  backgroundColor: selectedFolder === null ? colors.primary + '15' : 'transparent',
+                  color: colors.text
+                }}
                 onClick={() => onSelectFolder(null)}
               >
                 <div className="flex items-center">
-                  <Folder className="w-4 h-4 mr-2 text-gray-500" />
+                  <Folder className="w-4 h-4 mr-2" style={{ color: colors.textSecondary }} />
                   <span>Tümünü Göster</span>
                 </div>
               </div>
             )}
             
             {folders.length === 0 && !loading ? (
-              <div className="text-center py-2 text-gray-500 text-sm">
+              <div 
+                className="text-center py-2 text-sm"
+                style={{
+                  color: colors.textMuted,
+                  fontFamily: currentTheme.typography.fontFamily
+                }}
+              >
                 Henüz klasör yok
               </div>
             ) : (
@@ -223,10 +270,16 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
                 <div
                   key={folder.id}
                   className={`group flex items-center justify-between p-2 rounded-lg ${
-                    isEditing === folder.id ? 'bg-blue-50' : 'hover:bg-gray-100'
-                  } ${
-                    selectedFolder === folder.id ? 'bg-gray-100 font-medium' : ''
+                    isEditing === folder.id ? '' : 'hover:shadow-sm'
                   }`}
+                  style={{
+                    backgroundColor: isEditing === folder.id 
+                      ? colors.primary + '10'
+                      : selectedFolder === folder.id
+                        ? colors.primary + '15'
+                        : 'transparent',
+                    fontWeight: selectedFolder === folder.id ? '500' : 'normal'
+                  }}
                 >
                   {isEditing === folder.id ? (
                     <div className="flex items-center space-x-2 w-full">
@@ -234,18 +287,31 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
                         type="text"
                         value={newFolderName}
                         onChange={(e) => setNewFolderName(e.target.value)}
-                        className="flex-1 px-2 py-1 text-sm border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2"
+                        style={{
+                          backgroundColor: colors.surface,
+                          borderColor: colors.border,
+                          color: colors.text
+                        }}
                         autoFocus
                       />
                       <button
                         onClick={() => handleUpdateFolder(folder.id)}
-                        className="p-1 text-green-600 hover:text-green-800"
+                        className="p-1 rounded transition-colors"
+                        style={{ 
+                          color: colors.success,
+                          backgroundColor: colors.success + '10'
+                        }}
                       >
                         <Check className="w-4 h-4" />
                       </button>
                       <button
                         onClick={cancelAction}
-                        className="p-1 text-red-600 hover:text-red-800"
+                        className="p-1 rounded transition-colors"
+                        style={{ 
+                          color: colors.error,
+                          backgroundColor: colors.error + '10'
+                        }}
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -256,19 +322,35 @@ export default function FolderManager({ collectionName, onSelectFolder, selected
                         className="flex items-center flex-1 cursor-pointer"
                         onClick={() => onSelectFolder(folder.id)}
                       >
-                        <Folder className="w-4 h-4 mr-2 text-blue-500" />
-                        <span className="truncate text-gray-800">{folder.name}</span>
+                        <Folder className="w-4 h-4 mr-2" style={{ color: colors.primary }} />
+                        <span 
+                          className="truncate"
+                          style={{
+                            color: colors.text,
+                            fontFamily: currentTheme.typography.fontFamily
+                          }}
+                        >
+                          {folder.name}
+                        </span>
                       </div>
                       <div className="flex space-x-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                         <button
                           onClick={() => startEditing(folder)}
-                          className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                          className="p-1 rounded transition-colors"
+                          style={{ 
+                            color: colors.info,
+                            backgroundColor: colors.info + '10'
+                          }}
                         >
                           <Edit className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteFolder(folder.id)}
-                          className="p-1 text-red-600 hover:bg-red-50 rounded"
+                          className="p-1 rounded transition-colors"
+                          style={{ 
+                            color: colors.error,
+                            backgroundColor: colors.error + '10'
+                          }}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

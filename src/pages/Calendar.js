@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { useThemeColors } from '../hooks/useThemeStyles';
 import {
   collection,
   addDoc,
@@ -18,6 +20,8 @@ import toast from 'react-hot-toast';
 
 export default function CalendarPage() {
   const { currentUser } = useAuth();
+  const { currentTheme } = useTheme();
+  const colors = useThemeColors();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -190,8 +194,17 @@ export default function CalendarPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-romantic-500"></div>
+      <div 
+        className="flex items-center justify-center min-h-[400px]"
+        style={{ 
+          backgroundColor: colors.background,
+          backgroundImage: colors.backgroundGradient 
+        }}
+      >
+        <div 
+          className="animate-spin rounded-full h-12 w-12 border-b-2"
+          style={{ borderColor: colors.primary }}
+        ></div>
       </div>
     );
   }
@@ -204,35 +217,86 @@ export default function CalendarPage() {
   const dayNames = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
 
   return (
-    <div className="space-y-8">
+    <div 
+      className="space-y-8"
+      style={{ 
+        backgroundColor: colors.background,
+        backgroundImage: colors.backgroundGradient,
+        minHeight: '100vh',
+        padding: '2rem 1rem'
+      }}
+    >
       {/* Başlık */}
       <div className="text-center">
-        <h1 className="text-4xl font-romantic text-romantic-700 mb-2 flex items-center justify-center">
+        <h1 
+          className={`text-4xl font-bold mb-2 flex items-center justify-center ${
+            currentTheme.id === 'cat' ? 'font-romantic' : 'font-elegant'
+          }`}
+          style={{
+            color: colors.text,
+            fontFamily: currentTheme.typography.fontFamilyHeading
+          }}
+        >
           <Calendar className="w-8 h-8 mr-3" />
-          Anı Takvimi
+          {currentTheme.id === 'ocean' ? 'Okyanus Takvimi' : 
+           currentTheme.id === 'cat' ? 'Anı Takvimi' :
+           'Etkinlik Takvimi'}
         </h1>
-        <p className="text-lg text-romantic-600 font-elegant">
-          Özel günleriniz ve anılarınız burada...
+        <p 
+          className="text-lg font-elegant"
+          style={{
+            color: colors.textSecondary,
+            fontFamily: currentTheme.typography.fontFamily
+          }}
+        >
+          {currentTheme.id === 'ocean' ? 'Derin anılarınız ve gelecek planlarınız...' :
+           currentTheme.id === 'cat' ? 'Özel günleriniz ve anılarınız burada...' :
+           'Önemli tarihlerinizi takip edin...'}
         </p>
       </div>
 
       {/* Takvim Navigasyonu */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-romantic-200">
+      <div 
+        className="backdrop-blur-sm rounded-xl p-6 shadow-lg border"
+        style={{
+          backgroundColor: colors.surface + '80',
+          borderColor: colors.border,
+          boxShadow: `0 20px 60px ${colors.shadow}30`
+        }}
+      >
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={prevMonth}
-            className="p-2 text-romantic-600 hover:bg-romantic-50 rounded-lg transition-colors"
+            className="p-2 rounded-lg transition-colors hover:shadow-md"
+            style={{
+              color: colors.primary,
+              backgroundColor: colors.primary + '10',
+              borderColor: colors.primary + '20'
+            }}
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           
-          <h2 className="text-2xl font-romantic text-romantic-700">
+          <h2 
+            className={`text-2xl font-bold ${
+              currentTheme.id === 'cat' ? 'font-romantic' : 'font-elegant'
+            }`}
+            style={{
+              color: colors.text,
+              fontFamily: currentTheme.typography.fontFamilyHeading
+            }}
+          >
             {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
           </h2>
           
           <button
             onClick={nextMonth}
-            className="p-2 text-romantic-600 hover:bg-romantic-50 rounded-lg transition-colors"
+            className="p-2 rounded-lg transition-colors hover:shadow-md"
+            style={{
+              color: colors.primary,
+              backgroundColor: colors.primary + '10',
+              borderColor: colors.primary + '20'
+            }}
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -241,7 +305,14 @@ export default function CalendarPage() {
         {/* Takvim Grid */}
         <div className="grid grid-cols-7 gap-2 mb-4">
           {dayNames.map(day => (
-            <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
+            <div 
+              key={day} 
+              className="text-center text-sm font-medium py-2"
+              style={{
+                color: colors.textMuted,
+                fontFamily: currentTheme.typography.fontFamily
+              }}
+            >
               {day}
             </div>
           ))}
@@ -258,15 +329,30 @@ export default function CalendarPage() {
                 onClick={() => handleDateClick(date)}
                 className={`min-h-[80px] p-2 border rounded-lg cursor-pointer transition-colors ${
                   date 
-                    ? 'bg-white hover:bg-romantic-50 border-romantic-200' 
-                    : 'bg-gray-50 border-gray-200 cursor-default'
-                } ${isToday ? 'ring-2 ring-romantic-500' : ''}`}
+                    ? 'hover:shadow-md' 
+                    : 'cursor-default'
+                } ${isToday ? 'ring-2' : ''}`}
+                style={{
+                  backgroundColor: date 
+                    ? colors.surface 
+                    : colors.surface + '30',
+                  borderColor: date 
+                    ? colors.border 
+                    : colors.border + '30',
+                  ringColor: isToday ? colors.primary : 'transparent'
+                }}
               >
                 {date && (
                   <>
-                    <div className={`text-sm font-medium mb-1 ${
-                      isToday ? 'text-romantic-700' : 'text-gray-700'
-                    }`}>
+                    <div 
+                      className={`text-sm font-medium mb-1 ${
+                        isToday ? 'font-bold' : ''
+                      }`}
+                      style={{
+                        color: isToday ? colors.primary : colors.text,
+                        fontFamily: currentTheme.typography.fontFamily
+                      }}
+                    >
                       {date.getDate()}
                     </div>
                     <div className="space-y-1">
@@ -275,7 +361,7 @@ export default function CalendarPage() {
                         return (
                           <div
                             key={idx}
-                            className={`text-xs px-1 py-0.5 rounded ${categoryInfo.color} truncate`}
+                            className={`text-xs px-1 py-0.5 rounded truncate ${categoryInfo.color}`}
                             title={event.title}
                           >
                             {categoryInfo.icon} {event.title}
@@ -283,7 +369,13 @@ export default function CalendarPage() {
                         );
                       })}
                       {dayEvents.length > 2 && (
-                        <div className="text-xs text-gray-500">
+                        <div 
+                          className="text-xs"
+                          style={{
+                            color: colors.textMuted,
+                            fontFamily: currentTheme.typography.fontFamily
+                          }}
+                        >
                           +{dayEvents.length - 2} daha
                         </div>
                       )}
@@ -298,21 +390,47 @@ export default function CalendarPage() {
 
       {/* Etkinlik Formu */}
       {showForm && (
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-romantic-200">
-          <h2 className="text-2xl font-romantic text-romantic-700 mb-6">
+        <div 
+          className="backdrop-blur-sm rounded-xl p-6 shadow-lg border max-w-2xl mx-auto"
+          style={{
+            backgroundColor: colors.surface + 'E6',
+            borderColor: colors.border,
+            boxShadow: `0 20px 60px ${colors.shadow}30`
+          }}
+        >
+          <h2 
+            className={`text-2xl font-bold mb-6`}
+            style={{
+              color: colors.text,
+              fontFamily: currentTheme.typography.fontFamilyHeading
+            }}
+          >
             {editingEvent ? 'Etkinliği Düzenle' : 'Yeni Etkinlik Ekle'}
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-romantic-700 mb-2">
+              <label 
+                className="block text-sm font-medium mb-2"
+                style={{
+                  color: colors.text,
+                  fontFamily: currentTheme.typography.fontFamily
+                }}
+              >
                 Başlık
               </label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent backdrop-blur-sm"
+                style={{
+                  backgroundColor: colors.surface + '80',
+                  borderColor: colors.border,
+                  color: colors.text,
+                  fontFamily: currentTheme.typography.fontFamily,
+                  '--tw-ring-color': colors.primary,
+                }}
                 placeholder="Özel gün başlığı..."
                 required
               />
@@ -320,26 +438,52 @@ export default function CalendarPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-romantic-700 mb-2">
+                <label 
+                  className="block text-sm font-medium mb-2"
+                  style={{
+                    color: colors.text,
+                    fontFamily: currentTheme.typography.fontFamily
+                  }}
+                >
                   Tarih
                 </label>
                 <input
                   type="date"
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent backdrop-blur-sm"
+                  style={{
+                    backgroundColor: colors.surface + '80',
+                    borderColor: colors.border,
+                    color: colors.text,
+                    fontFamily: currentTheme.typography.fontFamily,
+                    '--tw-ring-color': colors.primary,
+                  }}
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-romantic-700 mb-2">
+                <label 
+                  className="block text-sm font-medium mb-2"
+                  style={{
+                    color: colors.text,
+                    fontFamily: currentTheme.typography.fontFamily
+                  }}
+                >
                   Kategori
                 </label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent backdrop-blur-sm"
+                  style={{
+                    backgroundColor: colors.surface + '80',
+                    borderColor: colors.border,
+                    color: colors.text,
+                    fontFamily: currentTheme.typography.fontFamily,
+                    '--tw-ring-color': colors.primary,
+                  }}
                 >
                   {categories.map(category => (
                     <option key={category.key} value={category.key}>
@@ -351,14 +495,27 @@ export default function CalendarPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-romantic-700 mb-2">
+              <label 
+                className="block text-sm font-medium mb-2"
+                style={{
+                  color: colors.text,
+                  fontFamily: currentTheme.typography.fontFamily
+                }}
+              >
                 Not (İsteğe Bağlı)
               </label>
               <textarea
                 value={formData.note}
                 onChange={(e) => setFormData({ ...formData, note: e.target.value })}
                 rows={4}
-                className="w-full px-4 py-2 border border-romantic-200 rounded-lg focus:ring-2 focus:ring-romantic-500 focus:border-transparent bg-white/50 resize-none"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent backdrop-blur-sm resize-none"
+                style={{
+                  backgroundColor: colors.surface + '80',
+                  borderColor: colors.border,
+                  color: colors.text,
+                  fontFamily: currentTheme.typography.fontFamily,
+                  '--tw-ring-color': colors.primary,
+                }}
                 placeholder="Bu özel gün hakkında notlarınız..."
               />
             </div>
@@ -367,14 +524,23 @@ export default function CalendarPage() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-1"
+                className="px-4 py-2 border rounded-lg hover:shadow-lg transition-colors flex items-center space-x-1"
+                style={{
+                  borderColor: colors.border,
+                  color: colors.textSecondary,
+                  backgroundColor: colors.surface
+                }}
               >
                 <X className="w-4 h-4" />
                 <span>İptal</span>
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-love-gradient text-white rounded-lg hover:shadow-lg transition-all flex items-center space-x-1"
+                className="px-4 py-2 rounded-lg hover:shadow-lg transition-all flex items-center space-x-1"
+                style={{
+                  background: colors.primaryGradient,
+                  color: 'white'
+                }}
               >
                 <Save className="w-4 h-4" />
                 <span>{editingEvent ? 'Güncelle' : 'Kaydet'}</span>
@@ -385,8 +551,23 @@ export default function CalendarPage() {
       )}
 
       {/* Yaklaşan Etkinlikler */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-romantic-200">
-        <h3 className="text-xl font-romantic text-romantic-700 mb-4">
+      <div 
+        className="backdrop-blur-sm rounded-xl p-6 shadow-lg border"
+        style={{
+          backgroundColor: colors.surface + '80',
+          borderColor: colors.border,
+          boxShadow: `0 20px 60px ${colors.shadow}30`
+        }}
+      >
+        <h3 
+          className={`text-xl font-bold mb-4 ${
+            currentTheme.id === 'cat' ? 'font-romantic' : 'font-elegant'
+          }`}
+          style={{
+            color: colors.text,
+            fontFamily: currentTheme.typography.fontFamilyHeading
+          }}
+        >
           Yaklaşan Özel Günler
         </h3>
         {events.filter(event => {
@@ -404,13 +585,30 @@ export default function CalendarPage() {
               return (
                 <div
                   key={event.id}
-                  className="flex items-center justify-between p-3 bg-romantic-50 rounded-lg group"
+                  className="flex items-center justify-between p-3 rounded-lg group"
+                  style={{
+                    backgroundColor: colors.surfaceVariant
+                  }}
                 >
                   <div className="flex items-center space-x-3">
                     <span className="text-lg">{categoryInfo.icon}</span>
                     <div>
-                      <h4 className="font-medium text-romantic-700">{event.title}</h4>
-                      <p className="text-sm text-gray-600">
+                      <h4 
+                        className="font-medium"
+                        style={{
+                          color: colors.text,
+                          fontFamily: currentTheme.typography.fontFamilyHeading
+                        }}
+                      >
+                        {event.title}
+                      </h4>
+                      <p 
+                        className="text-sm"
+                        style={{
+                          color: colors.textSecondary,
+                          fontFamily: currentTheme.typography.fontFamily
+                        }}
+                      >
                         {eventDate.toLocaleDateString('tr-TR', { 
                           day: 'numeric', 
                           month: 'long', 
@@ -422,13 +620,21 @@ export default function CalendarPage() {
                   <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => handleEdit(event)}
-                      className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                      className="p-1 rounded hover:shadow-sm"
+                      style={{ 
+                        color: colors.info,
+                        backgroundColor: colors.info + '10'
+                      }}
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(event.id)}
-                      className="p-1 text-red-600 hover:bg-red-50 rounded"
+                      className="p-1 rounded hover:shadow-sm"
+                      style={{ 
+                        color: colors.error,
+                        backgroundColor: colors.error + '10'
+                      }}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -438,7 +644,13 @@ export default function CalendarPage() {
             })}
           </div>
         ) : (
-          <p className="text-gray-500 text-center py-4">
+          <p 
+            className="text-center py-4"
+            style={{
+              color: colors.textMuted,
+              fontFamily: currentTheme.typography.fontFamily
+            }}
+          >
             Yaklaşan özel gün yok
           </p>
         )}

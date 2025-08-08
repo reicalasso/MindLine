@@ -682,9 +682,15 @@ export default function Chat() {
             ref={editInputRef}
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
-            className="w-full p-2 text-sm font-elegant bg-white/90 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 text-sm rounded-lg resize-none focus:outline-none focus:ring-2"
             rows="2"
-            style={{ minHeight: '40px' }}
+            style={{ 
+              minHeight: '40px',
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              color: colors.text,
+              '--tw-ring-color': colors.primary,
+            }}
             onInput={(e) => {
               e.target.style.height = '40px';
               e.target.style.height = e.target.scrollHeight + 'px';
@@ -701,14 +707,22 @@ export default function Chat() {
           <div className="flex space-x-2">
             <button
               onClick={() => handleSaveEdit(message.id)}
-              className="p-1 text-green-600 hover:bg-green-50 rounded text-xs flex items-center space-x-1"
+              className="p-1 hover:shadow-sm rounded text-xs flex items-center space-x-1"
+              style={{
+                color: colors.success,
+                backgroundColor: colors.success + '10'
+              }}
             >
               <Check className="w-3 h-3" />
               <span>Kaydet</span>
             </button>
             <button
               onClick={handleCancelEdit}
-              className="p-1 text-gray-600 hover:bg-gray-50 rounded text-xs flex items-center space-x-1"
+              className="p-1 hover:shadow-sm rounded text-xs flex items-center space-x-1"
+              style={{
+                color: colors.textSecondary,
+                backgroundColor: colors.border + '40'
+              }}
             >
               <X className="w-3 h-3" />
               <span>İptal</span>
@@ -724,14 +738,29 @@ export default function Chat() {
       <div className="space-y-2">
         {/* Yanıtlanan mesaj önizlemesi */}
         {replyMessage && (
-          <div className="bg-black/10 rounded-lg p-2 border-l-4 border-blue-400 ml-2">
+          <div 
+            className="rounded-lg p-2 border-l-4 ml-2"
+            style={{
+              backgroundColor: colors.surfaceVariant + '80',
+              borderColor: colors.primary
+            }}
+          >
             <div className="flex items-center space-x-2 mb-1">
-              <Reply className="w-3 h-3 text-blue-500" />
-              <span className="text-xs font-medium text-blue-600">
+              <Reply 
+                className="w-3 h-3"
+                style={{ color: colors.primary }}
+              />
+              <span 
+                className="text-xs font-medium"
+                style={{ color: colors.primary }}
+              >
                 {getUserProfile(replyMessage.author).displayName}
               </span>
             </div>
-            <p className="text-xs text-gray-600 truncate">
+            <p 
+              className="text-xs truncate"
+              style={{ color: colors.textSecondary }}
+            >
               {replyMessage.type === 'image' ? '📷 Fotoğraf' :
                replyMessage.type === 'file' ? '📎 Dosya' :
                replyMessage.content}
@@ -753,7 +782,13 @@ export default function Chat() {
                       onClick={() => openMediaModal(message)}
                     />
                     {message.content !== `📎 ${message.fileName}` && (
-                      <p className="font-elegant text-base font-medium break-words">{message.content}</p>
+                      <p 
+                        className="text-base font-medium break-words"
+                        style={{
+                          fontFamily: currentTheme.typography.fontFamily,
+                          color: isMyMessage(message) ? 'white' : colors.text
+                        }}
+                      >{message.content}</p>
                     )}
                   </div>
                 );
@@ -761,21 +796,51 @@ export default function Chat() {
               case 'file':
                 return (
                   <div className="space-y-2">
-                    <div className="flex items-center space-x-3 p-3 bg-white/20 rounded-lg min-w-0">
-                      <Paperclip className="w-5 h-5 flex-shrink-0" />
+                    <div 
+                      className="flex items-center space-x-3 p-3 rounded-lg min-w-0"
+                      style={{
+                        backgroundColor: isMyMessage(message) ? 'rgba(255,255,255,0.1)' : colors.surfaceVariant
+                      }}
+                    >
+                      <Paperclip 
+                        className="w-5 h-5 flex-shrink-0"
+                        style={{
+                          color: isMyMessage(message) ? 'white' : colors.text
+                        }}
+                      />
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{message.fileName}</p>
-                        <p className="text-xs opacity-75">{formatFileSize(message.fileSize)}</p>
+                        <p 
+                          className="font-medium truncate"
+                          style={{
+                            color: isMyMessage(message) ? 'white' : colors.text
+                          }}
+                        >{message.fileName}</p>
+                        <p 
+                          className="text-xs opacity-75"
+                          style={{
+                            color: isMyMessage(message) ? 'rgba(255,255,255,0.8)' : colors.textSecondary
+                          }}
+                        >{formatFileSize(message.fileSize)}</p>
                       </div>
                       <button
                         onClick={() => downloadFile(message)}
-                        className="p-1 hover:bg-white/20 rounded transition-colors flex-shrink-0"
+                        className="p-1 rounded transition-colors flex-shrink-0"
+                        style={{
+                          backgroundColor: isMyMessage(message) ? 'rgba(255,255,255,0.1)' : colors.surface,
+                          color: isMyMessage(message) ? 'white' : colors.text
+                        }}
                       >
                         <Download className="w-4 h-4" />
                       </button>
                     </div>
                     {message.content !== `📎 ${message.fileName}` && (
-                      <p className="font-elegant text-base font-medium break-words">{message.content}</p>
+                      <p 
+                        className="text-base font-medium break-words"
+                        style={{
+                          fontFamily: currentTheme.typography.fontFamily,
+                          color: isMyMessage(message) ? 'white' : colors.text
+                        }}
+                      >{message.content}</p>
                     )}
                   </div>
                 );
@@ -784,7 +849,13 @@ export default function Chat() {
                 const urls = extractUrls(message.content);
                 return (
                   <div className="space-y-1">
-                    <div className="font-elegant text-base font-medium break-words">
+                    <div 
+                      className="text-base font-medium break-words"
+                      style={{
+                        fontFamily: currentTheme.typography.fontFamily,
+                        color: isMyMessage(message) ? 'white' : colors.text
+                      }}
+                    >
                       <Linkify options={linkifyOptions}>
                         {message.content}
                       </Linkify>
@@ -793,7 +864,13 @@ export default function Chat() {
                       <LinkPreviewCard key={url} url={url} />
                     ))}
                     {message.edited && (
-                      <p className="text-xs opacity-60 italic font-elegant">
+                      <p 
+                        className="text-xs opacity-60 italic"
+                        style={{
+                          fontFamily: currentTheme.typography.fontFamily,
+                          color: isMyMessage(message) ? 'rgba(255,255,255,0.8)' : colors.textMuted
+                        }}
+                      >
                         (düzenlendi)
                       </p>
                     )}
@@ -820,9 +897,21 @@ export default function Chat() {
                 onClick={() => addEmojiReaction(message.id, emoji)}
                 className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs transition-all transform hover:scale-110 ${
                   reactions.some(r => r.userId === currentUser?.uid)
-                    ? 'bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 border border-pink-300 shadow-sm'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    ? 'shadow-sm'
+                    : 'hover:shadow-sm'
                 }`}
+                style={{
+                  backgroundColor: reactions.some(r => r.userId === currentUser?.uid)
+                    ? colors.primary + '20'
+                    : colors.surfaceVariant,
+                  color: reactions.some(r => r.userId === currentUser?.uid)
+                    ? colors.primary
+                    : colors.textSecondary,
+                  borderColor: reactions.some(r => r.userId === currentUser?.uid)
+                    ? colors.primary + '40'
+                    : colors.border,
+                  borderWidth: '1px'
+                }}
                 title={reactions.map(r => getUserProfile(r.userEmail).displayName).join(', ')}
               >
                 <span className="animate-pulse">{emoji}</span>
@@ -952,12 +1041,12 @@ export default function Chat() {
                       }`}
                       style={{
                         background: isMyMsg
-                          ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                          ? colors.primaryGradient
                           : colors.surface,
                         borderColor: isMyMsg ? 'transparent' : colors.border,
                         color: isMyMsg ? 'white' : colors.text,
                         boxShadow: isMyMsg
-                          ? `0 4px 20px rgba(102, 126, 234, 0.4)`
+                          ? `0 4px 20px ${colors.primary}40`
                           : `0 2px 12px ${colors.shadow}15`,
                         wordBreak: 'break-word',
                         overflowWrap: 'break-word',
@@ -1010,13 +1099,13 @@ export default function Chat() {
                       {/* Hızlı Reaksiyonlar - Cat Theme Style */}
                       {showQuickReactions === message.id && (
                         <div
-                          className={`absolute bottom-full mb-3 bg-white/95 backdrop-blur-xl rounded-full px-4 py-3 flex space-x-1 z-50 shadow-cat border ${
+                          className={`absolute bottom-full mb-3 backdrop-blur-xl rounded-full px-4 py-3 flex space-x-1 z-50 shadow-lg border ${
                             isMyMsg ? 'right-0' : 'left-0'
                           }`}
                           style={{
                             animation: 'slideUp 0.3s ease-out',
                             borderColor: colors.border + '40',
-                            background: 'rgba(255, 255, 255, 0.95)',
+                            background: colors.surface + 'F2',
                             maxWidth: '280px',
                             transform: isMyMsg ? 'translateX(-20px)' : 'translateX(20px)'
                           }}
@@ -1025,9 +1114,10 @@ export default function Chat() {
                             <button
                               key={emoji}
                               onClick={() => addQuickEmojiReaction(message.id, emoji)}
-                              className="text-xl transition-all transform hover:scale-125 active:scale-110 p-2 rounded-full hover:bg-cat-50/50 flex-shrink-0"
+                              className="text-xl transition-all transform hover:scale-125 active:scale-110 p-2 rounded-full hover:shadow-sm flex-shrink-0"
                               style={{
-                                filter: 'drop-shadow(0 2px 4px rgba(242, 113, 28, 0.2))'
+                                backgroundColor: colors.surfaceVariant,
+                                filter: `drop-shadow(0 2px 4px ${colors.shadow}20)`
                               }}
                             >
                               {emoji}
@@ -1039,11 +1129,11 @@ export default function Chat() {
                       {/* Mesaj İşlemleri - Instagram Style (Own Messages) */}
                       {showMessageActions === message.id && isMyMsg && (
                         <div
-                          className="absolute bottom-full mb-3 right-0 bg-white/95 backdrop-blur-xl rounded-3xl py-2 z-50 shadow-2xl border min-w-max"
+                          className="absolute bottom-full mb-3 right-0 backdrop-blur-xl rounded-3xl py-2 z-50 shadow-2xl border min-w-max"
                           style={{
                             animation: 'slideUp 0.3s ease-out',
                             borderColor: colors.border + '40',
-                            background: 'rgba(255, 255, 255, 0.95)',
+                            background: colors.surface + 'F2',
                             transform: 'translateX(-20px)',
                             maxWidth: '200px'
                           }}
@@ -1054,11 +1144,18 @@ export default function Chat() {
                                 handleEditMessage(message);
                                 setShowMessageActions(null);
                               }}
-                              className={`w-full flex items-center space-x-3 px-6 py-4 text-left transition-all hover:bg-cat-50/50 border-b border-gray-100/50 ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`}
-                              style={{ color: colors.primary }}
+                              className={`w-full flex items-center space-x-3 px-6 py-4 text-left transition-all hover:shadow-sm border-b`}
+                              style={{ 
+                                color: colors.primary,
+                                backgroundColor: colors.primary + '10',
+                                borderColor: colors.border
+                              }}
                             >
                               <Edit className="w-5 h-5" />
-                              <span className="text-base font-medium">Düzenle</span>
+                              <span 
+                                className="text-base font-medium"
+                                style={{ fontFamily: currentTheme.typography.fontFamily }}
+                              >Düzenle</span>
                             </button>
                           )}
                           <button
@@ -1066,11 +1163,17 @@ export default function Chat() {
                               handleDeleteMessage(message.id);
                               setShowMessageActions(null);
                             }}
-                            className={`w-full flex items-center space-x-3 px-6 py-4 text-left transition-all hover:bg-red-50/50 ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`}
-                            style={{ color: '#dc2626' }}
+                            className={`w-full flex items-center space-x-3 px-6 py-4 text-left transition-all hover:shadow-sm`}
+                            style={{ 
+                              color: colors.error,
+                              backgroundColor: colors.error + '10'
+                            }}
                           >
                             <Trash2 className="w-5 h-5" />
-                            <span className="text-base font-medium">Sil</span>
+                            <span 
+                              className="text-base font-medium"
+                              style={{ fontFamily: currentTheme.typography.fontFamily }}
+                            >Sil</span>
                           </button>
                         </div>
                       )}
@@ -1101,10 +1204,16 @@ export default function Chat() {
             borderColor: colors.border
           }}
         >
-          <div className="flex items-start justify-between bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-3">
+          <div 
+            className="flex items-start justify-between rounded-2xl p-3"
+            style={{
+              backgroundColor: colors.primary + '10'
+            }}
+          >
             <div className="flex items-start space-x-3 flex-1">
               <Reply 
-                className="w-5 h-5 mt-0.5 flex-shrink-0 text-blue-500"
+                className="w-5 h-5 mt-0.5 flex-shrink-0"
+                style={{ color: colors.primary }}
               />
               <div className="flex-1 min-w-0">
                 <p 
@@ -1143,7 +1252,12 @@ export default function Chat() {
             borderColor: colors.border
           }}
         >
-          <div className="flex items-center space-x-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-3">
+          <div 
+            className="flex items-center space-x-4 rounded-2xl p-3"
+            style={{
+              backgroundColor: colors.surface
+            }}
+          >
             {previewImage ? (
               <img 
                 src={previewImage} 
@@ -1212,7 +1326,8 @@ export default function Chat() {
                   maxHeight: '120px',
                   borderColor: colors.border,
                   backgroundColor: colors.surface,
-                  color: colors.text
+                  color: colors.text,
+                  '--tw-ring-color': colors.primary,
                 }}
                 onInput={(e) => {
                   e.target.style.height = '56px';
@@ -1274,7 +1389,7 @@ export default function Chat() {
               disabled={(!newMessage.trim() && !selectedFile) || sending}
               className="px-6 py-4 text-white rounded-full hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 self-end transform hover:scale-105 active:scale-95"
               style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: colors.primaryGradient,
                 minWidth: '56px',
                 height: '56px'
               }}
@@ -1295,7 +1410,12 @@ export default function Chat() {
       {showMediaModal && selectedMedia && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[1600] backdrop-blur-sm" onClick={closeMediaModal}>
           <div className="w-full max-w-4xl max-h-full p-6" onClick={(e) => e.stopPropagation()}>
-            <div className="bg-white rounded-3xl overflow-hidden relative w-full shadow-2xl">
+            <div 
+              className="rounded-3xl overflow-hidden relative w-full shadow-2xl"
+              style={{
+                backgroundColor: colors.surface
+              }}
+            >
               {selectedMedia.type === 'image' && (
                 <img
                   src={selectedMedia.fileData}
@@ -1307,14 +1427,24 @@ export default function Chat() {
               <div className="p-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="font-bold text-gray-800 text-lg">{selectedMedia.fileName}</p>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p 
+                      className="font-bold text-lg"
+                      style={{ color: colors.text }}
+                    >{selectedMedia.fileName}</p>
+                    <p 
+                      className="text-sm mt-1"
+                      style={{ color: colors.textSecondary }}
+                    >
                       {getDisplayName(selectedMedia.author)} • {formatTime(selectedMedia.createdAt)}
                     </p>
                   </div>
                   <button
                     onClick={() => downloadFile(selectedMedia)}
-                    className="p-3 text-gray-600 hover:bg-gray-100 rounded-full transition-all transform hover:scale-110"
+                    className="p-3 hover:shadow-sm rounded-full transition-all transform hover:scale-110"
+                    style={{
+                      color: colors.textSecondary,
+                      backgroundColor: colors.surfaceVariant
+                    }}
                   >
                     <Download className="w-6 h-6" />
                   </button>
@@ -1322,7 +1452,11 @@ export default function Chat() {
               </div>
               <button
                 onClick={closeMediaModal}
-                className="absolute top-4 right-4 p-3 bg-white/90 hover:bg-white rounded-full shadow-xl transition-all transform hover:scale-110"
+                className="absolute top-4 right-4 p-3 hover:shadow-lg rounded-full shadow-xl transition-all transform hover:scale-110"
+                style={{
+                  backgroundColor: colors.surface + 'E6',
+                  color: colors.text
+                }}
               >
                 <X className="w-6 h-6" />
               </button>
@@ -1334,11 +1468,23 @@ export default function Chat() {
       {/* Profil Modal - Instagram Style */}
       {showProfileModal && selectedProfile && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[1600] p-4 backdrop-blur-sm" onClick={closeProfileModal}>
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all" onClick={(e) => e.stopPropagation()}>
+          <div 
+            className="rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all" 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: colors.surface,
+              border: `1px solid ${colors.border}`
+            }}
+          >
             <div className="text-center">
               {/* Profil Fotoğrafı */}
               <div className="flex justify-center mb-6">
-                <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-pink-200 to-purple-300 flex items-center justify-center shadow-xl">
+                <div 
+                  className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center shadow-xl"
+                  style={{
+                    background: colors.primaryGradient
+                  }}
+                >
                   {selectedProfile.profileImage ? (
                     <img
                       src={selectedProfile.profileImage}
@@ -1354,37 +1500,75 @@ export default function Chat() {
               </div>
 
               {/* Profil Bilgileri */}
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">
+              <h3 
+                className="text-2xl font-bold mb-3"
+                style={{
+                  color: colors.text,
+                  fontFamily: currentTheme.typography.fontFamilyHeading
+                }}
+              >
                 {selectedProfile.displayName}
               </h3>
-              <p className="text-sm text-gray-600 mb-6">
+              <p 
+                className="text-sm mb-6"
+                style={{ color: colors.textSecondary }}
+              >
                 {selectedProfile.email}
               </p>
 
               {selectedProfile.bio && (
-                <div className="bg-gray-50 rounded-2xl p-4 mb-6">
-                  <p className="text-sm text-gray-700 font-medium italic">
+                <div 
+                  className="rounded-2xl p-4 mb-6"
+                  style={{
+                    backgroundColor: colors.surfaceVariant
+                  }}
+                >
+                  <p 
+                    className="text-sm font-medium italic"
+                    style={{ color: colors.text }}
+                  >
                     "{selectedProfile.bio}"
                   </p>
                 </div>
               )}
 
               {selectedProfile.favoriteQuote && (
-                <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-4 mb-6 border-l-4 border-pink-400">
-                  <p className="text-sm text-gray-700 font-medium">
+                <div 
+                  className="rounded-2xl p-4 mb-6 border-l-4"
+                  style={{
+                    backgroundColor: colors.primary + '10',
+                    borderColor: colors.primary
+                  }}
+                >
+                  <p 
+                    className="text-sm font-medium"
+                    style={{ color: colors.text }}
+                  >
                     "{selectedProfile.favoriteQuote}"
                   </p>
                 </div>
               )}
 
               {/* Kullanıcı Rozeti */}
-              <div className="flex justify-center items-center space-x-3 text-sm text-gray-600 mb-6">
-                <span className="bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 px-4 py-2 rounded-full flex items-center space-x-2 shadow-sm">
+              <div className="flex justify-center items-center space-x-3 text-sm mb-6">
+                <span 
+                  className="px-4 py-2 rounded-full flex items-center space-x-2 shadow-sm"
+                  style={{
+                    backgroundColor: colors.primary + '15',
+                    color: colors.primary
+                  }}
+                >
                   <span className="animate-wiggle">🐱</span>
                   <span className="font-bold">Kedici</span>
                 </span>
                 {selectedProfile.email === currentUser.email && (
-                  <span className="bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 px-4 py-2 rounded-full font-bold shadow-sm">
+                  <span 
+                    className="px-4 py-2 rounded-full font-bold shadow-sm"
+                    style={{
+                      backgroundColor: colors.accent + '20',
+                      color: colors.accent
+                    }}
+                  >
                     Sen
                   </span>
                 )}
@@ -1393,7 +1577,11 @@ export default function Chat() {
               {/* Kapatma Butonu */}
               <button
                 onClick={closeProfileModal}
-                className="w-full bg-gradient-to-r from-pink-100 to-purple-100 hover:from-pink-200 hover:to-purple-200 text-pink-700 px-6 py-4 rounded-2xl transition-all flex items-center justify-center space-x-2 font-bold shadow-lg transform hover:scale-105"
+                className="w-full px-6 py-4 rounded-2xl transition-all flex items-center justify-center space-x-2 font-bold shadow-lg transform hover:scale-105"
+                style={{
+                  background: colors.primaryGradient,
+                  color: 'white'
+                }}
               >
                 <X className="w-5 h-5" />
                 <span>Kapat</span>

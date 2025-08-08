@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { useThemeColors } from '../hooks/useThemeStyles';
 import { 
   collection, 
   addDoc, 
@@ -31,6 +32,7 @@ import FolderManager from '../components/FolderManager';
 export default function Letters() {
   const { currentUser } = useAuth();
   const { currentTheme } = useTheme();
+  const colors = useThemeColors();
   const [letters, setLetters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -183,29 +185,72 @@ export default function Letters() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className={`animate-spin rounded-full h-12 w-12 border-b-2 border-romantic-500`}></div>
+      <div 
+        className="flex items-center justify-center min-h-[400px]"
+        style={{ 
+          backgroundColor: colors.background,
+          backgroundImage: colors.backgroundGradient 
+        }}
+      >
+        <div 
+          className="animate-spin rounded-full h-12 w-12 border-b-2"
+          style={{ borderColor: colors.primary }}
+        ></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div 
+      className="space-y-8"
+      style={{ 
+        backgroundColor: colors.background,
+        backgroundImage: colors.backgroundGradient,
+        minHeight: '100vh',
+        padding: '2rem 1rem'
+      }}
+    >
       {/* Başlık */}
       <div className="text-center">
-        <h1 className={`text-4xl mb-2 flex items-center justify-center font-romantic text-gray-800`}>
+        <h1 
+          className={`text-4xl mb-2 flex items-center justify-center ${
+            currentTheme.id === 'cat' ? 'font-romantic' : 'font-elegant'
+          }`}
+          style={{
+            color: colors.text,
+            fontFamily: currentTheme.typography.fontFamilyHeading
+          }}
+        >
           <Mail className="w-8 h-8 mr-3" />
-          Aşk Mektupları
+          {currentTheme.id === 'skull-bunny' ? 'Dark Letters' :
+           currentTheme.id === 'ocean' ? 'Okyanus Mektupları' :
+           currentTheme.id === 'cat' ? 'Aşk Mektupları' :
+           'Mektuplarım'}
         </h1>
-        <p className={`text-lg text-gray-700 font-elegant`}>
-          Birbirinize yazdığınız güzel mektuplar burada...
+        <p 
+          className="text-lg"
+          style={{
+            color: colors.textSecondary,
+            fontFamily: currentTheme.typography.fontFamily
+          }}
+        >
+          {currentTheme.id === 'skull-bunny' ? 'Karanlık düşüncelerinizin yazılı hali...' :
+           currentTheme.id === 'ocean' ? 'Derin duygularınızın yazdığınız mektuplar...' :
+           currentTheme.id === 'cat' ? 'Birbirinize yazdığınız güzel mektuplar burada...' :
+           'Özel mektuplarınız burada...'}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Klasör Sidebar */}
         <div className="md:col-span-1">
-          <div className={`bg-white/90 border-romantic-200 shadow-lg backdrop-blur-sm rounded-xl p-4 border`}>
+          <div 
+            className="backdrop-blur-sm rounded-xl p-4 shadow-lg border"
+            style={{
+              backgroundColor: colors.surface + '90',
+              borderColor: colors.border
+            }}
+          >
             <FolderManager 
               collectionName="letters" 
               onSelectFolder={setSelectedFolder} 
@@ -222,13 +267,22 @@ export default function Letters() {
                 setShowForm(true);
               }}
               className={`w-full px-4 py-2 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all flex items-center justify-center space-x-2 ${
-                currentTheme.id === 'cyberpunk'
-                  ? 'bg-cyber-red text-cyber-primary shadow-neon-red animate-cyber-glow'
-                  : 'bg-love-gradient text-white'
+                currentTheme.id === 'skull-bunny' ? 'hover:animate-flicker' :
+                currentTheme.id === 'ocean' ? 'hover:animate-wave' :
+                currentTheme.id === 'cat' ? 'hover:animate-wiggle' : ''
               }`}
+              style={{
+                background: colors.primaryGradient,
+                color: 'white'
+              }}
             >
               <Plus className="w-4 h-4" />
-              <span>{currentTheme.id === 'cyberpunk' ? 'NEW_DATA_MAIL' : 'Yeni Mektup Yaz'}</span>
+              <span>
+                {currentTheme.id === 'skull-bunny' ? 'New Dark Letter' :
+                 currentTheme.id === 'ocean' ? 'Yeni Deniz Mektubu' :
+                 currentTheme.id === 'cat' ? 'Yeni Mektup Yaz' :
+                 'Yeni Mektup'}
+              </span>
             </button>
           </div>
         </div>
@@ -237,93 +291,117 @@ export default function Letters() {
         <div className="md:col-span-3">
           {/* Mektup Formu */}
           {showForm && (
-            <div className={`backdrop-blur-sm rounded-xl p-6 shadow-lg border mb-8 ${
-              currentTheme.id === 'cyberpunk'
-                ? 'bg-cyber-50/90 border-cyber-secondary shadow-cyber animate-hologram'
-                : 'bg-white/90 border-romantic-200'
-            }`}>
-              <h2 className={`text-2xl mb-6 ${
-                currentTheme.id === 'cyberpunk'
-                  ? 'font-mono text-cyber-primary animate-neon-flicker'
-                  : 'font-romantic text-gray-800'
-              }`}>
+            <div 
+              className="backdrop-blur-sm rounded-xl p-6 shadow-lg border mb-8"
+              style={{
+                backgroundColor: colors.surface + '90',
+                borderColor: colors.border,
+                boxShadow: `0 20px 60px ${colors.shadow}30`
+              }}
+            >
+              <h2 
+                className={`text-2xl mb-6 ${
+                  currentTheme.id === 'cat' ? 'font-romantic' : 'font-elegant'
+                }`}
+                style={{
+                  color: colors.text,
+                  fontFamily: currentTheme.typography.fontFamilyHeading
+                }}
+              >
                 {editingLetter 
-                  ? (currentTheme.id === 'cyberpunk' ? 'EDIT_DATA_MAIL.exe' : 'Mektubu Düzenle')
-                  : (currentTheme.id === 'cyberpunk' ? 'NEW_DATA_MAIL.exe' : 'Yeni Mektup Yaz')
+                  ? (currentTheme.id === 'skull-bunny' ? 'Edit Dark Letter' : 'Mektubu Düzenle')
+                  : (currentTheme.id === 'skull-bunny' ? 'New Dark Letter' : 'Yeni Mektup Yaz')
                 }
               </h2>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    currentTheme.id === 'cyberpunk'
-                      ? 'text-cyber-primary font-mono'
-                      : 'text-gray-800'
-                  }`}>
-                    {currentTheme.id === 'cyberpunk' ? 'SUBJECT_LINE:' : 'Başlık (İsteğe Bağlı)'}
+                  <label 
+                    className="block text-sm font-medium mb-2"
+                    style={{
+                      color: colors.text,
+                      fontFamily: currentTheme.typography.fontFamily
+                    }}
+                  >
+                    Başlık (İsteğe Bağlı)
                   </label>
                   <input
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
-                      currentTheme.id === 'cyberpunk'
-                        ? 'cyber-input'
-                        : 'border-romantic-200 focus:ring-romantic-500 bg-white/50 text-gray-800'
-                    }`}
-                    placeholder={currentTheme.id === 'cyberpunk' ? 'Enter subject line...' : 'Mektubunuza bir başlık verin...'}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent backdrop-blur-sm"
+                    style={{
+                      backgroundColor: colors.surface + '80',
+                      borderColor: colors.border,
+                      color: colors.text,
+                      fontFamily: currentTheme.typography.fontFamily,
+                      '--tw-ring-color': colors.primary
+                    }}
+                    placeholder="Mektubunuza bir başlık verin..."
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${
-                      currentTheme.id === 'cyberpunk'
-                        ? 'text-cyber-primary font-mono'
-                        : 'text-gray-800'
-                    }`}>
-                      {currentTheme.id === 'cyberpunk' ? 'TIMESTAMP:' : 'Tarih'}
+                    <label 
+                      className="block text-sm font-medium mb-2"
+                      style={{
+                        color: colors.text,
+                        fontFamily: currentTheme.typography.fontFamily
+                      }}
+                    >
+                      Tarih
                     </label>
                     <div className="relative">
-                      <Calendar className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
-                        currentTheme.id === 'cyberpunk' ? 'text-cyber-accent' : 'text-gray-500'
-                      }`} />
+                      <Calendar 
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
+                        style={{ color: colors.textSecondary }}
+                      />
                       <input
                         type="date"
                         value={formData.date}
                         onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                        className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
-                          currentTheme.id === 'cyberpunk'
-                            ? 'cyber-input'
-                            : 'border-romantic-200 focus:ring-romantic-500 bg-white/50 text-gray-800'
-                        }`}
+                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent backdrop-blur-sm"
+                        style={{
+                          backgroundColor: colors.surface + '80',
+                          borderColor: colors.border,
+                          color: colors.text,
+                          fontFamily: currentTheme.typography.fontFamily,
+                          '--tw-ring-color': colors.primary
+                        }}
                         required
                       />
                     </div>
                   </div>
                   
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${
-                      currentTheme.id === 'cyberpunk'
-                        ? 'text-cyber-primary font-mono'
-                        : 'text-gray-800'
-                    }`}>
-                      {currentTheme.id === 'cyberpunk' ? 'FOLDER_ID:' : 'Klasör (İsteğe Bağlı)'}
+                    <label 
+                      className="block text-sm font-medium mb-2"
+                      style={{
+                        color: colors.text,
+                        fontFamily: currentTheme.typography.fontFamily
+                      }}
+                    >
+                      Klasör (İsteğe Bağlı)
                     </label>
                     <div className="relative">
-                      <FolderPlus className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
-                        currentTheme.id === 'cyberpunk' ? 'text-cyber-accent' : 'text-gray-500'
-                      }`} />
+                      <FolderPlus 
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
+                        style={{ color: colors.textSecondary }}
+                      />
                       <select
                         value={formData.folderId || ''}
                         onChange={(e) => setFormData({ ...formData, folderId: e.target.value || null })}
-                        className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
-                          currentTheme.id === 'cyberpunk'
-                            ? 'cyber-input'
-                            : 'border-romantic-200 focus:ring-romantic-500 bg-white/50 text-gray-800'
-                        }`}
+                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent backdrop-blur-sm"
+                        style={{
+                          backgroundColor: colors.surface + '80',
+                          borderColor: colors.border,
+                          color: colors.text,
+                          fontFamily: currentTheme.typography.fontFamily,
+                          '--tw-ring-color': colors.primary
+                        }}
                       >
-                        <option value="">{currentTheme.id === 'cyberpunk' ? 'Select folder...' : 'Klasör Seçin (İsteğe Bağlı)'}</option>
+                        <option value="">Klasör Seçin (İsteğe Bağlı)</option>
                         <FolderOptions collectionName="letters" />
                       </select>
                     </div>
@@ -331,23 +409,34 @@ export default function Letters() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    currentTheme.id === 'cyberpunk'
-                      ? 'text-cyber-primary font-mono'
-                      : 'text-gray-800'
-                  }`}>
-                    {currentTheme.id === 'cyberpunk' ? 'MESSAGE_CONTENT:' : 'Mektup İçeriği'}
+                  <label 
+                    className="block text-sm font-medium mb-2"
+                    style={{
+                      color: colors.text,
+                      fontFamily: currentTheme.typography.fontFamily
+                    }}
+                  >
+                    Mektup İçeriği
                   </label>
                   <textarea
                     value={formData.content}
                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                     rows={8}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent text-lg resize-none ${
-                      currentTheme.id === 'cyberpunk'
-                        ? 'cyber-input font-mono'
-                        : 'border-romantic-200 focus:ring-romantic-500 bg-white/50 font-handwriting text-gray-800'
-                    }`}
-                    placeholder={currentTheme.id === 'cyberpunk' ? 'Enter neural message...' : 'Sevgili...'}
+                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent text-lg resize-none backdrop-blur-sm"
+                    style={{
+                      backgroundColor: colors.surface + '80',
+                      borderColor: colors.border,
+                      color: colors.text,
+                      fontFamily: currentTheme.id === 'cat' ? 'var(--font-handwriting, "Caveat", cursive)' : 
+                                  currentTheme.id === 'skull-bunny' ? 'var(--font-mono, monospace)' :
+                                  currentTheme.typography.fontFamily,
+                      '--tw-ring-color': colors.primary
+                    }}
+                    placeholder={
+                      currentTheme.id === 'skull-bunny' ? 'Enter your dark thoughts...' :
+                      currentTheme.id === 'ocean' ? 'Deniz kadar derin düşünceleriniz...' :
+                      'Sevgili...'
+                    }
                     required
                   />
                 </div>
@@ -356,25 +445,26 @@ export default function Letters() {
                   <button
                     type="button"
                     onClick={resetForm}
-                    className={`px-4 py-2 border rounded-lg transition-colors flex items-center space-x-1 ${
-                      currentTheme.id === 'cyberpunk'
-                        ? 'text-cyber-secondary hover:text-cyber-primary border-cyber-accent hover:bg-cyber-100'
-                        : 'text-gray-600 hover:text-gray-800 border-gray-300 hover:bg-gray-50'
-                    }`}
+                    className="px-4 py-2 border rounded-lg hover:shadow-lg transition-colors flex items-center space-x-1"
+                    style={{
+                      borderColor: colors.border,
+                      color: colors.textSecondary,
+                      backgroundColor: colors.surface
+                    }}
                   >
                     <X className="w-4 h-4" />
-                    <span>{currentTheme.id === 'cyberpunk' ? 'ABORT' : 'İptal'}</span>
+                    <span>İptal</span>
                   </button>
                   <button
                     type="submit"
-                    className={`px-4 py-2 rounded-lg hover:shadow-lg transition-all flex items-center space-x-1 ${
-                      currentTheme.id === 'cyberpunk'
-                        ? 'bg-cyber-purple text-cyber-primary shadow-neon-purple animate-cyber-glow'
-                        : 'bg-love-gradient text-white'
-                    }`}
+                    className="px-4 py-2 rounded-lg hover:shadow-lg transition-all flex items-center space-x-1"
+                    style={{
+                      background: colors.primaryGradient,
+                      color: 'white'
+                    }}
                   >
                     <Save className="w-4 h-4" />
-                    <span>{editingLetter ? (currentTheme.id === 'cyberpunk' ? 'UPDATE' : 'Güncelle') : (currentTheme.id === 'cyberpunk' ? 'SAVE' : 'Kaydet')}</span>
+                    <span>{editingLetter ? 'Güncelle' : 'Kaydet'}</span>
                   </button>
                 </div>
               </form>
@@ -383,28 +473,41 @@ export default function Letters() {
 
           {/* Mektuplar Listesi */}
           {letters.length === 0 ? (
-            <div className={`text-center py-12 backdrop-blur-sm rounded-xl shadow-lg border ${
-              currentTheme.id === 'cyberpunk'
-                ? 'bg-cyber-50/80 border-cyber-accent animate-hologram'
-                : 'bg-white/80 border-romantic-100'
-            }`}>
-              <Heart className={`w-16 h-16 mx-auto mb-4 ${
-                currentTheme.id === 'cyberpunk' ? 'text-cyber-accent animate-neon-flicker' : 'text-romantic-300'
-              }`} />
-              <h3 className={`text-xl mb-2 ${
-                currentTheme.id === 'cyberpunk'
-                  ? 'font-mono text-cyber-primary'
-                  : 'font-romantic text-gray-800'
-              }`}>
+            <div 
+              className="text-center py-12 backdrop-blur-sm rounded-xl shadow-lg border"
+              style={{
+                backgroundColor: colors.surface + '80',
+                borderColor: colors.border
+              }}
+            >
+              <Heart 
+                className="w-16 h-16 mx-auto mb-4"
+                style={{ color: colors.primary + '30' }}
+              />
+              <h3 
+                className={`text-xl mb-2 ${
+                  currentTheme.id === 'cat' ? 'font-romantic' : 'font-elegant'
+                }`}
+                style={{
+                  color: colors.text,
+                  fontFamily: currentTheme.typography.fontFamilyHeading
+                }}
+              >
                 {selectedFolder 
-                  ? (currentTheme.id === 'cyberpunk' ? 'NO_DATA_IN_FOLDER' : 'Bu klasörde henüz mektup yok')
-                  : (currentTheme.id === 'cyberpunk' ? 'NO_DATA_FOUND' : 'Henüz mektup yok')
+                  ? 'Bu klasörde henüz mektup yok'
+                  : 'Henüz mektup yok'
                 }
               </h3>
-              <p className={currentTheme.id === 'cyberpunk' ? 'text-cyber-secondary font-mono' : 'text-gray-700'}>
+              <p 
+                style={{
+                  color: colors.textSecondary,
+                  fontFamily: currentTheme.typography.fontFamily
+                }}
+              >
                 {selectedFolder 
-                  ? (currentTheme.id === 'cyberpunk' ? 'Upload first data to this folder' : 'Bu klasöre ilk mektubunuzu ekleyin!')
-                  : (currentTheme.id === 'cyberpunk' ? 'Initialize first neural message' : 'İlk aşk mektubunuzu yazmaya ne dersiniz?')
+                  ? 'Bu klasöre ilk mektubunuzu ekleyin!'
+                  : currentTheme.id === 'skull-bunny' ? 'Write your first dark letter...' :
+                    'İlk aşk mektubunuzu yazmaya ne dersiniz?'
                 }
               </p>
               <button
@@ -415,14 +518,14 @@ export default function Letters() {
                   });
                   setShowForm(true);
                 }}
-                className={`mt-4 px-6 py-2 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all inline-flex items-center space-x-2 ${
-                  currentTheme.id === 'cyberpunk'
-                    ? 'bg-cyber-red text-cyber-primary shadow-neon-red animate-cyber-glow'
-                    : 'bg-love-gradient text-white'
-                }`}
+                className="mt-4 px-6 py-2 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all inline-flex items-center space-x-2"
+                style={{
+                  background: colors.primaryGradient,
+                  color: 'white'
+                }}
               >
                 <Plus className="w-4 h-4" />
-                <span>{currentTheme.id === 'cyberpunk' ? 'NEW_DATA_MAIL' : 'Yeni Mektup'}</span>
+                <span>Yeni Mektup</span>
               </button>
             </div>
           ) : (
@@ -431,20 +534,31 @@ export default function Letters() {
                 <div
                   key={letter.id}
                   className={`backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border group cursor-pointer ${
-                    currentTheme.id === 'cyberpunk'
-                      ? 'bg-cyber-50/80 border-cyber-accent hover:border-cyber-primary animate-circuit-pulse hover:shadow-neon-blue'
-                      : 'bg-white/80 border-romantic-100'
+                    currentTheme.id === 'skull-bunny' ? 'hover:animate-flicker' :
+                    currentTheme.id === 'ocean' ? 'hover:animate-wave' :
+                    currentTheme.id === 'cat' ? 'hover:animate-purr' : ''
                   }`}
+                  style={{
+                    backgroundColor: colors.surface + '80',
+                    borderColor: colors.border,
+                    minHeight: '220px',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
                   onClick={() => setSelectedLetter(letter)}
-                  style={{ minHeight: '220px', display: 'flex', flexDirection: 'column' }}
                 >
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className={`flex-1 ${
-                      currentTheme.id === 'cyberpunk'
-                        ? 'font-mono text-lg text-cyber-primary'
-                        : 'font-handwriting text-xl text-gray-800'
-                    }`}>
-                      {letter.title || (currentTheme.id === 'cyberpunk' ? 'UNTITLED_DATA' : 'Başlıksız Mektup')}
+                    <h3 
+                      className="flex-1"
+                      style={{
+                        color: colors.text,
+                        fontFamily: currentTheme.id === 'cat' ? 'var(--font-handwriting)' :
+                                    currentTheme.id === 'skull-bunny' ? 'var(--font-mono)' :
+                                    currentTheme.typography.fontFamilyHeading,
+                        fontSize: currentTheme.id === 'cat' ? '1.25rem' : '1.125rem'
+                      }}
+                    >
+                      {letter.title || 'Başlıksız Mektup'}
                     </h3>
                     <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
@@ -452,11 +566,11 @@ export default function Letters() {
                           e.stopPropagation();
                           handleEdit(letter);
                         }}
-                        className={`p-1 rounded ${
-                          currentTheme.id === 'cyberpunk'
-                            ? 'text-cyber-accent hover:bg-cyber-100 animate-neon-flicker'
-                            : 'text-blue-600 hover:bg-blue-50'
-                        }`}
+                        className="p-1 rounded hover:shadow-sm"
+                        style={{ 
+                          color: colors.info,
+                          backgroundColor: colors.info + '10'
+                        }}
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -465,23 +579,23 @@ export default function Letters() {
                           e.stopPropagation();
                           handleDelete(letter.id);
                         }}
-                        className={`p-1 rounded ${
-                          currentTheme.id === 'cyberpunk'
-                            ? 'text-cyber-secondary hover:bg-cyber-100 animate-neon-flicker'
-                            : 'text-red-600 hover:bg-red-50'
-                        }`}
+                        className="p-1 rounded hover:shadow-sm"
+                        style={{ 
+                          color: colors.error,
+                          backgroundColor: colors.error + '10'
+                        }}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
                   <div
-                    className={`mb-4 text-sm overflow-y-auto ${
-                      currentTheme.id === 'cyberpunk'
-                        ? 'text-cyber-accent font-mono'
-                        : 'text-gray-800 font-handwriting'
-                    }`}
+                    className="mb-4 text-sm overflow-y-auto"
                     style={{
+                      color: colors.textSecondary,
+                      fontFamily: currentTheme.id === 'cat' ? 'var(--font-handwriting)' :
+                                  currentTheme.id === 'skull-bunny' ? 'var(--font-mono)' :
+                                  currentTheme.typography.fontFamily,
                       maxHeight: '180px',
                       minHeight: '80px',
                       paddingRight: '4px',
@@ -490,14 +604,16 @@ export default function Letters() {
                   >
                     {letter.content}
                   </div>
-                  <div className={`flex justify-between items-center text-xs mt-auto ${
-                    currentTheme.id === 'cyberpunk'
-                      ? 'text-cyber-secondary font-mono'
-                      : 'text-gray-600'
-                  }`}>
+                  <div 
+                    className="flex justify-between items-center text-xs mt-auto"
+                    style={{
+                      color: colors.textMuted,
+                      fontFamily: currentTheme.typography.fontFamily
+                    }}
+                  >
                     <span>{letter.author}</span>
                     <span>
-                      {letter.date?.toDate?.()?.toLocaleDateString('tr-TR') || (currentTheme.id === 'cyberpunk' ? 'NO_TIMESTAMP' : 'Tarih yok')}
+                      {letter.date?.toDate?.()?.toLocaleDateString('tr-TR') || 'Tarih yok'}
                     </span>
                   </div>
                 </div>
@@ -507,57 +623,78 @@ export default function Letters() {
           
           {/* Mektup Görüntüleme Modalı */}
           {selectedLetter && (
-            <div className={`fixed inset-0 flex items-center justify-center z-50 p-4 ${
-              currentTheme.id === 'cyberpunk' ? 'bg-black/80' : 'bg-black/60'
-            }`} onClick={() => setSelectedLetter(null)}>
-              <div className={`rounded-3xl p-8 max-w-lg w-full shadow-2xl relative ${
-                currentTheme.id === 'cyberpunk'
-                  ? 'bg-cyber-50/95 border-2 border-cyber-primary shadow-neon-blue animate-hologram'
-                  : 'bg-white'
-              }`} onClick={e => e.stopPropagation()}>
+            <div 
+              className="fixed inset-0 flex items-center justify-center z-50 p-4"
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
+              onClick={() => setSelectedLetter(null)}
+            >
+              <div 
+                className="rounded-3xl p-8 max-w-lg w-full shadow-2xl relative"
+                style={{
+                  backgroundColor: colors.surface + '95',
+                  backdropFilter: 'blur(20px)'
+                }}
+                onClick={e => e.stopPropagation()}
+              >
                 <div className="mb-6 text-center">
-                  <h2 className={`text-2xl mb-2 ${
-                    currentTheme.id === 'cyberpunk'
-                      ? 'font-mono text-cyber-primary animate-neon-flicker'
-                      : 'font-romantic text-gray-800'
-                  }`}>
-                    {selectedLetter.title || (currentTheme.id === 'cyberpunk' ? 'UNTITLED_DATA.msg' : 'Başlıksız Mektup')}
+                  <h2 
+                    className={`text-2xl mb-2 ${
+                      currentTheme.id === 'cat' ? 'font-romantic' : 'font-elegant'
+                    }`}
+                    style={{
+                      color: colors.text,
+                      fontFamily: currentTheme.typography.fontFamilyHeading
+                    }}
+                  >
+                    {selectedLetter.title || 'Başlıksız Mektup'}
                   </h2>
-                  <p className={`text-sm mb-2 ${
-                    currentTheme.id === 'cyberpunk'
-                      ? 'text-cyber-secondary font-mono'
-                      : 'text-gray-500'
-                  }`}>
-                    {selectedLetter.date?.toDate?.()?.toLocaleDateString('tr-TR') || (currentTheme.id === 'cyberpunk' ? 'NO_TIMESTAMP' : 'Tarih yok')}
+                  <p 
+                    className="text-sm mb-2"
+                    style={{
+                      color: colors.textSecondary,
+                      fontFamily: currentTheme.typography.fontFamily
+                    }}
+                  >
+                    {selectedLetter.date?.toDate?.()?.toLocaleDateString('tr-TR') || 'Tarih yok'}
                   </p>
-                  <p className={`text-xs mb-2 ${
-                    currentTheme.id === 'cyberpunk'
-                      ? 'text-cyber-accent font-mono'
-                      : 'text-gray-400'
-                  }`}>
-                    {currentTheme.id === 'cyberpunk' ? `USER: ${selectedLetter.author}` : selectedLetter.author}
+                  <p 
+                    className="text-xs mb-2"
+                    style={{
+                      color: colors.textMuted,
+                      fontFamily: currentTheme.typography.fontFamily
+                    }}
+                  >
+                    {selectedLetter.author}
                   </p>
                 </div>
-                <div className="mb-6 overflow-y-auto" style={{ maxHeight: '320px', minHeight: '120px', paddingRight: '4px' }}>
-                  <p className={`text-lg whitespace-pre-line ${
-                    currentTheme.id === 'cyberpunk'
-                      ? 'font-mono text-cyber-primary'
-                      : 'font-handwriting text-gray-800'
-                  }`}>
+                <div 
+                  className="mb-6 overflow-y-auto" 
+                  style={{ maxHeight: '320px', minHeight: '120px', paddingRight: '4px' }}
+                >
+                  <p 
+                    className="text-lg whitespace-pre-line"
+                    style={{
+                      color: colors.text,
+                      fontFamily: currentTheme.id === 'cat' ? 'var(--font-handwriting)' :
+                                  currentTheme.id === 'skull-bunny' ? 'var(--font-mono)' :
+                                  currentTheme.typography.fontFamily
+                    }}
+                  >
                     {selectedLetter.content}
                   </p>
                 </div>
                 <div className="flex justify-end space-x-2">
                   <button
                     onClick={() => setSelectedLetter(null)}
-                    className={`px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 ${
-                      currentTheme.id === 'cyberpunk'
-                        ? 'bg-cyber-accent/20 hover:bg-cyber-accent/30 text-cyber-primary border border-cyber-accent animate-circuit-pulse'
-                        : 'bg-romantic-100 hover:bg-romantic-200 text-romantic-700'
-                    }`}
+                    className="px-4 py-2 rounded-lg transition-colors flex items-center space-x-2"
+                    style={{
+                      backgroundColor: colors.primary + '20',
+                      color: colors.primary,
+                      borderColor: colors.primary + '40'
+                    }}
                   >
                     <X className="w-4 h-4" />
-                    <span>{currentTheme.id === 'cyberpunk' ? 'CLOSE' : 'Kapat'}</span>
+                    <span>Kapat</span>
                   </button>
                 </div>
               </div>

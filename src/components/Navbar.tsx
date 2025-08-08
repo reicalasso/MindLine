@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { useThemeColors } from '../hooks/useThemeStyles';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { 
@@ -31,6 +33,8 @@ interface NavCategory {
 
 export default function Navbar() {
   const { logout, currentUser } = useAuth();
+  const { currentTheme } = useTheme();
+  const colors = useThemeColors();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -197,18 +201,47 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 w-full bg-white/90 backdrop-blur-md border-b border-cat-200 z-40">
+      <nav 
+        className="sticky top-0 w-full backdrop-blur-md border-b z-40"
+        style={{
+          backgroundColor: colors.surface + '90',
+          borderColor: colors.border
+        }}
+      >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link
               to="/"
-              className="flex items-center space-x-2 text-cat-700 hover:text-cat-500 transition-colors group"
+              className="flex items-center space-x-2 hover:opacity-80 transition-colors group"
+              style={{ color: colors.text }}
             >
-              <span className="text-2xl group-hover:animate-wiggle">😺</span>
+              <span className={`text-2xl ${
+                currentTheme.animations.custom?.wiggle ? 'group-hover:animate-wiggle' : ''
+              }`}>
+                {currentTheme.emoji}
+              </span>
               <div className="hidden sm:block">
-                <div className="font-cat text-xl font-bold">MindLine</div>
-                <div className="text-xs text-cat-500 font-elegant">Kedili Aşk Dünyası</div>
+                <div 
+                  className="text-xl font-bold"
+                  style={{ 
+                    fontFamily: currentTheme.typography.fontFamilyHeading,
+                    color: colors.text 
+                  }}
+                >
+                  MindLine
+                </div>
+                <div 
+                  className="text-xs"
+                  style={{ 
+                    color: colors.textSecondary,
+                    fontFamily: currentTheme.typography.fontFamily
+                  }}
+                >
+                  {currentTheme.id === 'skull-bunny' ? 'Gothic Romance' :
+                   currentTheme.id === 'ocean' ? 'Okyanus Dünyası' :
+                   'Kedili Aşk Dünyası'}
+                </div>
               </div>
             </Link>
 
@@ -218,7 +251,21 @@ export default function Navbar() {
                 <div key={category.id} className="relative group">
                   <button
                     onClick={() => handleCategoryClick(category)}
-                    className="flex items-center space-x-2 px-3 py-2 rounded-full text-cat-700 hover:text-cat-500 hover:bg-cat-50 transition-all duration-200 text-sm group"
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200 text-sm group ${
+                      currentTheme.animations.custom?.flicker && currentTheme.id === 'skull-bunny' ? 'hover:animate-flicker' : ''
+                    }`}
+                    style={{
+                      color: colors.text,
+                      backgroundColor: 'transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = colors.surface + '50';
+                      e.currentTarget.style.color = colors.primary;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = colors.text;
+                    }}
                   >
                     <category.icon className="w-4 h-4" />
                     <span className="hidden xl:block font-medium">{category.label}</span>
@@ -230,13 +277,33 @@ export default function Navbar() {
 
                   {/* Desktop Dropdown */}
                   {category.items.length > 1 && (
-                    <div className="absolute top-full left-0 mt-1 w-48 bg-white/95 backdrop-blur-xl rounded-2xl shadow-soft border border-white/40 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div 
+                      className="absolute top-full left-0 mt-1 w-48 backdrop-blur-xl rounded-2xl shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+                      style={{
+                        backgroundColor: colors.surface + '95',
+                        borderColor: colors.border + '40',
+                        boxShadow: `0 10px 40px ${colors.shadow}20`
+                      }}
+                    >
                       <div className="p-2">
                         {category.items.map((item) => (
                           <Link
                             key={item.path}
                             to={item.path}
-                            className="flex items-center space-x-3 px-3 py-2 rounded-xl text-cat-700 hover:text-cat-500 hover:bg-cat-50 transition-all duration-200 text-sm group"
+                            className="flex items-center space-x-3 px-3 py-2 rounded-xl transition-all duration-200 text-sm group"
+                            style={{
+                              color: colors.text,
+                              // '--hover-bg': colors.surfaceVariant,
+                              // '--hover-color': colors.primary
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = colors.surfaceVariant;
+                              e.currentTarget.style.color = colors.primary;
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.color = colors.text;
+                            }}
                           >
                             <item.icon className="w-4 h-4" />
                             <span className="font-medium">{item.label}</span>
@@ -255,24 +322,68 @@ export default function Navbar() {
               {/* Profile Button */}
               <Link
                 to="/profile"
-                className="flex items-center space-x-2 px-3 py-1 rounded-full border border-cat-200 bg-white/70 hover:bg-cat-50 hover:border-cat-300 transition-all group"
+                className="flex items-center space-x-2 px-3 py-1 rounded-full border transition-all group"
+                style={{
+                  borderColor: colors.border,
+                  backgroundColor: colors.surface + '70'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.surfaceVariant;
+                  e.currentTarget.style.borderColor = colors.borderLight;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.surface + '70';
+                  e.currentTarget.style.borderColor = colors.border;
+                }}
               >
-                <div className="w-8 h-8 rounded-full bg-cat-100 flex items-center justify-center overflow-hidden border border-cat-300 flex-shrink-0">
+                <div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border flex-shrink-0"
+                  style={{
+                    backgroundColor: colors.surfaceVariant,
+                    borderColor: colors.borderLight
+                  }}
+                >
                   {getProfileImage()}
                 </div>
                 
                 <div className="hidden sm:flex flex-col">
-                  <span className="text-sm font-medium text-cat-700 group-hover:text-cat-500 max-w-20 truncate">
+                  <span 
+                    className="text-sm font-medium max-w-20 truncate"
+                    style={{
+                      color: colors.text,
+                      fontFamily: currentTheme.typography.fontFamily
+                    }}
+                  >
                     {getDisplayName()}
                   </span>
-                  <span className="text-xs text-cat-400">Hoşgeldin</span>
+                  <span 
+                    className="text-xs"
+                    style={{ 
+                      color: colors.textSecondary,
+                      fontFamily: currentTheme.typography.fontFamily
+                    }}
+                  >
+                    Hoşgeldin
+                  </span>
                 </div>
               </Link>
 
               {/* Logout Button */}
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-2 px-3 py-2 text-cat-500 border border-cat-200 hover:border-cat-400 hover:text-cat-700 rounded-full transition-all duration-200 text-sm group"
+                className="flex items-center space-x-2 px-3 py-2 border rounded-full transition-all duration-200 text-sm group"
+                style={{
+                  color: colors.textSecondary,
+                  borderColor: colors.border
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = colors.error + '40';
+                  e.currentTarget.style.color = colors.error;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = colors.border;
+                  e.currentTarget.style.color = colors.textSecondary;
+                }}
                 title="Çıkış Yap"
               >
                 <LogOut className="w-4 h-4" />
@@ -282,7 +393,24 @@ export default function Navbar() {
               {/* Mobile Menu Button */}
               <button
                 type="button"
-                className="lg:hidden p-2 text-cat-500 hover:text-cat-700 border border-cat-200 hover:border-cat-300 hover:bg-cat-50 rounded-full transition-all duration-200"
+                className="lg:hidden p-2 border rounded-full transition-all duration-200"
+                style={{
+                  color: colors.textSecondary,
+                  borderColor: colors.border,
+                  // '--hover-bg': colors.surfaceVariant,
+                  // '--hover-border': colors.borderLight,
+                  // '--hover-color': colors.text
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.surfaceVariant;
+                  e.currentTarget.style.borderColor = colors.borderLight;
+                  e.currentTarget.style.color = colors.text;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.borderColor = colors.border;
+                  e.currentTarget.style.color = colors.textSecondary;
+                }}
                 onClick={openMobileMenu}
                 aria-label="Menüyü aç"
               >
@@ -298,28 +426,65 @@ export default function Navbar() {
         <div className="lg:hidden fixed inset-0 z-50">
           {/* Backdrop */}
           <div 
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 backdrop-blur-sm"
+            style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
             onClick={closeMobileMenu}
           />
           
           {/* Mobile Menu Panel */}
           <div 
             ref={mobileMenuRef}
-            className="absolute inset-x-0 top-0 bottom-0 bg-white/95 backdrop-blur-xl transform transition-transform duration-300 ease-out animate-in slide-in-from-top"
+            className="absolute inset-x-0 top-0 bottom-0 backdrop-blur-xl transform transition-transform duration-300 ease-out animate-in slide-in-from-top"
+            style={{
+              backgroundColor: colors.surface + '95'
+            }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-cat-200 bg-white/50">
+            <div 
+              className="flex items-center justify-between p-4 border-b"
+              style={{
+                borderColor: colors.border,
+                backgroundColor: colors.surface + '50'
+              }}
+            >
               <div className="flex items-center space-x-2">
-                <span className="text-2xl">😺</span>
+                <span className="text-2xl">{currentTheme.emoji}</span>
                 <div>
-                  <div className="font-cat text-lg font-bold text-cat-700">MindLine</div>
-                  <div className="text-xs text-cat-500 font-elegant">Menü</div>
+                  <div 
+                    className="text-lg font-bold"
+                    style={{ 
+                      fontFamily: currentTheme.typography.fontFamilyHeading,
+                      color: colors.text 
+                    }}
+                  >
+                    MindLine
+                  </div>
+                  <div 
+                    className="text-xs"
+                    style={{ 
+                      color: colors.textSecondary,
+                      fontFamily: currentTheme.typography.fontFamily
+                    }}
+                  >
+                    Menü
+                  </div>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={closeMobileMenu}
-                className="p-2 text-cat-500 hover:text-cat-700 rounded-full hover:bg-cat-50 transition-colors"
+                className="p-2 rounded-full transition-colors"
+                style={{
+                  color: colors.textSecondary
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.surfaceVariant;
+                  e.currentTarget.style.color = colors.text;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = colors.textSecondary;
+                }}
                 aria-label="Menüyü kapat"
               >
                 <X className="w-6 h-6" />
@@ -330,13 +495,41 @@ export default function Navbar() {
             <div className="flex-1 overflow-y-auto">
               <div className="p-4">
                 {/* User Info */}
-                <div className="flex items-center space-x-3 p-4 rounded-2xl bg-gradient-to-r from-cat-50 to-cat-100 border border-cat-200 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-cat-300">
+                <div 
+                  className="flex items-center space-x-3 p-4 rounded-2xl border mb-6"
+                  style={{
+                    background: colors.primaryGradient + '20',
+                    borderColor: colors.border
+                  }}
+                >
+                  <div 
+                    className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border-2"
+                    style={{
+                      backgroundColor: colors.surface,
+                      borderColor: colors.borderLight
+                    }}
+                  >
                     {getProfileImage()}
                   </div>
                   <div>
-                    <div className="text-base font-semibold text-cat-800">{getDisplayName()}</div>
-                    <div className="text-sm text-cat-600">{currentUser?.email}</div>
+                    <div 
+                      className="text-base font-semibold"
+                      style={{
+                        color: colors.text,
+                        fontFamily: currentTheme.typography.fontFamilyHeading
+                      }}
+                    >
+                      {getDisplayName()}
+                    </div>
+                    <div 
+                      className="text-sm"
+                      style={{ 
+                        color: colors.textSecondary,
+                        fontFamily: currentTheme.typography.fontFamily
+                      }}
+                    >
+                      {currentUser?.email}
+                    </div>
                   </div>
                 </div>
 
@@ -349,9 +542,15 @@ export default function Navbar() {
                         onClick={() => handleCategoryClick(category)}
                         className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-200 ${
                           currentCategory?.id === category.id
-                            ? 'bg-cat-100 text-cat-800 border border-cat-300'
-                            : 'text-cat-700 hover:bg-cat-50 hover:text-cat-800'
+                            ? 'border'
+                            : ''
                         }`}
+                        style={{
+                          color: currentCategory?.id === category.id ? colors.primary : colors.text,
+                          backgroundColor: currentCategory?.id === category.id ? colors.surfaceVariant : 'transparent',
+                          borderColor: currentCategory?.id === category.id ? colors.borderLight : 'transparent',
+                          fontFamily: currentTheme.typography.fontFamily
+                        }}
                       >
                         <div className="flex items-center space-x-3">
                           <category.icon className="w-5 h-5" />
@@ -374,10 +573,14 @@ export default function Navbar() {
                               type="button"
                               onClick={() => handleNavItemClick(item.path)}
                               className={`w-full flex items-center space-x-3 p-3 rounded-xl transition-all duration-200 text-left ${
-                                location.pathname === item.path
-                                  ? 'bg-cat-100 text-cat-800 border border-cat-300'
-                                  : 'text-cat-600 hover:bg-cat-50 hover:text-cat-700'
+                                location.pathname === item.path ? 'border' : ''
                               }`}
+                              style={{
+                                color: location.pathname === item.path ? colors.primary : colors.textSecondary,
+                                backgroundColor: location.pathname === item.path ? colors.surfaceVariant : 'transparent',
+                                borderColor: location.pathname === item.path ? colors.borderLight : 'transparent',
+                                fontFamily: currentTheme.typography.fontFamily
+                              }}
                             >
                               <item.icon className="w-4 h-4" />
                               <span className="font-medium">{item.label}</span>
@@ -391,14 +594,28 @@ export default function Navbar() {
                 </nav>
 
                 {/* Logout Button */}
-                <div className="mt-8 pt-6 border-t border-cat-200">
+                <div 
+                  className="mt-8 pt-6 border-t"
+                  style={{ borderColor: colors.border }}
+                >
                   <button
                     type="button"
                     onClick={() => {
                       handleLogout();
                       closeMobileMenu();
                     }}
-                    className="w-full flex items-center space-x-3 p-4 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl transition-all duration-200"
+                    className="w-full flex items-center space-x-3 p-4 rounded-xl transition-all duration-200"
+                    style={{
+                      color: colors.error,
+                      backgroundColor: 'transparent',
+                      fontFamily: currentTheme.typography.fontFamily
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = colors.error + '10';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
                   >
                     <LogOut className="w-5 h-5" />
                     <span className="font-medium">Çıkış Yap</span>

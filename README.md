@@ -56,7 +56,7 @@ src/
 │   ├── Navbar.tsx
 │   ├── ParticleEffect.tsx
 │   └── ProtectedRoute.js
-├─�� contexts/           # React context'leri
+├── contexts/           # React context'leri
 │   └── AuthContext.tsx
 ├── hooks/              # Custom React hooks
 │   └── index.ts
@@ -70,7 +70,8 @@ src/
 │   ├── Calendar.js
 │   ├── Gallery.js
 │   ├── Todos.js
-│   └── Profile.js
+│   ├── Profile.js
+│   └── ThemeShowcase.js
 ├── types/              # TypeScript tip tanımları
 │   └── index.ts
 ├── utils/              # Utility fonksiyonları

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 
 /**
@@ -18,7 +19,9 @@ export const useThemeStyles = () => {
     },
     
     button: {
-      className: currentTheme.styles.button,
+      base: currentTheme.styles.button.base,
+      primary: currentTheme.styles.button.primary,
+      secondary: currentTheme.styles.button.secondary,
       style: {
         backgroundColor: currentTheme.colors.primary,
         color: currentTheme.colors.surface,
@@ -80,6 +83,8 @@ export const useThemeStyles = () => {
     
     // Yardımcı fonksiyonlar
     getColorWithOpacity: (color: string, opacity: number) => {
+      // Örneğin, theme context’de tanımlı renk değeri "#f21c1cff" yerine
+      // CSS değişkenimiz üzerinden dinamik değeri kullanabiliriz.
       return `${color}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`;
     },
     
@@ -105,29 +110,27 @@ export const useThemeStyles = () => {
 export const useThemeColors = () => {
   const { currentTheme } = useTheme();
   
-  return {
-    primary: currentTheme.colors.primary,
-    secondary: currentTheme.colors.secondary,
-    accent: currentTheme.colors.accent,
-    background: currentTheme.colors.background,
-    surface: currentTheme.colors.surface,
-    surfaceVariant: currentTheme.colors.surfaceVariant,
-    text: currentTheme.colors.text,
-    textSecondary: currentTheme.colors.textSecondary,
-    textMuted: currentTheme.colors.textMuted,
-    border: currentTheme.colors.border,
-    borderLight: currentTheme.colors.borderLight,
-    shadow: currentTheme.colors.shadow,
-    success: currentTheme.colors.success,
-    warning: currentTheme.colors.warning,
-    error: currentTheme.colors.error,
-    info: currentTheme.colors.info,
+  return useMemo(() => {
+    const colors = currentTheme.colors;
     
-    // Gradient'ler
-    primaryGradient: currentTheme.colors.primaryGradient,
-    backgroundGradient: currentTheme.colors.backgroundGradient,
-    accentGradient: currentTheme.colors.accentGradient,
-  };
+    // Pre-calculate frequently used color variations for better performance
+    const optimizedColors = {
+      ...colors,
+      // Pre-calculated alpha variations
+      surfaceAlpha50: colors.surface + '80',
+      surfaceAlpha70: colors.surface + 'B3',
+      surfaceAlpha90: colors.surface + 'E6',
+      shadowAlpha20: colors.shadow + '33',
+      shadowAlpha30: colors.shadow + '4D',
+      borderAlpha40: colors.border + '66',
+      borderAlpha30: colors.border + '4D',
+      primaryAlpha10: colors.primary + '1A',
+      primaryAlpha20: colors.primary + '33',
+      primaryAlpha40: colors.primary + '66'
+    };
+    
+    return optimizedColors;
+  }, [currentTheme.id]); // Only recalculate when theme actually changes
 };
 
 /**
@@ -166,4 +169,49 @@ export const useThemeTransition = (duration = 300) => {
     transitionWithEffect,
     currentTheme,
   };
+};
+
+// Performance optimized styles hook
+export const useOptimizedStyles = () => {
+  const { currentTheme } = useTheme();
+  const colors = useThemeColors();
+  
+  return useMemo(() => ({
+    // Optimized backdrop styles
+    backdrop: {
+      backgroundColor: colors.surfaceAlpha90,
+      backdropFilter: 'blur(8px) saturate(150%)',
+      WebkitBackdropFilter: 'blur(8px) saturate(150%)',
+      borderColor: colors.borderAlpha40,
+      willChange: 'transform',
+      transform: 'translateZ(0)',
+      backfaceVisibility: 'hidden'
+    },
+    
+    // Optimized card styles
+    card: {
+      backgroundColor: colors.surfaceAlpha70,
+      backdropFilter: 'blur(6px)',
+      WebkitBackdropFilter: 'blur(6px)',
+      borderColor: colors.borderAlpha30,
+      boxShadow: `0 8px 32px ${colors.shadowAlpha20}`,
+      willChange: 'transform',
+      transform: 'translateZ(0)'
+    },
+    
+    // Optimized button styles
+    button: {
+      background: colors.primaryGradient,
+      color: 'white',
+      willChange: 'transform',
+      transform: 'translateZ(0)'
+    },
+    
+    // Mobile optimized styles
+    mobileOptimized: window.innerWidth <= 768 ? {
+      backdropFilter: 'blur(4px)',
+      WebkitBackdropFilter: 'blur(4px)'
+    } : {}
+    
+  }), [currentTheme.id, colors]);
 };

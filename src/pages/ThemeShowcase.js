@@ -44,10 +44,14 @@ export default function ThemeShowcase() {
             <div className="flex justify-center space-x-4 mb-8">
               <Button 
                 onClick={handleQuickToggle}
-                className="flex items-center space-x-2"
+                className={`flex items-center space-x-2 ${
+                  currentTheme.id === 'skull-bunny' 
+                    ? 'bg-skull-bunny-primary-gradient text-skull-bunny-parchment hover:shadow-skull-bunny-glow' 
+                    : ''
+                }`}
                 style={{
-                  background: colors.primaryGradient,
-                  color: 'white',
+                  background: currentTheme.id !== 'skull-bunny' ? colors.primaryGradient : undefined,
+                  color: currentTheme.id !== 'skull-bunny' ? 'white' : undefined,
                 }}
               >
                 <Palette className="w-5 h-5" />

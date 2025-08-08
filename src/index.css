@@ -46,15 +46,112 @@ body {
 
 /* Theme-specific body styles */
 body.theme-cat {
-  font-family: 'Indie Flower', Comic Sans MS, cursive;
-  background: linear-gradient(135deg, #fef7ee 0%, #fde8d1 30%, #fbd2a2 70%, #f8b668 100%);
-  color: #374151;
+  /* Eski kod: font-family: 'Indie Flower', Comic Sans MS, cursive; background: linear-gradient(135deg, #fef7ee 0%, #fde8d1 30%, #fbd2a2 70%, #f8b668 100%); color: #374151; */
+  font-family: var(--font-family-cat, 'Indie Flower, Comic Sans MS, cursive');
+  background: var(--theme-cat-bg-gradient, linear-gradient(135deg, #fef7ee 0%, #fde8d1 30%, #fbd2a2 70%, #f8b668 100%));
+  color: var(--theme-cat-text, #374151);
 }
 
 body.theme-minimal {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: #ffffff;
-  color: #1e293b;
+  /* Eski kod: font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #ffffff; color: #1e293b; */
+  font-family: var(--font-family-minimal, 'Inter, system-ui, -apple-system, sans-serif');
+  background: var(--theme-minimal-bg, #ffffff);
+  color: var(--theme-minimal-text, #1e293b);
+}
+
+body.theme-skull-bunny {
+  font-family: var(--font-family-skull-bunny, 'Inter, Roboto, sans-serif');
+  background: 
+    linear-gradient(180deg, rgba(11, 11, 13, 0.9) 0%, rgba(30, 30, 34, 0.85) 100%),
+    url('/images/skull-bunny-bg.jpg') center/cover no-repeat fixed;
+  color: var(--theme-skull-bunny-text, #D9CBA3);
+  position: relative;
+  /* Performance optimizations */
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  transform: translateZ(0);
+}
+
+body.theme-skull-bunny::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%231E1E22' fill-opacity='0.08'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  pointer-events: none;
+  z-index: var(--z-decorations);
+  opacity: 0.2;
+  /* Performance optimization */
+  will-change: opacity;
+  transform: translateZ(0);
+}
+
+/* Remove blur overlay for better performance */
+body.theme-skull-bunny::after {
+  display: none;
+}
+
+/* Performance optimizations for theme elements */
+.skull-bunny-optimized {
+  /* GPU acceleration */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  
+  /* Reduce blur for performance */
+  backdrop-filter: blur(8px) saturate(150%);
+  -webkit-backdrop-filter: blur(8px) saturate(150%);
+}
+
+/* Optimized animations for skull bunny theme */
+@media (prefers-reduced-motion: no-preference) {
+  .theme-skull-bunny .animate-flicker {
+    animation: flicker-optimized 2s ease-in-out infinite;
+  }
+}
+
+@keyframes flicker-optimized {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 0.7; }
+}
+
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  body.theme-skull-bunny {
+    background-attachment: scroll; /* Better mobile performance */
+    background-size: cover;
+  }
+  
+  body.theme-skull-bunny::before {
+    opacity: 0.1; /* Reduce pattern opacity on mobile */
+  }
+  
+  .skull-bunny-optimized {
+    backdrop-filter: blur(4px); /* Less blur on mobile */
+    -webkit-backdrop-filter: blur(4px);
+  }
+}
+
+/* Prefers reduced motion - disable background effects */
+@media (prefers-reduced-motion: reduce) {
+  body.theme-skull-bunny {
+    background: linear-gradient(180deg, #0B0B0D 0%, #1E1E22 100%);
+    backdrop-filter: none;
+  }
+  
+  body.theme-skull-bunny::before,
+  body.theme-skull-bunny::after {
+    display: none;
+  }
+  
+  .skull-bunny-optimized {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 /* Background Decorations */
@@ -120,6 +217,32 @@ body.theme-minimal {
   opacity: 0.4;
 }
 
+/* Skull Bunny Theme Floating Elements */
+.skull-bunny-floating-particles::before,
+.skull-bunny-floating-particles::after {
+  content: "🐰💀";
+  position: fixed;
+  font-size: 1.5rem;
+  opacity: 0.15;
+  color: #A6282E;
+  pointer-events: none;
+  z-index: var(--z-decorations);
+  text-shadow: 0 0 10px rgba(166, 40, 46, 0.5);
+  animation: flicker 3s linear infinite;
+}
+
+.skull-bunny-floating-particles::before {
+  left: 10%;
+  top: 20%;
+  animation-delay: 0s;
+}
+
+.skull-bunny-floating-particles::after {
+  right: 15%;
+  top: 70%;
+  animation-delay: 1.5s;
+}
+
 /* Default Button Styles */
 button {
   background: none;
@@ -153,6 +276,14 @@ button {
 
 .font-minimal {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.font-skull-bunny-heading {
+  font-family: 'UnifrakturCook', 'Cinzel Decorative', serif;
+}
+
+.font-skull-bunny-body {
+  font-family: 'Inter', 'Roboto', sans-serif;
 }
 
 /* Component Styles */
@@ -254,10 +385,40 @@ button {
            transition-all duration-300 font-medium;
   }
 
-  .cat-input {
-    @apply bg-white/80 border-2 border-cat-200/50 rounded-xl
-           px-4 py-3 text-cat-800 placeholder:text-cat-400
-           focus:border-cat-400 focus:ring-4 focus:ring-cat-200/30
+  .skull-bunny-card {
+    @apply bg-skull-bunny-iron/90 backdrop-blur-xl rounded-lg shadow-skull-bunny border border-skull-bunny-crimson-dark/30;
+    position: relative;
+  }
+
+  .skull-bunny-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(166, 40, 46, 0.05) 50%, transparent 100%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .skull-bunny-button {
+    @apply bg-skull-bunny-iron/80 border border-skull-bunny-crimson-dark/50 rounded-lg
+           px-4 py-2 text-skull-bunny-parchment hover:bg-skull-bunny-crimson-dark/20 
+           hover:border-skull-bunny-crimson-light hover:shadow-skull-bunny-glow
+           transition-all duration-300 font-medium;
+  }
+
+  .skull-bunny-button-primary {
+    @apply bg-skull-bunny-primary-gradient text-skull-bunny-parchment rounded-lg shadow-skull-bunny
+           px-6 py-3 hover:shadow-skull-bunny-glow hover:scale-105
+           transition-all duration-300 font-medium;
+  }
+
+  .skull-bunny-input {
+    @apply bg-skull-bunny-iron/80 border border-skull-bunny-crimson-dark/50 rounded-lg
+           px-4 py-3 text-skull-bunny-parchment placeholder:text-skull-bunny-silver/60
+           focus:border-skull-bunny-crimson-light focus:ring-2 focus:ring-skull-bunny-crimson-light/30
            transition-all duration-300;
   }
 }
