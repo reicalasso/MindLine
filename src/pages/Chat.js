@@ -959,7 +959,7 @@ export default function Chat() {
                               handleDeleteMessage(message.id);
                               setShowMessageActions(null);
                             }}
-                            className="w-full flex items-center space-x-3 px-6 py-4 text-left transition-all hover:bg-red-50/50 font-cat"
+                            className={`w-full flex items-center space-x-3 px-6 py-4 text-left transition-all hover:bg-red-50/50 ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`}
                             style={{ color: '#dc2626' }}
                           >
                             <Trash2 className="w-5 h-5" />
@@ -1010,7 +1010,7 @@ export default function Chat() {
                   className="text-xs truncate mt-1 opacity-80"
                   style={{ color: colors.textSecondary }}
                 >
-                  {replyingTo.type === 'image' ? '�� Fotoğraf' :
+                  {replyingTo.type === 'image' ? '📷 Fotoğraf' :
                    replyingTo.type === 'file' ? '📎 Dosya' :
                    replyingTo.content}
                 </p>
