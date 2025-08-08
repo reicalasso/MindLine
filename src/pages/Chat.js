@@ -280,7 +280,7 @@ export default function Chat() {
       console.error('Profil yüklenirken hata:', error);
       return {
         displayName: userEmail.split('@')[0],
-        favoriteEmoji: '😺',
+        favoriteEmoji: '��',
         email: userEmail,
         profileImage: null
       };
@@ -819,7 +819,7 @@ export default function Chat() {
             <div className={`mt-4 text-xs space-y-1 ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`} style={{ color: colors.textSecondary }}>
               <p>😺 İpucu: Mesajları sağa kaydırarak yanıtlayın</p>
               <p>💕 İpucu: Başkalarının mesajlarını basılı tutarak ifade edin</p>
-              <p>✨ İpucu: Kendi mesajlarınızı basılı tutarak düzenleyin/silin</p>
+              <p>��� İpucu: Kendi mesajlarınızı basılı tutarak düzenleyin/silin</p>
             </div>
           </div>
         ) : (
@@ -893,13 +893,13 @@ export default function Chat() {
                           : 'border shadow-md'
                       }`}
                       style={{
-                        background: isMyMsg 
-                          ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+                        background: isMyMsg
+                          ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
                           : colors.surface,
                         borderColor: isMyMsg ? 'transparent' : colors.border,
                         color: isMyMsg ? 'white' : colors.text,
-                        boxShadow: isMyMsg 
-                          ? `0 4px 20px rgba(102, 126, 234, 0.4)` 
+                        boxShadow: isMyMsg
+                          ? `0 4px 20px rgba(102, 126, 234, 0.4)`
                           : `0 2px 12px ${colors.shadow}15`,
                         wordBreak: 'break-word',
                         overflowWrap: 'break-word',
@@ -908,6 +908,8 @@ export default function Chat() {
                       }}
                       onTouchStart={(e) => onTouchStartLongPress(e, message)}
                       onTouchEnd={onTouchEndLongPress}
+                      onDoubleClick={() => handleDoubleClick(message)}
+                      onClick={() => handleTapEvent(message)}
                     >
                       {renderMessage(message)}
                       
