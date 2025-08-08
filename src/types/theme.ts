@@ -142,7 +142,7 @@ export interface Theme {
   cssVariables?: Record<string, string>;
 }
 
-export type ThemeMode = 'cat';
+export type ThemeMode = 'cat' | 'minimal';
 
 // Temel tema şablonu
 const createBaseTheme = (overrides: Partial<Theme>): Theme => {
