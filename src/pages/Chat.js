@@ -125,6 +125,51 @@ export default function Chat() {
     }
   };
 
+  // Double click to like functionality
+  const handleDoubleClick = (message) => {
+    if (isMyMessage(message)) return; // Don't allow liking own messages
+
+    // Add heart reaction with animation
+    addEmojiReaction(message.id, '❤️');
+
+    // Show feedback
+    toast.success('💕 Mesaj beğenildi!', { duration: 1000 });
+
+    // Haptic feedback if available
+    if (navigator.vibrate) {
+      navigator.vibrate([50, 50, 50]);
+    }
+  };
+
+  // Handle single/double tap detection for mobile
+  const handleTapEvent = (message) => {
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300;
+
+    if (now - lastTap < DOUBLE_TAP_DELAY) {
+      // Double tap detected
+      if (doubleTapTimer) {
+        clearTimeout(doubleTapTimer);
+        setDoubleTapTimer(null);
+      }
+      handleDoubleClick(message);
+    } else {
+      // Single tap - set timer for potential double tap
+      if (doubleTapTimer) {
+        clearTimeout(doubleTapTimer);
+      }
+
+      const timer = setTimeout(() => {
+        // Single tap action (if needed in future)
+        setDoubleTapTimer(null);
+      }, DOUBLE_TAP_DELAY);
+
+      setDoubleTapTimer(timer);
+    }
+
+    setLastTap(now);
+  };
+
   // Instagram-vari Link Preview Kartı
   function LinkPreviewCard({ url }) {
     const [preview, setPreview] = useState(null);
