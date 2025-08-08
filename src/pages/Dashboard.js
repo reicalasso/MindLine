@@ -410,9 +410,12 @@ export default function Dashboard() {
           >
             <div className="flex items-center mb-4">
               <Activity className="w-5 h-5 mr-2" style={{ color: colors.primary }} />
-              <h2 
-                className="text-xl font-bold font-cat"
-                style={{ color: colors.text }}
+              <h2
+                className={`text-xl font-bold ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`}
+                style={{
+                  color: colors.text,
+                  fontFamily: currentTheme.typography.fontFamilyHeading
+                }}
               >
                 Son Aktiviteler
               </h2>
