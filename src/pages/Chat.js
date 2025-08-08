@@ -629,7 +629,7 @@ export default function Chat() {
             </div>
             <p className="text-xs text-gray-600 truncate">
               {replyMessage.type === 'image' ? '📷 Fotoğraf' :
-               replyMessage.type === 'file' ? '📎 Dosya' :
+               replyMessage.type === 'file' ? '�� Dosya' :
                replyMessage.content}
             </p>
           </div>
@@ -769,7 +769,7 @@ export default function Chat() {
             >
               İlk mesajınızı göndererek sohbeti başlatın! 💕
             </p>
-            <div className="mt-4 text-xs space-y-1 font-cat" style={{ color: colors.textSecondary }}>
+            <div className={`mt-4 text-xs space-y-1 ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`} style={{ color: colors.textSecondary }}>
               <p>😺 İpucu: Mesajları sağa kaydırarak yanıtlayın</p>
               <p>💕 İpucu: Başkalarının mesajlarını basılı tutarak ifade edin</p>
               <p>✨ İpucu: Kendi mesajlarınızı basılı tutarak düzenleyin/silin</p>
