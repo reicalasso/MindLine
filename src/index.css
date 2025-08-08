@@ -138,6 +138,23 @@ button {
   --theme-border: #f8b668;
 }
 
+/* Theme Font Utilities */
+.font-cat {
+  font-family: 'Indie Flower', Comic Sans MS, cursive;
+}
+
+.font-elegant {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.font-romantic {
+  font-family: 'Caveat', Dancing Script, cursive;
+}
+
+.font-minimal {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
 /* Component Styles */
 @layer components {
   .cat-card {
