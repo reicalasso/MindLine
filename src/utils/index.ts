@@ -600,7 +600,7 @@ export const themeUtils = {
       // Geçiş sonrası DOM güncellemelerini batch'le
       requestAnimationFrame(() => {
         // Force reflow to ensure all changes are applied
-        document.body.offsetHeight;
+        void document.body.offsetHeight;
       });
     });
   },
