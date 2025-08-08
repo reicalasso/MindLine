@@ -18,7 +18,7 @@ interface ProfileData {
 
 interface NavItem {
   path: string;
-  icon: any;
+  icon: React.ComponentType<any>;
   label: string;
   emoji: string;
 }
@@ -26,7 +26,7 @@ interface NavItem {
 interface NavCategory {
   id: string;
   label: string;
-  icon: any;
+  icon: React.ComponentType<any>;
   emoji: string;
   items: NavItem[];
 }
