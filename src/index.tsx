@@ -130,8 +130,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Prevent zoom on iOS Safari double tap
+// Prevent zoom on iOS Safari double tap (except for chat messages)
 document.addEventListener('dblclick', (event) => {
+  const target = event.target as HTMLElement;
+
+  // Allow double-click on chat messages (check for chat message classes)
+  if (target.closest('.px-4.py-3.rounded-3xl') ||
+      target.closest('[data-message-balloon]') ||
+      target.classList.contains('chat-message')) {
+    return; // Allow double-click for chat messages
+  }
+
+  // Prevent default zoom behavior for other elements
   event.preventDefault();
 }, { passive: false });
 
