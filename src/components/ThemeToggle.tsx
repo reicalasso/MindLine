@@ -73,7 +73,14 @@ const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
             />
             
             {/* Menu */}
-            <div className="absolute right-0 top-full mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-2xl border border-cat-200/50 shadow-magic z-[100] overflow-hidden">
+            <div
+              className="absolute right-0 top-full mt-2 w-64 backdrop-blur-xl rounded-2xl border z-[100] overflow-hidden"
+              style={{
+                backgroundColor: colors.surface + 'F0',
+                borderColor: colors.border,
+                boxShadow: `0 10px 25px ${colors.shadow}30`
+              }}
+            >
               <div className="p-3">
                 <div className="text-xs font-medium mb-3 px-2 text-gray-600">
                   Tema Seç
