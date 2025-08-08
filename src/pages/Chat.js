@@ -322,16 +322,42 @@ export default function Chat() {
     scrollToBottom();
   }, [messages]);
 
-  // User profiles effect
+  // User profiles effect with debouncing
   useEffect(() => {
-    if (messages.length > 0) {
+    if (messages.length === 0) return;
+
+    let isMounted = true;
+
+    const loadProfiles = async () => {
+      // Debounce profile loading
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      if (!isMounted) return;
+
       const uniqueAuthors = [...new Set(messages.map(msg => msg.author))];
-      uniqueAuthors.forEach(author => {
-        if (!userProfiles[author]) {
-          fetchUserProfile(author);
+      const authorsToLoad = uniqueAuthors.filter(author =>
+        author && !userProfiles[author]
+      );
+
+      if (authorsToLoad.length > 0) {
+        // Load profiles sequentially to prevent conflicts
+        for (const author of authorsToLoad) {
+          if (isMounted && !userProfiles[author]) {
+            try {
+              await fetchUserProfile(author);
+            } catch (error) {
+              console.error('Error loading profile for:', author, error);
+            }
+          }
         }
-      });
-    }
+      }
+    };
+
+    loadProfiles();
+
+    return () => {
+      isMounted = false;
+    };
   }, [messages, userProfiles, fetchUserProfile]);
 
   const convertFileToBase64 = (file) => {
