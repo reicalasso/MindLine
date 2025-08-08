@@ -13,6 +13,7 @@ interface ThemeToggleProps {
 const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
   ({ variant = 'button', showLabel = true, className = '' }, ref) => {
     const { currentTheme, themeMode, setThemeMode } = useTheme();
+    const colors = useThemeColors();
     const [isOpen, setIsOpen] = useState(false);
 
     const handleThemeSelect = (newTheme: ThemeMode) => {
