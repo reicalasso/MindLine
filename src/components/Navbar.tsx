@@ -71,7 +71,7 @@ export default function Navbar() {
     setExpandedCategory(null);
   }, [location.pathname]);
 
-  const fetchProfileData = async () => {
+  const fetchProfileData = useCallback(async () => {
     try {
       if (!currentUser) return;
       const profileDoc = await getDoc(doc(db, 'profiles', currentUser.uid));
@@ -83,7 +83,7 @@ export default function Navbar() {
         console.error('Profil verisi yüklenirken hata:', error);
       }
     }
-  };
+  }, [currentUser]);
 
   const handleLogout = async () => {
     try {
