@@ -45,7 +45,12 @@ const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
         <button
           ref={ref}
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex items-center space-x-2 px-3 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-cat-200/50 hover:bg-cat-50 hover:border-cat-300 transition-all duration-200 ${className}`}
+          className={`flex items-center space-x-2 px-3 py-2 rounded-full backdrop-blur-sm border transition-all duration-200 ${className}`}
+          style={{
+            backgroundColor: colors.surface + 'CC',
+            borderColor: colors.border,
+            color: colors.text
+          }}
         >
           <span className="text-lg">{currentTheme.emoji}</span>
           {showLabel && (
