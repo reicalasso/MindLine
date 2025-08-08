@@ -629,7 +629,7 @@ export default function Chat() {
             </div>
             <p className="text-xs text-gray-600 truncate">
               {replyMessage.type === 'image' ? '📷 Fotoğraf' :
-               replyMessage.type === 'file' ? '�� Dosya' :
+               replyMessage.type === 'file' ? '📎 Dosya' :
                replyMessage.content}
             </p>
           </div>
@@ -947,7 +947,7 @@ export default function Chat() {
                                 handleEditMessage(message);
                                 setShowMessageActions(null);
                               }}
-                              className="w-full flex items-center space-x-3 px-6 py-4 text-left transition-all hover:bg-cat-50/50 border-b border-gray-100/50 font-cat"
+                              className={`w-full flex items-center space-x-3 px-6 py-4 text-left transition-all hover:bg-cat-50/50 border-b border-gray-100/50 ${currentTheme.id === 'cat' ? 'font-cat' : 'font-minimal'}`}
                               style={{ color: colors.primary }}
                             >
                               <Edit className="w-5 h-5" />
@@ -1010,7 +1010,7 @@ export default function Chat() {
                   className="text-xs truncate mt-1 opacity-80"
                   style={{ color: colors.textSecondary }}
                 >
-                  {replyingTo.type === 'image' ? '📷 Fotoğraf' :
+                  {replyingTo.type === 'image' ? '�� Fotoğraf' :
                    replyingTo.type === 'file' ? '📎 Dosya' :
                    replyingTo.content}
                 </p>
